@@ -3,20 +3,15 @@
 		<div style="margin-bottom: 10px;display: flex;align-items: center;justify-content: space-between;">
 			
 			<div  style="display: flex;align-items: center;">
-				<Button type="primary" @click="add_good()" style="margin-right: 10px;">
-					<Icon type="ios-download-outline"></Icon>添加产品
-				</Button>
+				<router-link to="/home/add_good">
+					<Button type="success" style="margin-right: 10px;" icon="md-add">添加产品</Button>
+				</router-link>
 				
-				<Button type="primary" @click="delete_good()">
-					<Icon type="ios-download-outline"></Icon>删除
-				</Button>
+				<Button type="warning" @click="delete_good()" icon="ios-trash-outline">删除</Button>
 			</div>
 			
 			<div style="display: flex;align-items: center;">
-				<Button type="primary" @click="exportData()">
-					<Icon type="ios-download-outline"></Icon>
-					导出产品数据
-				</Button>
+				<Button type="primary" @click="exportData()" icon="ios-download-outline"> 导出产品数据</Button>
 				
 				<div style="margin-left:10px">
 					<input
@@ -26,10 +21,7 @@
 						accept=".csv,.excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
 						style="display: none;"
 					/>
-					<Button type="primary" @click="btnClick">
-						<Icon type="ios-download-outline"></Icon>
-						上传Excel表格数据
-					</Button>
+					<Button type="primary" @click="btnClick" icon="ios-cloud-upload-outline">上传Excel表格数据</Button>
 				</div>
 			</div>
 		</div>
