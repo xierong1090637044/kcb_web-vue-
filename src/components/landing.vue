@@ -12,7 +12,7 @@
 		</div>
 
 		<div class="index_content">
-			<Card dis-hover style="width: 30%;margin:10% 35% 0;margin-top: 10%;" v-if="landing_type == 'landing'">
+			<Card dis-hover :padding="padding_size" style="width: 30%;margin:10% 35% 0;margin-top: 15%;" v-if="landing_type == 'landing'">
 				<div slot="title">
 					<p style="font-size: 18px;color:#333">登录 - 库存表管理系统</p>
 					<div style="color: #b3424a;font-size: 12px;margin-top: 10px;">愿你被世界温柔的善待</div>
@@ -30,14 +30,14 @@
 						</Input>
 					</FormItem>
 					<FormItem>
-						<Button @click="handleSubmit(formInline.user,formInline.password)" style="background:#b3424a;color: #fff ;">登录</Button>
+						<Button @click="handleSubmit(formInline.user,formInline.password)" style="background:#b3424a;color: #fff ;" :loading="button_login">登录</Button>
 
 						<Button type="primary" @click="landing_type ='phone_landing'" style="margin-left: 40px;">手机登录</Button>
 					</FormItem>
 				</Form>
 			</Card>
 
-			<Card dis-hover style="width: 30%;margin:10% 35% 0;margin-top: 10%;" v-if="landing_type == 'phone_landing'">
+			<Card dis-hover :padding="padding_size" style="width: 30%;margin:10% 35% 0;margin-top: 15%;" v-if="landing_type == 'phone_landing'">
 				<div slot="title">
 					<p style="font-size: 18px;color:#333">手机登录 - 库存表管理系统</p>
 					<div style="color: #b3424a;font-size: 12px;margin-top: 10px;">总有人会给你遮风挡雨</div>
@@ -64,7 +64,7 @@
 					</FormItem>
 
 					<FormItem>
-						<Button @click="phone_login(formInline.phone,formInline.code)" style="background:#b3424a;color: #fff ;">登录</Button>
+						<Button @click="phone_login(formInline.phone,formInline.code)" style="background:#b3424a;color: #fff ;" :loading="button_login">登录</Button>
 
 						<Button type="primary" @click="landing_type ='landing'" style="margin-left: 40px;">返回账号登录</Button>
 					</FormItem>
@@ -80,6 +80,8 @@
 		name: 'login',
 		data() {
 			return {
+				button_login:false,//控制button的加载状态
+				padding_size:30,
 				code_button: false,
 				code_text: "发送验证码",
 				alter_type: '',
@@ -141,29 +143,34 @@
 
 			//手机登录点击
 			phone_login(phone, code) {
-
-				console.log(phone, code)
+				that.button_login = true
+				//console.log(phone, code)
 				Bmob.User.signOrLoginByMobilePhone(Number(phone), Number(code)).then(res => {
 					console.log(res)
+					that.button_login = false
 					localStorage.setItem("bmob",JSON.stringify(res))
 					this.$router.push({
 						path: '/home/index'
 					})
 				}).catch(err => {
+					that.button_login = false
 					that.alter_type = "phone_landing_error"
 				});
 			},
 
 			//账号登录点击
 			handleSubmit(name, password) {
+				that.button_login = true
 				console.log(name, password)
 				//this.$Message.error('Fail!');
-				Bmob.User.login(name, password).then(res => {
-					console.log(res.code)
+				Bmob.User.login(password, password).then(res => {
+					//console.log(res.code)
+					that.button_login = false
 					this.$router.push({
 						path: '/home/index'
 					})
 				}).catch(err => {
+					that.button_login = false
 					//console.log(err)
 					that.alter_type = "error"
 				});
