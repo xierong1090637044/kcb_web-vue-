@@ -1,5 +1,6 @@
 <template>
-	<div>
+	<div style="position: relative;">
+		<Spin size="large" fix v-if="loading"></Spin>
 		<Row style="background:#eee;padding:20px">
         <Col span="5">
             <Card shadow  style="background: #2db7f5;color: #fff;">
@@ -25,6 +26,7 @@ let that;
 export default {
 	data() {
 		return {
+			loading:true,
 			get_reserve: 0,
 			out_reserve: 0,
 			total_reserve: 0,
@@ -42,7 +44,7 @@ export default {
 			})();
 		};
 		this.gettoday_detail();
-		this.loadallGoods()
+		
 	},
 
 	methods: {
@@ -76,6 +78,7 @@ export default {
 
 				that.get_reserve = get_reserve.toFixed(2);
 				that.out_reserve = out_reserve.toFixed(2);
+				this.loadallGoods()
 			});
 		},
 
@@ -106,6 +109,8 @@ export default {
 						(that.total_money = total_money.toFixed(2)), (that.total_reserve = total_reserve.toFixed(2)), (that.total_products = res.length);
 					}
 				}
+				
+				that.loading= false
 			});
 		}
 	}

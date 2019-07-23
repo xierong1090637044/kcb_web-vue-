@@ -46,7 +46,7 @@
 						Item 3
 						</MenuItem>
 						<MenuItem name="4">
-						   <Avatar :src="user.avatarUrl" />
+						<Avatar :src="user.avatarUrl" />
 						</MenuItem>
 					</div>
 				</Menu>
@@ -55,23 +55,23 @@
 				<Sider hide-trigger :style="{height:screenHeight - 64+'px'}">
 					<Menu active-name="1" theme="dark" width="auto">
 
-						<MenuItem name="1" to = 'index'>
+						<MenuItem name="1" to='index'>
 						<div class="display_flex">
-							<Icon type="ios-home" style="font-size: 20px;"/>
+							<Icon type="ios-home" style="font-size: 20px;" />
 							<div style="margin-left: 10px;margin-top: 4px;">首页</div>
 						</div>
 						</MenuItem>
-						
-						<MenuItem name="2" to = 'goods'>
+
+						<MenuItem name="2" to='goods'>
 						<div class="display_flex">
-							<Icon type="md-cart" style="font-size: 20px;"/>
+							<Icon type="md-cart" style="font-size: 20px;" />
 							<div style="margin-left: 10px;margin-top: 4px;">产品管理</div>
 						</div>
 						</MenuItem>
-						
-						<MenuItem name="3" to = 'operations'>
+
+						<MenuItem name="3" to='operations'>
 						<div class="display_flex">
-							<Icon type="ios-paper" style="font-size: 20px;"/>
+							<Icon type="ios-paper" style="font-size: 20px;" />
 							<div style="margin-left: 10px;margin-top: 4px;">操作记录</div>
 						</div>
 						</MenuItem>
@@ -111,7 +111,7 @@
 
 		data() {
 			return {
-				user:JSON.parse(localStorage.getItem('bmob')),
+				user: JSON.parse(localStorage.getItem('bmob')),
 				screenHeight: window.innerHeight,
 			}
 		},
@@ -126,7 +126,7 @@
 		},
 
 		methods: {
-			
+
 		},
 
 	}
