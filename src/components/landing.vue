@@ -240,6 +240,13 @@
 				}
 			}
 			window.onresize()
+			
+			let current = Bmob.User.current()
+			if(current){
+				this.$router.push({
+					path: '/home/index'
+				})
+			}
 		}
 	}
 </script>

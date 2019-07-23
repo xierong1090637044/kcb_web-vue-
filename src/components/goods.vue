@@ -151,15 +151,15 @@
 					},
 					{
 						title: '单位',
-						key: 'address'
+						key: 'packingUnit'
 					},
 					{
 						title: '登记编号',
-						key: 'address'
+						key: 'regNumber'
 					},
 					{
-						title: '单位',
-						key: 'packingUnit'
+						title: '产品简介',
+						key: 'product_info'
 					},
 					{
 						title: '生产厂家',

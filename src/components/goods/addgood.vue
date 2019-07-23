@@ -59,10 +59,10 @@
 					</Select>
 					</Col>
 					<Col span="6" style="margin-left: 20px;">
-					<Input v-model="formValidate.reserve" placeholder="对应的库存"></Input>
+					<Input v-model="formValidate.reserve" placeholder="对应的库存" type="number"></Input>
 					</Col>
 					<Col span="6" style="margin-left: 20px;">
-					<Input v-model="formValidate.reserve" placeholder="预警库存"></Input>
+					<Input v-model="formValidate.warning_num" placeholder="预警库存" type="number"></Input>
 					</Col>
 				</Row>
 
@@ -76,16 +76,16 @@
 			<FormItem label="货架编号" prop="position">
 				<Input v-model="formValidate.position" placeholder="请输入货架编号"></Input>
 			</FormItem>
-			<FormItem label="生产日期">
+			<!--<FormItem label="生产日期">
 				<FormItem prop="producttime">
-					<DatePicker type="date" placeholder="请选择生产日期" v-model="formValidate.producttime"></DatePicker>
+					<DatePicker type="date" placeholder="请选择生产日期" v-model="formValidate.producttime" format="yyyy-MM-dd HH:mm:ss"></DatePicker>
 				</FormItem>
 			</FormItem>
 			<FormItem label="失效日期">
 				<FormItem prop="nousetime">
-					<DatePicker type="date" placeholder="请选择失效日期" v-model="formValidate.nousetime"></DatePicker>
+					<DatePicker type="date" placeholder="请选择失效日期" v-model="formValidate.nousetime" format="yyyy-MM-dd HH:mm:ss"></DatePicker>
 				</FormItem>
-			</FormItem>
+			</FormItem>-->
 			<FormItem label="产品简介" prop="product_info">
 				<Input v-model="formValidate.product_info" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入产品简介"></Input>
 			</FormItem>
@@ -166,7 +166,18 @@
 			//上传产品
 			handleSubmit(formValidate) {
 				console.log(formValidate)
-				goods.upload_good(formValidate)
+				if(formValidate.goodsName){
+					goods.upload_good(formValidate).then(res => {
+						if(res[0]){
+							 this.$Message.success('上传成功');
+						}else{
+							this.$Message.error('已存在产品');
+						}
+					})
+				}else{
+					this.$Message.error('请填写产品名字');
+				}
+				
 			},
 
 			upload() {
@@ -176,8 +187,22 @@
 				let inputDOM = this.$refs.inputer;
 				// 通过DOM取文件数据
 				this.fil = inputDOM.files;
-				
+
 				console.log(this.fil)
+
+				this.formValidate.goodsIcon = this.fil
+				
+				if (this.fil) {
+					let file
+					for (let item of this.fil) {
+						file = Bmob.File(item.name, item);
+					}
+					file.save().then(res => {
+						console.log(res[0].url);
+						this.formValidate.goodsIcon = res[0].url
+					})
+				}
+
 				let oldLen = this.imgLen;
 				let len = this.fil.length + oldLen;
 				if (len > 1) {
@@ -193,6 +218,7 @@
 					this.$set(this.imgs, this.fil[i].name + '?' + new Date().getTime() + i, this.fil[i]);
 				}
 			},
+
 			getObjectURL(file) {
 				var url = null;
 				if (window.createObjectURL != undefined) { // basic
@@ -203,26 +229,15 @@
 					url = window.webkitURL.createObjectURL(file);
 				}
 
-				this.formValidate.goodsIcon = url
+				
 				return url;
 			},
+
 			delImg(key) {
 				this.$delete(this.imgs, key);
 				this.imgLen--;
 			},
-			submit() {
-				for (let key in this.imgs) {
-					let name = key.split('?')[0];
-					this.formData.append('multipartFiles', this.imgs[key], name);
-				}
-				this.$http.post('/opinion/feedback', this.formData, {
-					headers: {
-						'Content-Type': 'multipart/form-data'
-					}
-				}).then(res => {
-					this.alertShow = true;
-				});
-			},
+
 			handleReset(name) {
 				this.$refs[name].resetFields();
 			}
