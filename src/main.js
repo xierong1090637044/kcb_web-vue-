@@ -4,6 +4,7 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import common from '@/serve/common.js';
+import expandRow from '@/components/component/expandRow.vue';
 
 Vue.config.productionTip = false
 

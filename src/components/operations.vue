@@ -23,7 +23,7 @@
 			</div>
 		</div>-->
 
-		<Table :columns="columns" :data="order_opreations" :loading="loading" ref="table" border size="small" :height="screenHeight - 200"></Table>
+		<Table :columns="columns" :data="order_opreations" :loading="loading" ref="table" border size="small" :height="screenHeight - 200" ></Table>
 
 		<div style="margin: 10px;overflow: hidden">
 			<div style="float: right;">
@@ -68,9 +68,13 @@
 </template>
 <script>
 	import common from '@/serve/common.js';
+	import expandRow from '@/components/component/expandRow.vue';
 	let that;
 
 	export default {
+		components: {
+			expandRow
+		},
 		data() {
 			return {
 				order_opreations: [],
@@ -82,57 +86,56 @@
 				screenHeight: window.innerHeight,
 				loading: true,
 				columns: [{
-						type: 'selection',
-						width: 60,
-						align: 'center'
+						type: 'expand',
+						width: 50,
+						render: (h, params) => {
+							return h(expandRow, {
+								props: {
+									row: params.row
+								}
+							})
+						}
 					},
 					{
 						title: '操作产品',
 						key: 'goodsName',
+						sortable: true,
+						render: (h, params) => {
+							return h('div', [params.row.goodsName + " 等"]);
+						}
+					},
+					{
+						title: '实际应付（实际应收）',
+						key: 'all_money',
 						sortable: true
 					},
 					{
-						title: '成本价',
-						key: 'costPrice',
+						title: '欠款',
+						key: 'debt',
 						sortable: true
 					},
 					{
-						title: '零售价',
-						key: 'retailPrice',
-						sortable: true
+						title: '操作类型',
+						key: 'type',
+						render: (h, params) => {
+							if(params.row.type == 1){
+								return h('div', ["入库"]);
+							}else if(params.row.type == -1){
+								return h('div', ["出库"]);
+							}else if(params.row.type == 2){
+								return h('div', ["退货"]);
+							}else if(params.row.type == 3){
+								return h('div', ["盘点"]);
+							}
+							
+						}
 					},
 					{
-						title: '所属分类',
-						key: 'class',
-					},
-					{
-						title: '所属仓库',
-						key: 'stocks',
-					},
-					{
-						title: '当前库存',
-						key: 'reserve',
-						sortable: true
-					},
-					{
-						title: '规格',
-						key: 'packageContent'
-					},
-					{
-						title: '单位',
-						key: 'packingUnit'
-					},
-					{
-						title: '登记编号',
-						key: 'regNumber'
-					},
-					{
-						title: '产品简介',
-						key: 'product_info'
-					},
-					{
-						title: '生产厂家',
-						key: 'producer'
+						title: '操作者',
+						key: 'opreater',
+						render: (h, params) => {
+							return h('div', [params.row.opreater.nickName]);
+						}
 					},
 					{
 						title: '创建时间',
@@ -175,26 +178,6 @@
 
 			//查询产品列表
 			get_operations() {
-				/*const query = Bmob.Query('order_opreations');
-				query.include("opreater", "custom", "producer");
-				query.get(id).then(res => {
-					console.log(res);
-					that.setData({
-						detail: res
-					});
-					const query = Bmob.Query('order_opreations');
-					query.include("goodsId");
-					query.field('relations', res.objectId);
-					query.relation('Bills').then(res => {
-						//console.log(res);
-						that.setData({
-							products: res.results,
-							spinShow: false
-						});
-					})
-				}).catch(err => {
-					console.log(err)
-				})*/
 				const query = Bmob.Query('order_opreations');
 				query.equalTo('master', '==', that.userid);
 				query.include("opreater", "custom", "producer");

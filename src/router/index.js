@@ -11,6 +11,7 @@ import test from '@/components/test'
 import goods from '@/components/goods'
 import add_good from '@/components/goods/addgood'
 import operations from '@/components/operations'
+import expandRow from '@/components/component/expandRow.vue';
 
 
 Bmob.initialize("afaa8342776ad99ff0d49bca224de9b2", "9eed865dc5914f2ecedcd63be31e33e9","47f76baf4ee4d90630d7b2bc17f7505c");
