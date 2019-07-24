@@ -3,15 +3,16 @@ import Router from 'vue-router'
 import iView from 'iview';
 import 'iview/dist/styles/iview.css';
 import common from '@/serve/common.js';
+import expandRow from '@/components/component/expandRow.vue';
 
 import landing from '@/components/landing'
 import home from '@/components/home'
-import index from '@/components/index'
-import test from '@/components/test'
-import goods from '@/components/goods'
-import add_good from '@/components/goods/addgood'
-import operations from '@/components/operations'
-import expandRow from '@/components/component/expandRow.vue';
+import index from '@/components/index' //首页
+import test from '@/components/test'  //样板页面
+import goods from '@/components/goods' //产品添加页面
+import add_good from '@/components/goods/addgood'//添加产品页面
+import operations from '@/components/operations' //操作记录页面
+import download from '@/components/download'; // app下载页面
 
 
 Bmob.initialize("afaa8342776ad99ff0d49bca224de9b2", "9eed865dc5914f2ecedcd63be31e33e9","47f76baf4ee4d90630d7b2bc17f7505c");
@@ -50,6 +51,11 @@ export default new Router({
 				  path: 'operations',
 				  name: 'operations',
 				  component: operations
+				},
+				{
+				  path: 'download',
+				  name: 'download',
+				  component: download
 				},
 				{
 				  path: 'add_good',
