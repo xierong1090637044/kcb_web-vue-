@@ -31,7 +31,7 @@
 		<Layout>
 			<Header>
 				<Menu mode="horizontal" theme="dark" active-name="1" @on-select="select_horizontal_item">
-					<div class="layout-logo"></div>
+					<div class="layout-logo" style="color: #fff;line-height: 30px;font-weight: bold;font-size: 16px;background: unset;width: auto;margin-top: 4px;">库存表 V 1.0.0</div>
 					<div class="layout-nav">
 						<MenuItem name="1" to='download'>
 						  <Icon type="ios-download-outline" size="24"/>
@@ -51,7 +51,7 @@
 			</Header>
 			<Layout>
 				<Sider hide-trigger :style="{height:screenHeight - 64+'px'}">
-					<Menu active-name="1" theme="dark" width="auto">
+					<Menu :active-name="activename" theme="dark" width="auto">
 
 						<MenuItem name="1" to='index'>
 						<div class="display_flex">
@@ -74,23 +74,13 @@
 						</div>
 						</MenuItem>
 
-
-
-						<Submenu name="2">
+						<Submenu name="4">
 							<template slot="title">
 								<Icon type="ios-keypad"></Icon>
-								Item 2
+								设置
 							</template>
-							<MenuItem name="2-1">Option 1</MenuItem>
-							<MenuItem name="2-2">Option 2</MenuItem>
-						</Submenu>
-						<Submenu name="3">
-							<template slot="title">
-								<Icon type="ios-analytics"></Icon>
-								Item 3
-							</template>
-							<MenuItem name="3-1">Option 1</MenuItem>
-							<MenuItem name="3-2">Option 2</MenuItem>
+							<MenuItem name="2-1" to='manage/category'>类别管理</MenuItem>
+							<MenuItem name="2-2">仓库管理</MenuItem>
 						</Submenu>
 					</Menu>
 				</Sider>
@@ -109,6 +99,7 @@
 
 		data() {
 			return {
+				activename:"1",
 				user: JSON.parse(localStorage.getItem('bmob')),
 				screenHeight: window.innerHeight,
 			}
