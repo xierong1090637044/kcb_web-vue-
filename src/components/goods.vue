@@ -14,11 +14,13 @@
 
 			<div style="display: flex;align-items: center;">
 				<Button type="primary" @click="exportData()" icon="ios-download-outline"> 导出产品数据</Button>
+				
+				<Button type="primary" @click="download_demo()" icon="ios-download-outline" style="margin-left: 10px;"> 下载导入产品数据样本</Button>
 
 				<div style="margin-left:10px">
 					<input class="input-file" type="file" @change="importfile" accept=".csv,.excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
 					 style="display: none;" />
-					<Button type="primary" @click="btnClick" icon="ios-cloud-upload-outline">上传Excel表格数据</Button>
+					<Button type="primary" @click="btnClick" icon="ios-cloud-upload-outline">上传Excel表格数据(一次最多50条数据)</Button>
 				</div>
 			</div>
 		</div>
@@ -186,21 +188,34 @@
 			this.get_productList();
 
 			//得到仓库列表
-			goods.getstock_list().then(res => {
-				console.log(res)
-				that.all_stocks = res
-				//that.all_fristclass = res
-			});
+			if(localStorage.getItem('stocks')){
+				that.all_stocks = JSON.parse(localStorage.getItem('stocks'))
+			}else{
+				goods.getstock_list().then(res => {
+					console.log(res)
+					that.all_stocks = res
+				});
+			}
+			
 
 			//获得一级分类
-			goods.get_fristclass().then(res => {
-				//console.log(res)
-				that.all_fristclass = res
-			});
+			if(localStorage.getItem('frist_class')){
+				that.all_stocks = JSON.parse(localStorage.getItem('frist_class'))
+			}else{
+				goods.get_fristclass().then(res => {
+					console.log(res)
+					that.all_fristclass = res
+				});
+			}
 
 		},
 
 		methods: {
+			
+			//点击下载导入模板
+			download_demo(){
+				window.open("/static/demo.xlsx");
+			},
 			
 			//重置点击
 			cancel(){

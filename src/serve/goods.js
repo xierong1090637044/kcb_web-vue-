@@ -89,6 +89,7 @@ export default {
 			query.equalTo("parent", "==", userid);
 			query.find().then(res => {
 				//console.log(res)
+				localStorage.setItem("frist_class",JSON.stringify(res))
 				resolve(res)
 			});
 
@@ -125,6 +126,7 @@ export default {
 			}
 			query.find().then(res => {
 				//console.log(res)
+				localStorage.setItem("stocks",JSON.stringify(res))
 				resolve(res)
 			});
 		})

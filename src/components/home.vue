@@ -30,12 +30,17 @@
 	<div class="layout" :style="{height:screenHeight+'px'}">
 		<Layout>
 			<Header>
-				<Menu mode="horizontal" theme="dark" active-name="1">
+				<Menu mode="horizontal" theme="dark" active-name="1" @on-select="select_horizontal_item">
 					<div class="layout-logo"></div>
 					<div class="layout-nav">
 						<MenuItem name="1" to='download'>
-						  <Icon type="ios-navigate"></Icon>
+						  <Icon type="ios-download-outline" size="24"/>
 						  App下载
+						</MenuItem>
+						
+						<MenuItem name="2" >
+						  <Icon type="ios-log-out" size="24"/>
+						  退出登录
 						</MenuItem>
 						
 						<MenuItem name="4">
@@ -119,7 +124,19 @@
 		},
 
 		methods: {
-
+			
+			//水平导航栏的子类点击
+			select_horizontal_item(name){
+				if(name == "2")
+				{
+					localStorage.removeItem('bmob')
+					localStorage.removeItem('stocks')
+					localStorage.removeItem('frist_class')
+					this.$router.push({
+						path: '/'
+					})
+				}
+			}
 		},
 
 	}
