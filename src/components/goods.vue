@@ -99,6 +99,11 @@
 						align: 'center'
 					},
 					{
+						type: 'index',
+						width: 60,
+						align: 'center'
+					},
+					{
 						title: '产品名字',
 						key: 'goodsName',
 						sortable: true

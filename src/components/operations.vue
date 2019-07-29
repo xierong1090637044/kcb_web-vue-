@@ -1,27 +1,5 @@
 <template>
 	<div>
-		<!--<div style="margin-bottom: 10px;display: flex;align-items: center;justify-content: space-between;">
-
-			<div style="display: flex;align-items: center;">
-				<router-link to="/home/add_good">
-					<Button type="success" style="margin-right: 10px;" icon="md-add">添加产品</Button>
-				</router-link>
-
-				<Button type="warning" @click="delete_good()" icon="ios-trash-outline" style="margin-right: 10px;">删除</Button>
-				
-				<Button type="error" @click="modal1=true" icon="ios-funnel-outline">筛选</Button>
-			</div>
-
-			<div style="display: flex;align-items: center;">
-				<Button type="primary" @click="exportData()" icon="ios-download-outline"> 导出产品数据</Button>
-
-				<div style="margin-left:10px">
-					<input class="input-file" type="file" @change="importfile" accept=".csv,.excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-					 style="display: none;" />
-					<Button type="primary" @click="btnClick" icon="ios-cloud-upload-outline">上传Excel表格数据</Button>
-				</div>
-			</div>
-		</div>-->
 
 		<Table :columns="columns" :data="order_opreations" :loading="loading" ref="table" border size="small" :height="screenHeight - 200" ></Table>
 
@@ -30,39 +8,6 @@
 				<Page :total="100" :current="pege_number" @on-change="changePage"></Page>
 			</div>
 		</div>
-
-		<!--<Modal v-model="modal1" title="筛选" @on-ok="modal_confrim" @on-cancel="cancel" cancel-text="重置">
-			<Form :label-width="80">
-				<FormItem label="产品名字">
-				    <Input v-model="search_goodMame" placeholder="请输入产品名字"></Input>
-				</FormItem>
-				
-				<FormItem label="产品分类">
-					<Row>
-						<Col span="6">
-						<Select v-model="selected_goodsClass" placeholder="请选择一级分类" @on-change="get_secondclass">
-							<Option v-for="(value,index) in all_fristclass" :value="value.objectId" :key="index">{{value.class_text}}</Option>
-						</Select>
-						</Col>
-						<Col span="6" style="margin-left: 20px;">
-						<Select v-model="selected_second_class" placeholder="请选择二级分类">
-							<Option v-for="(value,index) in all_secondclass" :value="value.objectId" :key="index">{{value.class_text}}</Option>
-						</Select>
-						</Col>
-					</Row>
-				</FormItem>
-				
-				<FormItem label="存放仓库">
-					<Row>
-						<Col span="6">
-						<Select v-model="selected_stocks" placeholder="请选择存放仓库">
-							<Option v-for="(value,index) in all_stocks" :value="value.objectId" :key="index">{{value.stock_name}}</Option>
-						</Select>
-						</Col>
-					</Row>
-				</FormItem>
-			</Form>
-		</Modal>-->
 
 	</div>
 </template>
@@ -95,6 +40,11 @@
 								}
 							})
 						}
+					},
+					{
+						type: 'index',
+						width: 60,
+						align: 'center'
 					},
 					{
 						title: '操作产品',

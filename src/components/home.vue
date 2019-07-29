@@ -53,21 +53,21 @@
 				<Sider hide-trigger :style="{height:screenHeight - 64+'px'}">
 					<Menu :active-name="activename" theme="dark" width="auto">
 
-						<MenuItem name="1" to='index'>
+						<MenuItem name="1" to='/home/index'>
 						<div class="display_flex">
 							<Icon type="ios-home" style="font-size: 20px;" />
 							<div style="margin-left: 10px;margin-top: 4px;">首页</div>
 						</div>
 						</MenuItem>
 
-						<MenuItem name="2" to='goods'>
+						<MenuItem name="2" to='/home/goods'>
 						<div class="display_flex">
 							<Icon type="md-cart" style="font-size: 20px;" />
 							<div style="margin-left: 10px;margin-top: 4px;">产品管理</div>
 						</div>
 						</MenuItem>
 
-						<MenuItem name="3" to='operations'>
+						<MenuItem name="3" to='/home/operations'>
 						<div class="display_flex">
 							<Icon type="ios-paper" style="font-size: 20px;" />
 							<div style="margin-left: 10px;margin-top: 4px;">操作记录</div>
@@ -79,7 +79,7 @@
 								<Icon type="ios-keypad"></Icon>
 								设置
 							</template>
-							<MenuItem name="2-1" to='manage/category'>类别管理</MenuItem>
+							<MenuItem name="2-1" to='/home/manage/category'>类别管理</MenuItem>
 							<MenuItem name="2-2">仓库管理</MenuItem>
 						</Submenu>
 					</Menu>
