@@ -76,7 +76,7 @@
 			<FormItem label="货架编号" prop="position">
 				<Input v-model="formValidate.position" placeholder="请输入货架编号"></Input>
 			</FormItem>
-			<!--<FormItem label="生产日期">
+			<FormItem label="生产日期">
 				<FormItem prop="producttime">
 					<DatePicker type="date" placeholder="请选择生产日期" v-model="formValidate.producttime" format="yyyy-MM-dd HH:mm:ss"></DatePicker>
 				</FormItem>
@@ -85,7 +85,7 @@
 				<FormItem prop="nousetime">
 					<DatePicker type="date" placeholder="请选择失效日期" v-model="formValidate.nousetime" format="yyyy-MM-dd HH:mm:ss"></DatePicker>
 				</FormItem>
-			</FormItem>-->
+			</FormItem>
 			<FormItem label="产品简介" prop="product_info">
 				<Input v-model="formValidate.product_info" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入产品简介"></Input>
 			</FormItem>
@@ -126,6 +126,8 @@
 					regNumber: '',
 					producer: '', //生产厂家
 					warning_num: '', //预警库存
+					producttime:'',
+					nousetime:'',
 				},
 				ruleValidate: {
 					goodsName: [{

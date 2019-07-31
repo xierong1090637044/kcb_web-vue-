@@ -77,10 +77,10 @@
 						<Submenu name="4">
 							<template slot="title">
 								<Icon type="ios-keypad"></Icon>
-								设置
+								管理
 							</template>
 							<MenuItem name="2-1" to='/home/manage/category'>类别管理</MenuItem>
-							<MenuItem name="2-2">仓库管理</MenuItem>
+							<MenuItem name="2-2" to='/home/manage/stocks'>仓库管理</MenuItem>
 						</Submenu>
 					</Menu>
 				</Sider>
