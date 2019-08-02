@@ -20,7 +20,7 @@
 		<Modal v-model="modal2" width="360">
 			<p slot="header" style="color:#f60;text-align:center">
 				<Icon type="ios-information-circle"></Icon>
-				<span>确定删除此分类</span>
+				<span>确定删除此员工</span>
 			</p>
 			<div style="text-align:center">
 				<p>删除后将无法恢复</p>

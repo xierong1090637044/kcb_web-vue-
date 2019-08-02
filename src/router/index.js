@@ -16,7 +16,8 @@ import download from '@/components/download'; // app下载页面
 import category from '@/components/manage/category'; // 类别管理页面
 import stocks from '@/components/manage/stocks'; // 类别管理页面
 import shops from '@/components/manage/shops'; // 门店管理页面
-import staffs from '@/components/manage/staffs'; // 门店管理页面
+import staffs from '@/components/manage/staffs'; // 员工管理页面
+import customs from '@/components/manage/customs'; // 客户管理页面
 
 
 Bmob.initialize("afaa8342776ad99ff0d49bca224de9b2", "9eed865dc5914f2ecedcd63be31e33e9","47f76baf4ee4d90630d7b2bc17f7505c");
@@ -85,6 +86,11 @@ export default new Router({
 				  path: 'manage/staffs',
 				  name: 'staffs',
 				  component: staffs
+				},
+				{
+				  path: 'manage/customs',
+				  name: 'customs',
+				  component: customs
 				}
       ]
 		}

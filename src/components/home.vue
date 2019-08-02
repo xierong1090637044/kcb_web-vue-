@@ -83,6 +83,8 @@
 							<MenuItem name="2-2" to='/home/manage/stocks'>仓库管理</MenuItem>
 							<MenuItem name="2-3" to='/home/manage/shops'>门店管理</MenuItem>
 							<MenuItem name="2-4" to='/home/manage/staffs'>员工管理</MenuItem>
+							<MenuItem name="2-5" to='/home/manage/customs'>客户管理</MenuItem>
+							<MenuItem name="2-6" to='/home/manage/staffs'>供应商管理</MenuItem>
 						</Submenu>
 					</Menu>
 				</Sider>
