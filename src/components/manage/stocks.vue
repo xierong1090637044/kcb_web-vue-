@@ -39,7 +39,7 @@
 		</Modal>
 
 		<!--添加仓库-->
-		<Modal v-model="modal3" title="添加仓库" @on-ok="add_stock">
+		<Modal v-model="modal3" title="添加仓库" @on-ok="add_stock" @on-cancel="stock= {}">
 			<Form :label-width="80">
 				<FormItem label="名字">
 					<Input v-model="stock.name" placeholder="请输入仓库的名字"></Input>

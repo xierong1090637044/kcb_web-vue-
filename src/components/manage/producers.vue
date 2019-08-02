@@ -6,7 +6,7 @@
 		<div style="margin-bottom: 10px;display: flex;align-items: center;justify-content: space-between;">
 
 			<div style="display: flex;align-items: center;">
-				<Button type="warning" @click="modal3 = true" icon="md-add" style="margin-right: 10px;background: #ed4014;">添加客户</Button>
+				<Button type="warning" @click="modal3 = true" icon="md-add" style="margin-right: 10px;background: #ed4014;">添加供货商</Button>
 			</div>
 
 		</div>
@@ -20,7 +20,7 @@
 		<Modal v-model="modal2" width="360">
 			<p slot="header" style="color:#f60;text-align:center">
 				<Icon type="ios-information-circle"></Icon>
-				<span>确定删除此客户</span>
+				<span>确定删除此供货商</span>
 			</p>
 			<div style="text-align:center">
 				<p>删除后将无法恢复</p>
@@ -30,26 +30,26 @@
 			</div>
 		</Modal>
 
-		<!--添加客户-->
-		<Modal v-model="modal3" title="添加客户" @on-ok="add_custom"  @on-cancel="custom= {}">>
+		<!--添加供货商-->
+		<Modal v-model="modal3" title="添加供货商" @on-ok="add_producer" @on-cancel="producer= {}">
 			<Form :label-width="80">
 				<FormItem label="名字">
-					<Input v-model="custom.custom_name" placeholder="请输入客户的名字"></Input>
+					<Input v-model="producer.producer_name" placeholder="请输入供货商的名字"></Input>
 				</FormItem>
 				<FormItem label="地址">
-					<Input v-model="custom.custom_address" placeholder="请输入客户的地址"></Input>
+					<Input v-model="producer.producer_address" placeholder="请输入供货商的地址"></Input>
 				</FormItem>
 				<FormItem label="电话">
-					<Input v-model="custom.custom_phone" placeholder="请输入客户的电话"></Input>
+					<Input v-model="producer.producer_phone" placeholder="请输入供货商的电话"></Input>
 				</FormItem>
 				
 				
 				<FormItem label="欠款金额">
-					<Input v-model="custom.debt" placeholder="请输入备注"></Input>
+					<Input v-model="producer.debt" placeholder="请输入备注"></Input>
 				</FormItem>
 				
 				<FormItem label="启用">
-					<i-switch v-model="custom.disabled" size="large">
+					<i-switch v-model="producer.disabled" size="large">
 						<span slot="open">启</span>
 						<span slot="close">关</span>
 					</i-switch>
@@ -61,7 +61,7 @@
 	</div>
 </template>
 <script>
-	import customs from '@/serve/customs.js';
+	import producers from '@/serve/producers.js';
 
 	let that;
 	export default {
@@ -70,14 +70,14 @@
 		},
 		data() {
 			return {
-				custom: {
-					custom_name: "",
-					custom_address:"",
-					custom_phone:"",
+				producer: {
+					producer_name: "",
+					producer_address:"",
+					producer_phone:"",
 					debt: 0,
 					disabled: true,
 					objectId:"",
-				}, //添加客户的对象
+				}, //添加供货商的对象
 				loading: false,
 				modal: false,
 				modal2: false,
@@ -89,20 +89,20 @@
 						align: 'center'
 					},
 					{
-						title: '客户Id',
+						title: '供货商Id',
 						key: 'objectId',
 					},
 					{
-						title: '客户名字',
-						key: 'custom_name',
+						title: '供货商名字',
+						key: 'producer_name',
 					},
 					{
-						title: '客户地址',
-						key: 'custom_address',
+						title: '供货商地址',
+						key: 'producer_address',
 					},
 					{
-						title: '客户电话',
-						key: 'custom_phone',
+						title: '供货商电话',
+						key: 'producer_phone',
 					},
 					{
 						title: '是否已启用',
@@ -132,7 +132,7 @@
 		mounted() {
 			that = this;
 			this.$Loading.start();
-			customs.get_customList().then(res=>{
+			producers.get_producerList().then(res=>{
 				console.log(res)
 				this.$Loading.finish();
 				that.data = res;
@@ -141,47 +141,47 @@
 
 		methods: {
 			
-			//添加客户点击确定
-			add_custom(){
+			//添加供货商点击确定
+			add_producer(){
 				
-				if(that.custom.custom_name){
+				if(that.producer.producer_name){
 					this.$Loading.start();
-					customs.add_custom(that.custom).then(res=>{
-						customs.get_customList().then(res=>{
+					producers.add_producer(that.producer).then(res=>{
+						producers.get_producerList().then(res=>{
 							this.$Message.success('成功');
 							this.$Loading.finish();
 							that.data = res;
 						})
 					});
 				}else{
-					this.$Message.error('请输入客户名字');
+					this.$Message.error('请输入供货商名字');
 				}
 				
 			},
 			
-			//修改客户
+			//修改供货商
 			edit(row) {
 				that.modal3 = true;
-				that.custom.custom_name = row.name
-				that.custom.custom_address = row.address
-				that.custom.custom_phone = row.phone
-				that.custom.disabled = row.disabled
-				that.custom.debt = row.debt
-				that.custom.objectId = row.objectId
+				that.producer.producer_name = row.producer_name
+				that.producer.producer_address = row.producer_address
+				that.producer.producer_phone = row.producer_phone
+				that.producer.disabled = row.disabled
+				that.producer.debt = row.debt
+				that.producer.objectId = row.objectId
 			},
 
-			//删除分类点击
+			//删除点击
 			remove(row) {
 				that.modal2 = true,
-				that.custom.objectId = row.objectId
+				that.producer.objectId = row.objectId
 			},
 
 			//确定删除
 			del() {
 				that.modal2 = false,
 				this.$Loading.start();
-				customs.delete_custom(that.custom.objectId).then(res => {
-					customs.get_customList().then(res=>{
+				producers.delete_producer(that.producer.objectId).then(res => {
+					producers.get_producerList().then(res=>{
 						this.$Message.success('删除成功');
 						this.$Loading.finish();
 						that.data = res;

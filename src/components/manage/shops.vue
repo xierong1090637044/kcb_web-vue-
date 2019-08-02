@@ -31,7 +31,7 @@
 		</Modal>
 
 		<!--添加门店-->
-		<Modal v-model="modal3" title="添加门店" @on-ok="add_shop">
+		<Modal v-model="modal3" title="添加门店" @on-ok="add_shop" @on-cancel="shop= {}">
 			<Form :label-width="80">
 				<FormItem label="名字">
 					<Input v-model="shop.name" placeholder="请输入门店的名字"></Input>

@@ -31,7 +31,7 @@
 		</Modal>
 
 		<!--添加员工-->
-		<Modal v-model="modal3" title="添加员工" @on-ok="add_staff">
+		<Modal v-model="modal3" title="添加员工" @on-ok="add_staff" @on-cancel="staff= {}">
 			<Form :label-width="80">
 				<FormItem label="名字">
 					<Input v-model="staff.name" placeholder="请输入员工的名字"></Input>
