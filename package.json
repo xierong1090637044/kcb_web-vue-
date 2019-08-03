@@ -14,7 +14,11 @@
   },
   "dependencies": {
     "@antv/g2": "^3.5.8-beta.1",
+    "@xkeshi/vue-barcode": "^1.0.0",
+    "canvas": "^2.5.0",
     "iview": "^3.4.2",
+    "jr-qrcode": "^1.1.4",
+    "jsbarcode": "^3.11.0",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",
     "xlsx": "^0.14.3"

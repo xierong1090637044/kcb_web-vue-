@@ -8,13 +8,13 @@
 				</router-link>
 
 				<Button type="warning" @click="delete_good()" icon="ios-trash-outline" style="margin-right: 10px;">删除</Button>
-				
+
 				<Button type="error" @click="modal1=true" icon="ios-funnel-outline">筛选</Button>
 			</div>
 
 			<div style="display: flex;align-items: center;">
 				<Button type="primary" @click="exportData()" icon="ios-download-outline"> 导出产品数据</Button>
-				
+
 				<Button type="primary" @click="download_demo()" icon="ios-download-outline" style="margin-left: 10px;"> 下载导入产品数据样本</Button>
 
 				<div style="margin-left:10px">
@@ -26,7 +26,11 @@
 		</div>
 
 		<Table :columns="columns" :data="goods" :loading="loading" ref="table" border size="small" :height="screenHeight - 200"
-		 @on-select="get_select" @on-select-cancel="cancle_select" @on-selection-change="get_select" @on-select-all-cancel="cancle_select"></Table>
+		 @on-select="get_select" @on-select-cancel="cancle_select" @on-selection-change="get_select" @on-select-all-cancel="cancle_select">
+		 <template slot-scope="{ row, index }" slot="action">
+		 	<Button type="primary" size="small" style="margin-right: 5px" @click="download1(row)">下载二维码</Button>
+		 </template>
+		 </Table>
 
 		<div style="margin: 10px;overflow: hidden">
 			<div style="float: right;">
@@ -37,9 +41,9 @@
 		<Modal v-model="modal1" title="筛选" @on-ok="modal_confrim" @on-cancel="cancel" cancel-text="重置">
 			<Form :label-width="80">
 				<FormItem label="产品名字">
-				    <Input v-model="search_goodMame" placeholder="请输入产品名字"></Input>
+					<Input v-model="search_goodMame" placeholder="请输入产品名字"></Input>
 				</FormItem>
-				
+
 				<FormItem label="产品分类">
 					<Row>
 						<Col span="6">
@@ -54,7 +58,7 @@
 						</Col>
 					</Row>
 				</FormItem>
-				
+
 				<FormItem label="存放仓库">
 					<Row>
 						<Col span="6">
@@ -70,6 +74,8 @@
 	</div>
 </template>
 <script>
+	import barcode from '@xkeshi/vue-barcode'
+	import jrQrcode from "jr-qrcode";
 	import common from '@/serve/common.js';
 	import goods from '@/serve/goods.js';
 	import XLSX from 'xlsx';
@@ -77,10 +83,13 @@
 	//let userid = JSON.parse(localStorage.getItem('bmob')).objectId;
 	let that;
 	export default {
+		components: {
+			'barcode': barcode
+		},
 		data() {
 			return {
-				search_goodMame:'',
-				selected_stocks:null,
+				search_goodMame: '',
+				selected_stocks: null,
 				selected_goodsClass: null,
 				selected_second_class: null,
 				all_fristclass: [], //所有的一级分类
@@ -119,7 +128,7 @@
 							}, [
 								h('img', {
 									style: {
-										width: "30px",
+										width: "60px",
 										margin: "10px 0",
 									},
 									attrs: {
@@ -173,9 +182,58 @@
 						key: 'producer'
 					},
 					{
+						title: '产品条码',
+						key: 'productCode'
+					},
+					{
+						title: '产品二维码',
+						key: 'qrcodeImg',
+						render: (h, params) => {
+							return h('div', {
+								style: {
+									"text-align": "center"
+								},
+							}, [
+								h('img', {
+									style: {
+										width: "65px",
+										margin: "10px 0",
+									},
+									attrs: {
+										src: params.row.qrcodeImg
+									}
+								})
+							]);
+						}
+					},
+
+					{
+						title: '产品条形码',
+						width: 200,
+						type: 'barcode',
+						render: (h, params) => {
+							return h(barcode, {
+								style: {
+									width: "170px",
+									height: "80px",
+									margin: "10px 0",
+								},
+								attrs: {
+									value: (params.row.productCode) ? params.row.productCode + '-' + true : params.row.objectId + '-' + false
+								}
+							})
+						}
+					},
+					{
 						title: '创建时间',
 						key: 'createdAt',
 						sortable: true
+					},
+					{
+						title: '操作',
+						slot: 'action',
+						align: 'center',
+						fixed: 'right',
 					}
 				],
 				goods: [],
@@ -193,49 +251,48 @@
 			this.get_productList();
 
 			//得到仓库列表
-			if(localStorage.getItem('stocks')){
+			if (localStorage.getItem('stocks')) {
 				that.all_stocks = JSON.parse(localStorage.getItem('stocks'))
-			}else{
+			} else {
 				goods.getstock_list().then(res => {
 					console.log(res)
 					that.all_stocks = res
 				});
 			}
-			
+
 
 			//获得一级分类
-			if(localStorage.getItem('frist_class')){
+			if (localStorage.getItem('frist_class')) {
 				that.all_stocks = JSON.parse(localStorage.getItem('frist_class'))
-			}else{
+			} else {
 				goods.get_fristclass().then(res => {
 					console.log(res)
 					that.all_fristclass = res
 				});
 			}
-
 		},
 
 		methods: {
-			
+
 			//点击下载导入模板
-			download_demo(){
+			download_demo() {
 				window.open("/static/demo.xlsx");
 			},
-			
+
 			//重置点击
-			cancel(){
+			cancel() {
 				that.loading = true,
-				that.search_goodMame = '',
-				that.selected_stocks = null,
-				that.selected_goodsClass = null,
-				that.selected_second_class = null,
-				that.get_productList()
+					that.search_goodMame = '',
+					that.selected_stocks = null,
+					that.selected_goodsClass = null,
+					that.selected_second_class = null,
+					that.get_productList()
 			},
-			
+
 			//modal 确定点击
-			modal_confrim(){
+			modal_confrim() {
 				that.loading = true,
-				that.get_productList()
+					that.get_productList()
 			},
 
 			//获得二级分类
@@ -312,7 +369,6 @@
 			exportData(type) {
 				this.$refs.table.exportCsv({
 					filename: '产品数据',
-					original: false
 				});
 			},
 
@@ -354,17 +410,17 @@
 
 			//查询产品列表
 			get_productList() {
-				console.log(that.selected_stocks,that.selected_second_class)
+				console.log(that.selected_stocks, that.selected_second_class)
 				const query = Bmob.Query('Goods');
 				query.equalTo('userId', '==', that.userid);
 				query.include('second_class', 'goodsClass', 'stocks')
-				
-				if(that.selected_stocks){
+
+				if (that.selected_stocks) {
 					query.equalTo("stocks", "==", that.selected_stocks);
 				}
-				if(that.selected_second_class){
+				if (that.selected_second_class) {
 					query.equalTo("second_class", "==", that.selected_second_class);
-				}	
+				}
 				query.equalTo("goodsName", "==", {
 					"$regex": "" + that.search_goodMame + ".*"
 				});
@@ -377,11 +433,53 @@
 						item.class = (item.goodsClass ? (item.goodsClass.class_text || "") : "") + "    " + (item.second_class ? (item.second_class
 							.class_text || "") : "")
 						item.stocks = (item.stocks) ? item.stocks.stock_name : ""
+
+						item.qrcodeImg = jrQrcode.getQrBase64((item.productCode) ? item.productCode + '-' + true : item.objectId + '-' +
+							false)
 					}
 					this.goods = res;
 					this.loading = false;
 				});
-			}
+			},
+
+			//下载图片
+			download1(row) {
+				console.log(row);
+				let imgData = row.qrcodeImg; //填写你的base64
+				this.downloadFile(row.goodsName, imgData);
+			},
+			
+			//下载
+			downloadFile(fileName, content) {
+				let aLink = document.createElement('a');
+				let blob = this.base64ToBlob(content); //new Blob([content]);
+
+				let evt = document.createEvent("HTMLEvents");
+				evt.initEvent("click", true, true); //initEvent 不加后两个参数在FF下会报错  事件类型，是否冒泡，是否阻止浏览器的默认行为
+				aLink.download = fileName;
+				aLink.href = URL.createObjectURL(blob);
+
+				// aLink.dispatchEvent(evt);
+				aLink.click()
+			},
+			
+			//base64转blob
+			base64ToBlob(code) {
+				let parts = code.split(';base64,');
+				let contentType = parts[0].split(':')[1];
+				let raw = window.atob(parts[1]);
+				let rawLength = raw.length;
+
+				let uInt8Array = new Uint8Array(rawLength);
+
+				for (let i = 0; i < rawLength; ++i) {
+					uInt8Array[i] = raw.charCodeAt(i);
+				}
+				return new Blob([uInt8Array], {
+					type: contentType
+				});
+			},
+
 		}
 	};
 </script>
