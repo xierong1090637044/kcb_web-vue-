@@ -27,10 +27,10 @@
 
 		<Table :columns="columns" :data="goods" :loading="loading" ref="table" border size="small" :height="screenHeight - 200"
 		 @on-select="get_select" @on-select-cancel="cancle_select" @on-selection-change="get_select" @on-select-all-cancel="cancle_select">
-		 <template slot-scope="{ row, index }" slot="action">
-		 	<Button type="primary" size="small" style="margin-right: 5px" @click="download1(row)">下载二维码</Button>
-		 </template>
-		 </Table>
+			<template slot-scope="{ row, index }" slot="action">
+				<Button type="primary" size="small" style="margin-right: 5px" @click="download1(row)">下载二维码</Button>
+			</template>
+		</Table>
 
 		<div style="margin: 10px;overflow: hidden">
 			<div style="float: right;">
@@ -448,7 +448,7 @@
 				let imgData = row.qrcodeImg; //填写你的base64
 				this.downloadFile(row.goodsName, imgData);
 			},
-			
+
 			//下载
 			downloadFile(fileName, content) {
 				let aLink = document.createElement('a');
@@ -462,7 +462,7 @@
 				// aLink.dispatchEvent(evt);
 				aLink.click()
 			},
-			
+
 			//base64转blob
 			base64ToBlob(code) {
 				let parts = code.split(';base64,');
