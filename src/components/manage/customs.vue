@@ -162,9 +162,9 @@
 			//修改客户
 			edit(row) {
 				that.modal3 = true;
-				that.custom.custom_name = row.name
-				that.custom.custom_address = row.address
-				that.custom.custom_phone = row.phone
+				that.custom.custom_name = row.custom_name
+				that.custom.custom_address = row.custom_address
+				that.custom.custom_phone = row.custom_phone
 				that.custom.disabled = row.disabled
 				that.custom.debt = row.debt
 				that.custom.objectId = row.objectId
