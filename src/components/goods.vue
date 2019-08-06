@@ -3,6 +3,19 @@
 		<div style="margin-bottom: 10px;display: flex;align-items: center;justify-content: space-between;">
 
 			<div style="display: flex;align-items: center;">
+				<Dropdown style="margin-right: 10px" @on-click="selected_options">
+					<Button type="primary">
+						选择操作
+						<Icon type="ios-arrow-down"></Icon>
+					</Button>
+					<DropdownMenu slot="list">
+						<DropdownItem name="出库">出库</DropdownItem>
+						<DropdownItem name="入库">入库</DropdownItem>
+						<DropdownItem name="盘点">盘点</DropdownItem>
+						<DropdownItem name="退货">退货</DropdownItem>
+					</DropdownMenu>
+				</Dropdown>
+
 				<router-link to="/home/add_good">
 					<Button type="success" style="margin-right: 10px;" icon="md-add">添加产品</Button>
 				</router-link>
@@ -71,6 +84,22 @@
 			</Form>
 		</Modal>
 
+
+		<Drawer :title="option_title" v-model="value1" width="720" :mask-closable="false" :styles="styles">
+			<Card bordered shadow v-for="(item,index) in select_goods" :key="index">
+				<div slot="title" class="display_flex_bet">
+					<div>{{item.goodsName}}</div>
+					 <div>库存:{{item.reserve}}</div>
+				</div>
+				<div>产品规格：{{item.packageContent}}/{{item.packingUnit}}</div>
+				<div class="display_flex">实际入库价（可修改）：<Input v-model="value14" placeholder="请输入实际入库价" clearable style="width: 200px" /></div>
+			</Card>
+			<div class="demo-drawer-footer">
+				<Button style="margin-right: 8px" @click="value1 = false">取消</Button>
+				<Button type="primary" @click="value1 = false">确定</Button>
+			</div>
+		</Drawer>
+
 	</div>
 </template>
 <script>
@@ -88,6 +117,15 @@
 		},
 		data() {
 			return {
+				option_title: '',
+				value1: false,
+				styles: {
+					height: 'calc(100% - 55px)',
+					overflow: 'auto',
+					paddingBottom: '53px',
+					position: 'static',
+					background: '#eee'
+				},
 				search_goodMame: '',
 				selected_stocks: null,
 				selected_goodsClass: null,
@@ -274,6 +312,20 @@
 
 		methods: {
 
+			//选择操作是触发
+			selected_options(name) {
+				console.log(that.select_goods)
+				if (that.select_goods.length == 0) {
+					this.$Message.error('当前没有选择产品');
+				} else {
+					that.option_title = name;
+					if (name == "入库" || name == "出库") {
+						that.value1 = true
+					}
+
+				}
+			},
+
 			//点击下载导入模板
 			download_demo() {
 				window.open("/static/demo.xlsx");
@@ -391,6 +443,7 @@
 					queryObj.set('costPrice', "" + good.成本价);
 					queryObj.set('retailPrice', "" + good.零售价);
 					queryObj.set('packingUnit', good.单位);
+					queryObj.set('reserve', Number("" + good.库存));
 					queryObj.set('userId', poiID);
 					queryArray.push(queryObj);
 				}
@@ -483,3 +536,15 @@
 		}
 	};
 </script>
+
+<style>
+	.display_flex{
+		display: flex;
+		align-items: center;
+	}
+	.display_flex_bet{
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+</style>
