@@ -121,7 +121,9 @@
 
 		mounted() {
 			that = this;
-			that.data = JSON.parse(localStorage.getItem("frist_class"))
+			manage.get_fristclass().then(res => {
+				that.data = res
+			})
 		},
 
 		methods: {

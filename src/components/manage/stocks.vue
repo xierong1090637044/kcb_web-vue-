@@ -116,7 +116,7 @@
 						title: '是否已启用',
 						key: 'disabled',
 						render: (h, params) => {
-							return h('div', [(params.row.disabled) ? "已启用" : "未启用"])
+							return h('div', [(params.row.disabled) ? "未启用" : "已启用"])
 						}
 					},
 					{
@@ -139,13 +139,16 @@
 
 		mounted() {
 			that = this;
-			that.data = JSON.parse(localStorage.getItem("stocks"))
 			this.$Loading.start();
-			manage.get_chargeList().then(res=>{
-				console.log(res)
-				this.$Loading.finish();
-				that.charge = res;
+			manage.getstock_list().then(res=>{
+				that.data = res
+				manage.get_chargeList().then(res=>{
+					
+					this.$Loading.finish();
+					that.charge = res;
+				})
 			})
+			
 		},
 
 		methods: {
