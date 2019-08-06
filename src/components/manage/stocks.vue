@@ -169,7 +169,7 @@
 			edit(row) {
 				that.modal3 = true;
 				that.stock.name = row.stock_name
-				that.stock.disabled = row.disabled
+				that.stock.disabled = !row.disabled
 				that.stock.beizhu = row.beizhu
 				that.stock.objectId = row.objectId
 			},

@@ -165,7 +165,7 @@
 				that.producer.producer_name = row.producer_name
 				that.producer.producer_address = row.producer_address
 				that.producer.producer_phone = row.producer_phone
-				that.producer.disabled = row.disabled
+				that.producer.disabled = !row.disabled
 				that.producer.debt = row.debt
 				that.producer.objectId = row.objectId
 			},

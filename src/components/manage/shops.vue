@@ -172,7 +172,7 @@
 				that.shop.name = row.name
 				that.shop.address = row.address
 				that.shop.phone = row.phone
-				that.shop.disabled = row.disabled
+				that.shop.disabled = !row.disabled
 				that.shop.beizhu = row.beizhu
 				that.shop.objectId = row.objectId
 			},

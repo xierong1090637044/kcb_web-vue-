@@ -33,10 +33,10 @@
 				<Menu mode="horizontal" theme="dark" active-name="1" @on-select="select_horizontal_item">
 					<div class="layout-logo" style="color: #fff;line-height: 30px;font-weight: bold;font-size: 16px;background: unset;width: auto;margin-top: 4px;">库存表 V 1.0.0</div>
 					<div class="layout-nav">
-						<MenuItem name="1" to='download'>
+						<!--<MenuItem name="1" to='download'>
 						  <Icon type="ios-download-outline" size="24"/>
 						  App下载
-						</MenuItem>
+						</MenuItem>-->
 						
 						<MenuItem name="2" >
 						  <Icon type="ios-log-out" size="24"/>

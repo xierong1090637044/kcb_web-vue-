@@ -57,7 +57,7 @@ export default {
 				//query.set("shop",shopId);
 				query.set("charge", chargeId);
 				query.set("beizhu", params.beizhu);
-				query.set("disabled", params.disabled);
+				query.set("disabled", !params.disabled);
 				query.set("parent", poiID);
 				query.set("id", params.objectId);
 				query.save().then(res => {
@@ -79,7 +79,7 @@ export default {
 						//query.set("shop",shopId);
 						query.set("charge", chargeId);
 						query.set("beizhu", params.beizhu);
-						query.set("disabled", params.disabled);
+						query.set("disabled", !params.disabled);
 						query.set("parent", poiID);
 						query.save().then(res => {
 							resolve(res)
