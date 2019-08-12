@@ -143,21 +143,23 @@
 				columns: [{
 						type: 'selection',
 						width: 60,
-						align: 'center'
+						align: 'center',
 					},
 					{
 						type: 'index',
 						width: 60,
-						align: 'center'
+						align: 'center',
 					},
 					{
 						title: '产品名字',
 						key: 'goodsName',
-						sortable: true
+						sortable: true,
+						width:"200"
 					},
 					{
 						title: '产品图片',
 						key: 'goodsIcon',
+						width: "150",
 						render: (h, params) => {
 							return h('div', {
 								style: {
@@ -179,53 +181,65 @@
 					{
 						title: '成本价',
 						key: 'costPrice',
-						sortable: true
+						sortable: true,
+						width:"100"
 					},
 					{
 						title: '零售价',
 						key: 'retailPrice',
-						sortable: true
+						sortable: true,
+						width:"100"
 					},
 					{
 						title: '所属分类',
 						key: 'class',
+						width:"150"
 					},
 					{
 						title: '所属仓库',
 						key: 'stocks',
+						width:"150"
 					},
 					{
 						title: '当前库存',
 						key: 'reserve',
-						sortable: true
+						sortable: true,
+						width:"100"
 					},
 					{
 						title: '规格',
-						key: 'packageContent'
+						key: 'packageContent',
+						width:"150"
 					},
 					{
 						title: '单位',
-						key: 'packingUnit'
+						key: 'packingUnit',
+						width:"100"
 					},
 					{
 						title: '登记编号',
-						key: 'regNumber'
+						key: 'regNumber',
+						width:"150"
 					},
 					{
 						title: '产品简介',
-						key: 'product_info'
+						key: 'product_info',
+						width:"150"
 					},
 					{
 						title: '生产厂家',
-						key: 'producer'
+						key: 'producer',
+						width:"150"
 					},
 					{
 						title: '产品条码',
-						key: 'productCode'
+						key: 'productCode',
+						width:"150"
 					},
 					{
 						title: '产品二维码',
 						key: 'qrcodeImg',
+						width:"150",
 						render: (h, params) => {
 							return h('div', {
 								style: {
@@ -265,13 +279,15 @@
 					{
 						title: '创建时间',
 						key: 'createdAt',
-						sortable: true
+						sortable: true,
+						width:"150"
 					},
 					{
 						title: '操作',
 						slot: 'action',
 						align: 'center',
 						fixed: 'right',
+						width:"200"
 					}
 				],
 				goods: [],
