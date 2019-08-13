@@ -4,6 +4,7 @@ import iView from 'iview';
 import 'iview/dist/styles/iview.css';
 import common from '@/serve/common.js';
 import expandRow from '@/components/component/expandRow.vue';
+import Print from 'vue-print-nb'
 
 import landing from '@/components/landing'
 import home from '@/components/home'
@@ -25,6 +26,7 @@ Bmob.initialize("afaa8342776ad99ff0d49bca224de9b2", "9eed865dc5914f2ecedcd63be31
 
 Vue.use(Router)
 Vue.use(iView)
+Vue.use(Print);
 
 export default new Router({
   routes: [

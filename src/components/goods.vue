@@ -27,6 +27,8 @@
 
 			<div style="display: flex;align-items: center;">
 				<Button type="primary" @click="exportData()" icon="ios-download-outline"> 导出产品数据</Button>
+				
+				<Button type="primary" icon="ios-download-outline" style="margin-left: 10px;" v-print="'#print_allqr'"> 批量打印当前页面二维码</Button>
 
 				<Button type="primary" @click="download_demo()" icon="ios-download-outline" style="margin-left: 10px;"> 下载导入产品数据样本</Button>
 
@@ -39,9 +41,9 @@
 		</div>
 
 		<Table :columns="columns" :data="goods" :loading="loading" ref="table" border size="small" :height="screenHeight - 200"
-		 @on-select="get_select" @on-select-cancel="cancle_select" @on-selection-change="get_select" @on-select-all-cancel="cancle_select">
+		 @on-select="get_select" @on-select-cancel="cancle_select" @on-selection-change="get_select" @on-select-all-cancel="cancle_select" id="print_table">
 			<template slot-scope="{ row, index }" slot="action">
-				<Button type="primary" size="small" style="margin-right: 5px" @click="download1(row)">下载二维码</Button>
+				<Button type="primary" size="small" style="margin-right: 5px" v-print="'#printMe'" @click="Print(row)">打印二维码</Button>
 			</template>
 		</Table>
 
@@ -89,7 +91,7 @@
 			<Card bordered shadow v-for="(item,index) in select_goods" :key="index">
 				<div slot="title" class="display_flex_bet">
 					<div>{{item.goodsName}}</div>
-					 <div>库存:{{item.reserve}}</div>
+					<div>库存:{{item.reserve}}</div>
 				</div>
 				<div>产品规格：{{item.packageContent}}/{{item.packingUnit}}</div>
 				<div class="display_flex">实际入库价（可修改）：<Input v-model="value14" placeholder="请输入实际入库价" clearable style="width: 200px" /></div>
@@ -100,6 +102,19 @@
 			</div>
 		</Drawer>
 
+		<div id="printMe" style="text-align: center;" v-if="now_product" class="print">
+			<img :src="now_product.qrcodeImg" />
+			<div style="color: #333;margin-top: 20px;"><text style="font-size: 32px;">{{now_product.goodsName}}</text></div>
+		</div>
+		
+		<div id="print_allqr" style="text-align: center;width: 100%;" class="print">
+			<div v-for="(item,index) in goods" :key="index" style="width: 25%; display: inline-block;">
+				<img :src="item.qrcodeImg" style="width: 80px;"/>
+				<div style="color: #333;margin-top: 10px;"><text style="font-size: 10px;">{{item.goodsName}}</text></div>
+			</div>
+			
+		</div>
+
 	</div>
 </template>
 <script>
@@ -108,6 +123,7 @@
 	import common from '@/serve/common.js';
 	import goods from '@/serve/goods.js';
 	import XLSX from 'xlsx';
+	import Print from 'vue-print-nb'
 
 	//let userid = JSON.parse(localStorage.getItem('bmob')).objectId;
 	let that;
@@ -117,6 +133,7 @@
 		},
 		data() {
 			return {
+				now_product: '',
 				option_title: '',
 				value1: false,
 				styles: {
@@ -154,13 +171,13 @@
 						title: '产品Id',
 						key: 'objectId',
 						sortable: true,
-						width:"120"
+						width: "120"
 					},
 					{
 						title: '产品名字',
 						key: 'goodsName',
 						sortable: true,
-						width:"200"
+						width: "200"
 					},
 					{
 						title: '产品图片',
@@ -188,64 +205,64 @@
 						title: '成本价',
 						key: 'costPrice',
 						sortable: true,
-						width:"100"
+						width: "100"
 					},
 					{
 						title: '零售价',
 						key: 'retailPrice',
 						sortable: true,
-						width:"100"
+						width: "100"
 					},
 					{
 						title: '所属分类',
 						key: 'class',
-						width:"150"
+						width: "150"
 					},
 					{
 						title: '所属仓库',
 						key: 'stocks',
-						width:"150"
+						width: "150"
 					},
 					{
 						title: '当前库存',
 						key: 'reserve',
 						sortable: true,
-						width:"100"
+						width: "100"
 					},
 					{
 						title: '规格',
 						key: 'packageContent',
-						width:"150"
+						width: "150"
 					},
 					{
 						title: '单位',
 						key: 'packingUnit',
-						width:"100"
+						width: "100"
 					},
 					{
 						title: '登记编号',
 						key: 'regNumber',
-						width:"150"
+						width: "150"
 					},
 					{
 						title: '产品简介',
 						key: 'product_info',
-						width:"150"
+						width: "150"
 					},
 					{
 						title: '生产厂家',
 						key: 'producer',
-						width:"150"
+						width: "150"
 					},
 					{
 						title: '产品条码',
 						key: 'productCode',
-						width:"150"
+						width: "150"
 					},
 					{
 						title: '产品二维码',
 						key: 'qrcodeImg',
-						width:"150",
+						width: "150",
 						render: (h, params) => {
 							return h('div', {
 								style: {
@@ -286,14 +303,14 @@
 						title: '创建时间',
 						key: 'createdAt',
 						sortable: true,
-						width:"150"
+						width: "150"
 					},
 					{
 						title: '操作',
 						slot: 'action',
 						align: 'center',
 						fixed: 'right',
-						width:"200"
+						width: "200"
 					}
 				],
 				goods: [],
@@ -333,6 +350,11 @@
 		},
 
 		methods: {
+
+			//打印点击
+			Print(row) {
+				that.now_product = row
+			},
 
 			//选择操作是触发
 			selected_options(name) {
@@ -517,54 +539,23 @@
 				});
 			},
 
-			//下载图片
-			download1(row) {
-				console.log(row);
-				let imgData = row.qrcodeImg; //填写你的base64
-				this.downloadFile(row.goodsName, imgData);
-			},
-
-			//下载
-			downloadFile(fileName, content) {
-				let aLink = document.createElement('a');
-				let blob = this.base64ToBlob(content); //new Blob([content]);
-
-				let evt = document.createEvent("HTMLEvents");
-				evt.initEvent("click", true, true); //initEvent 不加后两个参数在FF下会报错  事件类型，是否冒泡，是否阻止浏览器的默认行为
-				aLink.download = fileName;
-				aLink.href = URL.createObjectURL(blob);
-
-				// aLink.dispatchEvent(evt);
-				aLink.click()
-			},
-
-			//base64转blob
-			base64ToBlob(code) {
-				let parts = code.split(';base64,');
-				let contentType = parts[0].split(':')[1];
-				let raw = window.atob(parts[1]);
-				let rawLength = raw.length;
-
-				let uInt8Array = new Uint8Array(rawLength);
-
-				for (let i = 0; i < rawLength; ++i) {
-					uInt8Array[i] = raw.charCodeAt(i);
-				}
-				return new Blob([uInt8Array], {
-					type: contentType
-				});
-			},
-
 		}
 	};
 </script>
 
 <style>
-	.display_flex{
+	@media only screen {
+		.print {
+			display: none
+		}
+	}
+
+	.display_flex {
 		display: flex;
 		align-items: center;
 	}
-	.display_flex_bet{
+
+	.display_flex_bet {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
