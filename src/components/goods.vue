@@ -151,6 +151,12 @@
 						align: 'center',
 					},
 					{
+						title: '产品Id',
+						key: 'objectId',
+						sortable: true,
+						width:"120"
+					},
+					{
 						title: '产品名字',
 						key: 'goodsName',
 						sortable: true,
