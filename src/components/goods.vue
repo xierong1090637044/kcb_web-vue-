@@ -27,7 +27,7 @@
 
 			<div style="display: flex;align-items: center;">
 				<Button type="primary" @click="exportData()" icon="ios-download-outline"> 导出产品数据</Button>
-				
+
 				<Button type="primary" icon="ios-download-outline" style="margin-left: 10px;" v-print="'#print_allqr'"> 批量打印当前页面二维码</Button>
 
 				<Button type="primary" @click="download_demo()" icon="ios-download-outline" style="margin-left: 10px;"> 下载导入产品数据样本</Button>
@@ -41,7 +41,8 @@
 		</div>
 
 		<Table :columns="columns" :data="goods" :loading="loading" ref="table" border size="small" :height="screenHeight - 200"
-		 @on-select="get_select" @on-select-cancel="cancle_select" @on-selection-change="get_select" @on-select-all-cancel="cancle_select" id="print_table">
+		 @on-select="get_select" @on-select-cancel="cancle_select" @on-selection-change="get_select" @on-select-all-cancel="cancle_select"
+		 id="print_table">
 			<template slot-scope="{ row, index }" slot="action">
 				<Button type="primary" size="small" style="margin-right: 5px" v-print="'#printMe'" @click="Print(row)">打印二维码</Button>
 			</template>
@@ -106,13 +107,13 @@
 			<img :src="now_product.qrcodeImg" />
 			<div style="color: #333;margin-top: 20px;"><text style="font-size: 32px;">{{now_product.goodsName}}</text></div>
 		</div>
-		
+
 		<div id="print_allqr" style="text-align: center;width: 100%;" class="print">
 			<div v-for="(item,index) in goods" :key="index" style="width: 25%; display: inline-block;">
-				<img :src="item.qrcodeImg" style="width: 80px;"/>
+				<img :src="item.qrcodeImg" style="width: 80px;" />
 				<div style="color: #333;margin-top: 10px;"><text style="font-size: 10px;">{{item.goodsName}}</text></div>
 			</div>
-			
+
 		</div>
 
 	</div>
@@ -332,26 +333,16 @@
 			};
 			this.get_productList();
 
-			//得到仓库列表
-			if (localStorage.getItem('stocks')) {
-				that.all_stocks = JSON.parse(localStorage.getItem('stocks'))
-			} else {
-				goods.getstock_list().then(res => {
-					console.log(res)
-					that.all_stocks = res
-				});
-			}
+			goods.getstock_list().then(res => {
+				console.log(res)
+				that.all_stocks = res
+			});
 
 
-			//获得一级分类
-			if (localStorage.getItem('frist_class')) {
-				that.all_stocks = JSON.parse(localStorage.getItem('frist_class'))
-			} else {
-				goods.get_fristclass().then(res => {
-					console.log(res)
-					that.all_fristclass = res
-				});
-			}
+			goods.get_fristclass().then(res => {
+				console.log(res)
+				that.all_fristclass = res
+			});
 		},
 
 		methods: {
