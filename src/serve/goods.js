@@ -36,6 +36,8 @@ export default {
 			const query = Bmob.Query("Goods");
 			query.equalTo("userId", "==", uid);
 			query.equalTo("goodsName", "==", good.goodsName);
+			query.equalTo("position", "==", good.position);
+			query.equalTo("stocks", "==", good.stocks);
 			query.find().then(res => {
 				console.log(res)
 				if (res.length >= 1) {
@@ -44,7 +46,7 @@ export default {
 					let reserve = good.reserve
 
 					const pointer1 = Bmob.Pointer('stocks')
-					const p_stock_id = pointer1.set( good.stocks) //仓库的id关联
+					const p_stock_id = pointer1.set(good.stocks) //仓库的id关联
 
 					const query = Bmob.Query('Goods');
 					query.set("goodsName", good.goodsName)
@@ -65,6 +67,7 @@ export default {
 					query.set("stocktype", (Number(good.warning_num) >= Number(reserve)) ? 0 : 1) //库存数量类型 0代表库存不足 1代表库存充足
 					query.set("second_class", p_second_class_id)
 					query.set("goodsClass", p_class_user_id)
+					query.set("position", good.position)
 
 					query.set("userId", userid)
 					query.save().then(res => {

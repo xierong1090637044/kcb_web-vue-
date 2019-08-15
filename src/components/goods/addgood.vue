@@ -166,18 +166,18 @@
 			//上传产品
 			handleSubmit(formValidate) {
 				console.log(formValidate)
-				if(formValidate.goodsName){
+				if (formValidate.goodsName) {
 					goods.upload_good(formValidate).then(res => {
-						if(res[0]){
-							 this.$Message.success('上传成功');
-						}else{
+						if (res[0]) {
+							this.$Message.success('上传成功');
+						} else {
 							this.$Message.error('已存在产品');
 						}
 					})
-				}else{
+				} else {
 					this.$Message.error('请填写产品名字');
 				}
-				
+
 			},
 
 			upload() {
@@ -191,7 +191,7 @@
 				console.log(this.fil)
 
 				this.formValidate.goodsIcon = this.fil
-				
+
 				if (this.fil) {
 					let file
 					for (let item of this.fil) {
@@ -229,7 +229,7 @@
 					url = window.webkitURL.createObjectURL(file);
 				}
 
-				
+
 				return url;
 			},
 

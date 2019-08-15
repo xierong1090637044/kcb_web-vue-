@@ -31,18 +31,19 @@
 		<Layout>
 			<Header>
 				<Menu mode="horizontal" theme="dark" active-name="1" @on-select="select_horizontal_item">
-					<div class="layout-logo" style="color: #fff;line-height: 30px;font-weight: bold;font-size: 16px;background: unset;width: auto;margin-top: 4px;">库存表 V 1.0.0</div>
+					<div class="layout-logo" style="color: #fff;line-height: 30px;font-weight: bold;font-size: 16px;background: unset;width: auto;margin-top: 4px;">库存表
+						V 1.0.0</div>
 					<div class="layout-nav">
-						<!--<MenuItem name="1" to='download'>
-						  <Icon type="ios-download-outline" size="24"/>
-						  App下载
-						</MenuItem>-->
-						
-						<MenuItem name="2" >
-						  <Icon type="ios-log-out" size="24"/>
-						  退出登录
+						<MenuItem name="1" to='download'>
+						<Icon type="md-paper" size="24" />
+						加入我们
 						</MenuItem>
-						
+
+						<MenuItem name="2">
+						<Icon type="ios-log-out" size="24" />
+						退出登录
+						</MenuItem>
+
 						<MenuItem name="4">
 						<Avatar :src="user.avatarUrl" />
 						</MenuItem>
@@ -103,7 +104,7 @@
 
 		data() {
 			return {
-				activename:"1",
+				activename: "1",
 				user: JSON.parse(localStorage.getItem('bmob')),
 				screenHeight: window.innerHeight,
 			}
@@ -119,11 +120,10 @@
 		},
 
 		methods: {
-			
+
 			//水平导航栏的子类点击
-			select_horizontal_item(name){
-				if(name == "2")
-				{
+			select_horizontal_item(name) {
+				if (name == "2") {
 					localStorage.removeItem('bmob')
 					localStorage.removeItem('stocks')
 					localStorage.removeItem('frist_class')

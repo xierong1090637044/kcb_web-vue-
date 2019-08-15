@@ -224,10 +224,15 @@
 						width: "150"
 					},
 					{
+						title: '存放位置',
+						key: 'position',
+						width: "150"
+					},
+					{
 						title: '当前库存',
 						key: 'reserve',
 						sortable: true,
-						width: "100"
+						width: "120"
 					},
 					{
 						title: '规格',
