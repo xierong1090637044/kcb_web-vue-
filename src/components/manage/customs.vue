@@ -12,8 +12,13 @@
 		</div>
 		<Table :columns="columns" :data="data" stripe border>
 			<template slot-scope="{ row, index }" slot="action">
-				<Button type="primary" size="small" style="margin-right: 5px" @click="edit(row)">修改</Button>
-				<Button type="error" size="small" @click="remove(row)">删除</Button>
+				<div  v-if="state == 'choose'">
+					<Button type="primary" size="small" style="margin-right: 5px" @click="choose(row)">选择</Button>
+				</div>
+				<div v-else>
+					<Button type="primary" size="small" style="margin-right: 5px" @click="edit(row)">修改</Button>
+					<Button type="error" size="small" @click="remove(row)">删除</Button>
+				</div>
 			</template>
 		</Table>
 
@@ -70,6 +75,7 @@
 		},
 		data() {
 			return {
+				state:'normal',//当前客户的模式   choose 选择模式
 				custom: {
 					custom_name: "",
 					custom_address:"",
@@ -130,7 +136,10 @@
 		},
 
 		mounted() {
+			//console.log(this.$route.query.type)
 			that = this;
+			that.state = this.$route.query.type?this.$route.query.type:'normal'
+			//console.log(that.state)
 			this.$Loading.start();
 			customs.get_customList().then(res=>{
 				console.log(res)
@@ -140,6 +149,13 @@
 		},
 
 		methods: {
+			
+			//选择当前客户
+			choose(row){
+				console.log(row)
+				localStorage.setItem("select_custom",JSON.stringify(row))
+				this.$router.push({ path: '/home/operations' })
+			},
 			
 			//添加客户点击确定
 			add_custom(){

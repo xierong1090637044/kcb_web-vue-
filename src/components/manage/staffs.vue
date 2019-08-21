@@ -154,7 +154,7 @@
 						title: '负责门店',
 						key: 'shop',
 						render: (h, params) => {
-							return h('div', [params.row.shop.name])
+							return h('div', [params.row.shop?params.row.shop.name:"无"])
 						}
 					},
 					{
