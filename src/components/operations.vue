@@ -33,8 +33,8 @@
 			<Form :label-width="80">
 				
 				<FormItem label="请选择时间">
-					<DatePicker type="date" placeholder="选择起始时间" style="width: 200px" @on-change="change_startdata"></DatePicker>
-					<DatePicker type="date" placeholder=" 选择结束时间" style="width: 200px" @on-change="change_enddata"></DatePicker>
+					<DatePicker type="date" placeholder="选择起始时间" style="width: 200px" @on-change="change_startdata" v-model="start_time"></DatePicker>
+					<DatePicker type="date" placeholder=" 选择结束时间" style="width: 200px" @on-change="change_enddata" v-model="end_time"></DatePicker>
 				</FormItem>
 				
 
@@ -267,6 +267,8 @@
 			cancel() {
 				that.select_custom = ''
 				localStorage.removeItem("select_custom")
+				that.start_time =''
+				that.end_time = ''
 				if (that.type == 0) {
 					that.get_operations();
 				} else {
