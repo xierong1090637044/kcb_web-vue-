@@ -9,10 +9,21 @@
 						<Icon type="ios-arrow-down"></Icon>
 					</Button>
 					<DropdownMenu slot="list">
-						<DropdownItem name="出库">出库</DropdownItem>
-						<DropdownItem name="入库">入库</DropdownItem>
-						<DropdownItem name="盘点">盘点</DropdownItem>
-						<DropdownItem name="退货">退货</DropdownItem>
+						<DropdownItem name="出库">
+							<Button type="primary" long> 出库</Button>
+						</DropdownItem>
+						<DropdownItem name="入库">
+							<Button type="primary" long> 入库</Button>
+						</DropdownItem>
+						<DropdownItem name="盘点">
+							<Button type="primary" long> 盘点</Button>
+						</DropdownItem>
+						<DropdownItem name="退货">
+							<Button type="primary" long> 退货</Button>
+						</DropdownItem>
+						<DropdownItem name="打印">
+							<Button type="primary" long v-print="'#print_allqr'"> 批量打印当前页面二维码</Button>
+						</DropdownItem>
 					</DropdownMenu>
 				</Dropdown>
 
@@ -24,27 +35,27 @@
 
 				<Button type="error" @click="modal1=true" icon="ios-funnel-outline">筛选</Button>
 			</div>
-
-			<div style="display: flex;align-items: center;">
-				<Button type="primary" @click="exportData()" icon="ios-download-outline"> 导出产品数据</Button>
-
-				<Button type="primary" icon="ios-download-outline" style="margin-left: 10px;" v-print="'#print_allqr'"> 批量打印当前页面二维码</Button>
-
-				<Button type="primary" @click="download_demo()" icon="ios-download-outline" style="margin-left: 10px;"> 下载导入产品数据样本</Button>
-
-				<div style="margin-left:10px">
-					<input class="input-file" type="file" @change="importfile" accept=".csv,.excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-					 style="display: none;" />
-					<Button type="primary" @click="btnClick" icon="ios-cloud-upload-outline">上传Excel表格数据(一次最多50条数据)</Button>
-				</div>
+		</div>
+		
+		<div style="display: flex;align-items: center;margin-bottom: 10px;">
+			<Button type="primary" @click="exportData()" icon="ios-download-outline"> 导出产品数据</Button>
+		
+			<Button type="primary" icon="ios-download-outline" style="margin-left: 10px;" v-print="'#print_allqr'"> 批量打印当前页面二维码</Button>
+		
+			<Button type="primary" @click="download_demo()" icon="ios-download-outline" style="margin-left: 10px;"> 下载导入产品数据样本</Button>
+		
+			<div style="margin-left:10px">
+				<input class="input-file" type="file" @change="importfile" accept=".csv,.excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+				 style="display: none;" />
+				<Button type="primary" @click="btnClick" icon="ios-cloud-upload-outline" >上传Excel表格数据(一次最多50条数据)</Button>
 			</div>
 		</div>
 
-		<Table :columns="columns" :data="goods" :loading="loading" ref="table" border size="small" :height="screenHeight - 200"
+		<Table :columns="columns" :data="goods" :loading="loading" ref="table" border size="small" :height="screenHeight - 240"
 		 @on-select="get_select" @on-select-cancel="cancle_select" @on-selection-change="get_select" @on-select-all-cancel="cancle_select"
 		 id="print_table">
 			<template slot-scope="{ row, index }" slot="action">
-				<Button type="primary" size="small" style="margin-right: 5px" v-print="'#printMe'" @click="Print(row)">打印二维码</Button>
+				<Button type="primary" size="small" v-print="'#printMe'" @click="Print(row)">打印二维码</Button>
 			</template>
 		</Table>
 
@@ -159,13 +170,13 @@
 				screenHeight: window.innerHeight,
 				loading: true,
 				columns: [{
+					width:60,
 						type: 'selection',
-						width: 60,
 						align: 'center',
 					},
 					{
+						width:50,
 						type: 'index',
-						width: 60,
 						align: 'center',
 					},
 					{
@@ -178,7 +189,6 @@
 						title: '产品名字',
 						key: 'goodsName',
 						sortable: true,
-						width: "200"
 					},
 					{
 						title: '产品图片',
@@ -206,69 +216,56 @@
 						title: '成本价',
 						key: 'costPrice',
 						sortable: true,
-						width: "100"
 					},
 					{
 						title: '零售价',
 						key: 'retailPrice',
 						sortable: true,
-						width: "100"
 					},
 					{
 						title: '所属分类',
 						key: 'class',
-						width: "150"
 					},
 					{
 						title: '所属仓库',
 						key: 'stocks',
-						width: "150"
 					},
 					{
 						title: '存放位置',
 						key: 'position',
-						width: "150"
 					},
 					{
-						title: '当前库存',
+						title: '库存',
 						key: 'reserve',
 						sortable: true,
-						width: "120"
 					},
 					{
 						title: '规格',
 						key: 'packageContent',
-						width: "150"
 					},
 					{
 						title: '单位',
 						key: 'packingUnit',
-						width: "100"
 					},
 					{
 						title: '登记编号',
 						key: 'regNumber',
-						width: "150"
 					},
 					{
 						title: '产品简介',
 						key: 'product_info',
-						width: "150"
 					},
 					{
 						title: '生产厂家',
 						key: 'producer',
-						width: "150"
 					},
 					{
 						title: '产品条码',
 						key: 'productCode',
-						width: "150"
 					},
 					{
 						title: '产品二维码',
 						key: 'qrcodeImg',
-						width: "150",
 						render: (h, params) => {
 							return h('div', {
 								style: {
@@ -309,14 +306,12 @@
 						title: '创建时间',
 						key: 'createdAt',
 						sortable: true,
-						width: "150"
 					},
 					{
 						title: '操作',
 						slot: 'action',
 						align: 'center',
 						fixed: 'right',
-						width: "200"
 					}
 				],
 				goods: [],
@@ -361,6 +356,8 @@
 					that.option_title = name;
 					if (name == "入库" || name == "出库") {
 						that.value1 = true
+					}else if(name == "打印"){
+						
 					}
 
 				}
