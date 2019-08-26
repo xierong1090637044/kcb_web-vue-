@@ -22,7 +22,7 @@
 							<Button type="primary" long> 退货</Button>
 						</DropdownItem>
 						<DropdownItem name="打印">
-							<Button type="primary" long v-print="'#print_allqr'"> 批量打印当前页面二维码</Button>
+							<Button type="primary" long v-print="'#print_selectedqr'"> 打印选中商品的二维码</Button>
 						</DropdownItem>
 					</DropdownMenu>
 				</Dropdown>
@@ -125,6 +125,14 @@
 				<div style="color: #333;margin-top: 10px;"><text style="font-size: 10px;">{{item.goodsName}}</text></div>
 			</div>
 
+		</div>
+		
+		<div id="print_selectedqr" style="text-align: center;width: 100%;" class="print">
+			<div v-for="(item,index) in select_goods" :key="index" style="width: 25%; display: inline-block;">
+				<img :src="item.qrcodeImg" style="width: 80px;" />
+				<div style="color: #333;margin-top: 10px;"><text style="font-size: 10px;">{{item.goodsName}}</text></div>
+			</div>
+		
 		</div>
 
 	</div>
