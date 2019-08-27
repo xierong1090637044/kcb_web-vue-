@@ -9,6 +9,7 @@ import Print from 'vue-print-nb'
 import landing from '@/components/landing'
 import home from '@/components/home'
 import index from '@/components/index' //首页
+import thanks from '@/components/thanks' // 感谢页面
 import test from '@/components/test'  //样板页面
 import goods from '@/components/goods' //产品添加页面
 import add_good from '@/components/goods/addgood'//添加产品页面
@@ -20,7 +21,6 @@ import shops from '@/components/manage/shops'; // 门店管理页面
 import staffs from '@/components/manage/staffs'; // 员工管理页面
 import customs from '@/components/manage/customs'; // 客户管理页面
 import producers from '@/components/manage/producers'; // 客户管理页面
-
 
 Bmob.initialize("afaa8342776ad99ff0d49bca224de9b2", "9eed865dc5914f2ecedcd63be31e33e9","47f76baf4ee4d90630d7b2bc17f7505c");
 
@@ -45,6 +45,11 @@ export default new Router({
           name: 'index',
           component: index
         },
+				{
+				  path: 'thanks',
+				  name: 'thanks',
+				  component: thanks
+				},
          {
           path: 'test',
           name: 'test',
