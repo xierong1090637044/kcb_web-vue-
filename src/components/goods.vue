@@ -188,20 +188,23 @@
 						align: 'center',
 					},
 					{
+						width:110,
 						title: '产品Id',
 						key: 'objectId',
+						align: 'center',
 						sortable: true,
-						width: "120"
 					},
 					{
+						width:110,
 						title: '产品名字',
 						key: 'goodsName',
 						sortable: true,
+						align: 'center',
 					},
 					{
 						title: '产品图片',
 						key: 'goodsIcon',
-						width: "150",
+						width: 100,
 						render: (h, params) => {
 							return h('div', {
 								style: {
@@ -221,53 +224,77 @@
 						}
 					},
 					{
+						width:100,
+						align: 'center',
+						sortable: true,
 						title: '成本价',
 						key: 'costPrice',
-						sortable: true,
 					},
 					{
+						width:100,
+						align: 'center',
 						title: '零售价',
 						key: 'retailPrice',
 						sortable: true,
 					},
 					{
+						width:100,
+						align: 'center',
 						title: '所属分类',
 						key: 'class',
 					},
 					{
+						width:100,
+						align: 'center',
 						title: '所属仓库',
 						key: 'stocks',
 					},
 					{
+						width:100,
+						align: 'center',
 						title: '存放位置',
 						key: 'position',
 					},
 					{
+						width:100,
+						align: 'center',
 						title: '库存',
 						key: 'reserve',
 						sortable: true,
 					},
 					{
+						width:100,
+						align: 'center',
 						title: '规格',
 						key: 'packageContent',
 					},
 					{
+						width:100,
+						align: 'center',
 						title: '单位',
 						key: 'packingUnit',
 					},
 					{
+						width:100,
+						align: 'center',
 						title: '登记编号',
 						key: 'regNumber',
 					},
 					{
+						width:100,
+						align: 'center',
 						title: '产品简介',
 						key: 'product_info',
 					},
 					{
+						width:100,
+						align: 'center',
 						title: '生产厂家',
 						key: 'producer',
 					},
 					{
+						width:100,
+						align: 'center',
 						title: '产品条码',
 						key: 'productCode',
 					},
@@ -311,6 +338,8 @@
 						}
 					},
 					{
+						width:160,
+						align: 'center',
 						title: '创建时间',
 						key: 'createdAt',
 						sortable: true,
