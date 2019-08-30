@@ -332,7 +332,7 @@
 									margin: "10px 0",
 								},
 								attrs: {
-									value: (params.row.productCode) ? params.row.productCode + '-' + true : params.row.objectId + '-' + false
+									value: (params.row.productCode) ? params.row.productCode : params.row.objectId + '-' + false
 								}
 							})
 						}
@@ -561,8 +561,8 @@
 							.class_text || "") : "")
 						item.stocks = (item.stocks) ? item.stocks.stock_name : ""
 
-						item.qrcodeImg = jrQrcode.getQrBase64((item.productCode) ? item.productCode + '-' + true : item.objectId + '-' +
-							false)
+						item.qrcodeImg = jrQrcode.getQrBase64((item.productCode) ? item.productCode: item.objectId + '-' +false)
+						item.productCode = (item.productCode) ? item.productCode : item.objectId + '-' +false
 					}
 					this.goods = res;
 					this.loading = false;
