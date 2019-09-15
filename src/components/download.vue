@@ -1,11 +1,11 @@
 <template>
 	<div style="position: relative;">
-		<img src="@/assets/download.png" style="width: 100%;" />
-		<img src="@/assets/qq_qun.jpg" class="qq_qunstyle" />
-		<div class="button_ele">
-			<!--<div><button class="button_class" @click="download('ios')">iphone版下载</button></div>
-		  <div><button class="button_class" @click="download('androind')">Android版下载</button></div>-->
-		</div>
+    <div style="text-align: center;margin-top: 100px;">
+      <img src="@/assets/download.png" style="height: 500px;width: 500px;" />
+      <div style="font-size: 18px;margin-top: 30px;color: #333;font-style: oblique;font-weight: bold;">扫码关注"库存表"服务号，体验最新功能！</div>
+    </div>
+
+
 	</div>
 </template>
 
