@@ -512,11 +512,15 @@
 				const poiID = pointer.set(that.userid)
 				// 构造含有50个对象的数组
 				for (let good of goods) {
+					console.log(good)
 					var queryObj = Bmob.Query('Goods');
-					queryObj.set('goodsName', "" + good.商品名字);
+					queryObj.set('goodsName', "" + (good.商品名字).toString());
 					queryObj.set('costPrice', "" + good.成本价);
 					queryObj.set('retailPrice', "" + good.零售价);
-					queryObj.set('packingUnit', good.单位);
+					queryObj.set('packingUnit', (good.单位).toString());
+					queryObj.set('position', (good.存放位置)?(good.存放位置).toString():'');
+					queryObj.set('productCode', good.条形码?(good.条形码).toString():'');
+					queryObj.set('packageContent', good.规格?(good.规格).toString():'');
 					queryObj.set('reserve', Number("" + good.库存));
 					queryObj.set('userId', poiID);
 					queryArray.push(queryObj);
