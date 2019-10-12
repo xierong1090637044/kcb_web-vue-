@@ -301,6 +301,7 @@
 					{
 						title: '产品二维码',
 						key: 'qrcodeImg',
+						width:100,
 						render: (h, params) => {
 							return h('div', {
 								style: {
