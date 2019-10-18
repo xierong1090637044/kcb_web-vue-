@@ -127,10 +127,10 @@
 
 		</div>
 		
-		<div id="print_selectedqr" style="text-align: center;width: 100%;" class="print">
-			<div v-for="(item,index) in select_goods" :key="index" style="width: 25%; display: inline-block;">
-				<img :src="item.qrcodeImg" style="width: 80px;" />
-				<div style="color: #333;margin-top: 10px;"><text style="font-size: 10px;">{{item.goodsName}}</text></div>
+		<div id="print_selectedqr" style="width: 100%;" class="print">
+			<div v-for="(item,index) in select_goods" :key="index" style="width: 100%;">
+				<img :src="item.qrcodeImg" style="width: 120px;magrin-left:30px" />
+				<div style="color: #333;margin-top: 10px;magrin-left:30px"><text style="font-size: 28px;">{{item.goodsName}}</text></div>
 			</div>
 		
 		</div>
