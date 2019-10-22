@@ -41,12 +41,26 @@
 
 		mounted() {
 			that = this;
+			const query = Bmob.Query("_User");
+			query.equalTo("objectId", "==", that.userid);
+			query.find().then(res => {
+				if (res[0].is_vip == false) {
+					localStorage.removeItem('bmob')
+					localStorage.removeItem('stocks')
+					localStorage.removeItem('frist_class')
+					this.$router.push({
+						path: '/'
+					})
+				} else {
+					this.gettoday_detail();
+				}
+			});
+
 			window.onresize = () => {
 				return (() => {
 					that.screenHeight = window.innerHeight;
 				})();
 			};
-			this.gettoday_detail();
 		},
 
 		methods: {

@@ -12,32 +12,7 @@
 		</div>
 
 		<div class="index_content">
-			<Card dis-hover :padding="padding_size" style="width: 30%;margin:10% 35% 0;margin-top: 15%;" v-if="landing_type == 'landing'">
-				<div slot="title">
-					<p style="font-size: 18px;color:#333">登录 - 库存表管理系统</p>
-					<div style="color: #b3424a;font-size: 12px;margin-top: 10px;">愿你被世界温柔的善待</div>
-				</div>
-				<Form ref="formInline" :model="formInline" :rules="ruleInline">
-					<Alert type="error" show-icon v-if='alter_type =="error"'>账号或密码错误</Alert>
-					<FormItem prop="user">
-						<Input type="text" v-model="formInline.user" placeholder="Username">
-						<Icon type="ios-person-outline" slot="prepend" size="18"></Icon>
-						</Input>
-					</FormItem>
-					<FormItem prop="password">
-						<Input type="password" v-model="formInline.password" placeholder="Password">
-						<Icon type="ios-lock-outline" slot="prepend" size="18"></Icon>
-						</Input>
-					</FormItem>
-					<FormItem>
-						<Button @click="handleSubmit(formInline.user,formInline.password)" style="background:#b3424a;color: #fff ;" :loading="button_login">登录</Button>
-
-						<Button type="primary" @click="landing_type ='phone_landing'" style="margin-left: 40px;">手机登录</Button>
-					</FormItem>
-				</Form>
-			</Card>
-
-			<Card dis-hover :padding="padding_size" style="width: 30%;margin:10% 35% 0;margin-top: 15%;" v-if="landing_type == 'phone_landing'">
+			<Card dis-hover :padding="padding_size" style="width: 30%;margin:10% 35% 0;margin-top: 15%;">
 				<div slot="title">
 					<p style="font-size: 18px;color:#333">手机登录 - 库存表管理系统</p>
 					<div style="color: #b3424a;font-size: 12px;margin-top: 10px;">总有人会给你遮风挡雨</div>
@@ -46,7 +21,7 @@
 					<Alert type="error" show-icon v-if='alter_type =="phone_landing_error"'>手机号或者验证码不正确</Alert>
 					<FormItem prop="phone">
 						<Input type="text" v-model="formInline.phone" placeholder="请输入手机号" autofocus>
-						<Icon type="md-phone-portrait" slot="prepend"  size="18"/>
+						<Icon type="md-phone-portrait" slot="prepend" size="18" />
 						</Input>
 					</FormItem>
 
@@ -54,7 +29,7 @@
 						<Row>
 							<Col span="11">
 							<Input type="text" v-model="formInline.code" placeholder="请输入验证码">
-							<Icon type="ios-mail" slot="prepend" size="18"/>
+							<Icon type="ios-mail" slot="prepend" size="18" />
 							</Input>
 							</Col>
 							<Col span="4" offset="6">
@@ -65,8 +40,6 @@
 
 					<FormItem>
 						<Button @click="phone_login(formInline.phone,formInline.code)" style="background:#b3424a;color: #fff ;" :loading="button_login">登录</Button>
-
-						<Button type="primary" @click="landing_type ='landing'" style="margin-left: 40px;">返回账号登录</Button>
 					</FormItem>
 				</Form>
 			</Card>
@@ -80,8 +53,8 @@
 		name: 'login',
 		data() {
 			return {
-				button_login:false,//控制button的加载状态
-				padding_size:30,
+				button_login: false, //控制button的加载状态
+				padding_size: 30,
 				code_button: false,
 				code_text: "发送验证码",
 				alter_type: '',
@@ -148,31 +121,21 @@
 				Bmob.User.signOrLoginByMobilePhone(Number(phone), Number(code)).then(res => {
 					console.log(res)
 					that.button_login = false
-					localStorage.setItem("bmob",JSON.stringify(res))
-					this.$router.push({
-						path: '/home/index'
-					})
+					if (res.is_vip) {
+						localStorage.setItem("bmob", JSON.stringify(res))
+						this.$router.push({
+							path: '/home/index'
+						})
+					} else {
+						this.$Modal.warning({
+							title: '还不是会员，无法使用',
+							content: '请去小程序端成为会员后，再来登陆'
+						});
+					}
+
 				}).catch(err => {
 					that.button_login = false
 					that.alter_type = "phone_landing_error"
-				});
-			},
-
-			//账号登录点击
-			handleSubmit(name, password) {
-				that.button_login = true
-				console.log(name, password)
-				//this.$Message.error('Fail!');
-				Bmob.User.login(password, password).then(res => {
-					//console.log(res.code)
-					that.button_login = false
-					this.$router.push({
-						path: '/home/index'
-					})
-				}).catch(err => {
-					that.button_login = false
-					//console.log(err)
-					that.alter_type = "error"
 				});
 			},
 
@@ -240,9 +203,9 @@
 				}
 			}
 			window.onresize()
-			
+
 			let current = Bmob.User.current()
-			if(current){
+			if (current) {
 				this.$router.push({
 					path: '/home/index'
 				})
