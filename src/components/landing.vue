@@ -121,18 +121,10 @@
 				Bmob.User.signOrLoginByMobilePhone(Number(phone), Number(code)).then(res => {
 					console.log(res)
 					that.button_login = false
-					if (res.is_vip) {
-						localStorage.setItem("bmob", JSON.stringify(res))
-						this.$router.push({
-							path: '/home/index'
-						})
-					} else {
-						this.$Modal.warning({
-							title: '还不是会员，无法使用',
-							content: '请去小程序端成为会员后，再来登陆'
-						});
-					}
-
+					localStorage.setItem("bmob", JSON.stringify(res))
+					this.$router.push({
+						path: '/home/index'
+					})
 				}).catch(err => {
 					that.button_login = false
 					that.alter_type = "phone_landing_error"

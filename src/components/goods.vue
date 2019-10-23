@@ -36,18 +36,18 @@
 				<Button type="error" @click="modal1=true" icon="ios-funnel-outline">筛选</Button>
 			</div>
 		</div>
-		
+
 		<div style="display: flex;align-items: center;margin-bottom: 10px;">
 			<Button type="primary" @click="exportData()" icon="ios-download-outline"> 导出产品数据</Button>
-		
+
 			<Button type="primary" icon="ios-download-outline" style="margin-left: 10px;" v-print="'#print_allqr'"> 批量打印当前页面二维码</Button>
-		
+
 			<Button type="primary" @click="download_demo()" icon="ios-download-outline" style="margin-left: 10px;"> 下载导入产品数据样本</Button>
-		
+
 			<div style="margin-left:10px">
 				<input class="input-file" type="file" @change="importfile" accept=".csv,.excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
 				 style="display: none;" />
-				<Button type="primary" @click="btnClick" icon="ios-cloud-upload-outline" >上传Excel表格数据(一次最多50条数据)</Button>
+				<Button type="primary" @click="btnClick" icon="ios-cloud-upload-outline">上传Excel表格数据(一次最多50条数据)</Button>
 			</div>
 		</div>
 
@@ -126,13 +126,13 @@
 			</div>
 
 		</div>
-		
+
 		<div id="print_selectedqr" style="width: 100%;" class="print">
 			<div v-for="(item,index) in select_goods" :key="index" style="width: 100%;">
 				<img :src="item.qrcodeImg" style="width: 120px;magrin-left:30px" />
 				<div style="color: #333;margin-top: 10px;magrin-left:30px"><text style="font-size: 28px;">{{item.goodsName}}</text></div>
 			</div>
-		
+
 		</div>
 
 	</div>
@@ -178,24 +178,24 @@
 				screenHeight: window.innerHeight,
 				loading: true,
 				columns: [{
-					width:60,
+						width: 60,
 						type: 'selection',
 						align: 'center',
 					},
 					{
-						width:50,
+						width: 50,
 						type: 'index',
 						align: 'center',
 					},
 					{
-						width:110,
+						width: 110,
 						title: '产品Id',
 						key: 'objectId',
 						align: 'center',
 						sortable: true,
 					},
 					{
-						width:110,
+						width: 110,
 						title: '产品名字',
 						key: 'goodsName',
 						sortable: true,
@@ -224,76 +224,76 @@
 						}
 					},
 					{
-						width:100,
+						width: 100,
 						align: 'center',
 						sortable: true,
 						title: '成本价',
 						key: 'costPrice',
 					},
 					{
-						width:100,
+						width: 100,
 						align: 'center',
 						title: '零售价',
 						key: 'retailPrice',
 						sortable: true,
 					},
 					{
-						width:100,
+						width: 100,
 						align: 'center',
 						title: '所属分类',
 						key: 'class',
 					},
 					{
-						width:100,
+						width: 100,
 						align: 'center',
 						title: '所属仓库',
 						key: 'stocks',
 					},
 					{
-						width:100,
+						width: 100,
 						align: 'center',
 						title: '存放位置',
 						key: 'position',
 					},
 					{
-						width:100,
+						width: 100,
 						align: 'center',
 						title: '库存',
 						key: 'reserve',
 						sortable: true,
 					},
 					{
-						width:100,
+						width: 100,
 						align: 'center',
 						title: '规格',
 						key: 'packageContent',
 					},
 					{
-						width:100,
+						width: 100,
 						align: 'center',
 						title: '单位',
 						key: 'packingUnit',
 					},
 					{
-						width:100,
+						width: 100,
 						align: 'center',
 						title: '登记编号',
 						key: 'regNumber',
 					},
 					{
-						width:100,
+						width: 100,
 						align: 'center',
 						title: '产品简介',
 						key: 'product_info',
 					},
 					{
-						width:100,
+						width: 100,
 						align: 'center',
 						title: '生产厂家',
 						key: 'producer',
 					},
 					{
-						width:100,
+						width: 100,
 						align: 'center',
 						title: '产品条码',
 						key: 'productCode',
@@ -301,7 +301,7 @@
 					{
 						title: '产品二维码',
 						key: 'qrcodeImg',
-						width:100,
+						width: 100,
 						render: (h, params) => {
 							return h('div', {
 								style: {
@@ -339,7 +339,7 @@
 						}
 					},
 					{
-						width:160,
+						width: 160,
 						align: 'center',
 						title: '创建时间',
 						key: 'createdAt',
@@ -394,8 +394,8 @@
 					that.option_title = name;
 					if (name == "入库" || name == "出库") {
 						that.value1 = true
-					}else if(name == "打印"){
-						
+					} else if (name == "打印") {
+
 					}
 
 				}
@@ -454,7 +454,20 @@
 			},
 
 			btnClick() {
-				document.querySelector('.input-file').click();
+				const query = Bmob.Query('_User');
+				query.get(that.userid).then(res => {
+					console.log(res)
+					if (res.is_vip) {
+						document.querySelector('.input-file').click();
+					} else {
+						this.$Modal.warning({
+							title: '还不是会员，无法使用',
+							content: '请去小程序端成为会员后，再来登陆'
+						});
+					}
+				}).catch(err => {
+					console.log(err)
+				})
 			},
 
 			importfile(event) {
@@ -519,9 +532,9 @@
 					queryObj.set('costPrice', "" + good.成本价);
 					queryObj.set('retailPrice', "" + good.零售价);
 					queryObj.set('packingUnit', (good.单位).toString());
-					queryObj.set('position', (good.存放位置)?(good.存放位置).toString():'');
-					queryObj.set('productCode', good.条形码?(good.条形码).toString():'');
-					queryObj.set('packageContent', good.规格?(good.规格).toString():'');
+					queryObj.set('position', (good.存放位置) ? (good.存放位置).toString() : '');
+					queryObj.set('productCode', good.条形码 ? (good.条形码).toString() : '');
+					queryObj.set('packageContent', good.规格 ? (good.规格).toString() : '');
 					queryObj.set('reserve', Number("" + good.库存));
 					queryObj.set('userId', poiID);
 					queryArray.push(queryObj);
@@ -566,8 +579,8 @@
 							.class_text || "") : "")
 						item.stocks = (item.stocks) ? item.stocks.stock_name : ""
 
-						item.qrcodeImg = jrQrcode.getQrBase64((item.productCode) ? item.productCode: item.objectId + '-' +false)
-						item.productCode = (item.productCode) ? item.productCode : item.objectId + '-' +false
+						item.qrcodeImg = jrQrcode.getQrBase64((item.productCode) ? item.productCode : item.objectId + '-' + false)
+						item.productCode = (item.productCode) ? item.productCode : item.objectId + '-' + false
 					}
 					this.goods = res;
 					this.loading = false;
