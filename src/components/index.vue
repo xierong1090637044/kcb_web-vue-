@@ -4,14 +4,14 @@
 		<Row style="background:#eee;padding:20px">
 			<Col span="5">
 			<Card shadow style="background: #2db7f5;color: #fff;">
-				<p slot="title">今日详情</p>
+				<p slot="title" style="color:#fff">今日详情</p>
 				<p>今日入库：{{get_reserve}}</p>
 				<p>今日出库：{{out_reserve}}</p>
 			</Card>
 			</Col>
 			<Col span="5" offset="2">
 			<Card shadow style="background: #ed4014;color: #fff;">
-				<p slot="title">库存详情</p>
+				<p slot="title" style="color:#fff">库存详情</p>
 				<p>库存总量：{{total_reserve}}</p>
 				<p>库存成本：{{total_money}}</p>
 				<p>库存种类：{{total_products}}</p>
@@ -23,8 +23,10 @@
 	</div>
 </template>
 <script>
-	import common from '@/serve/common.js';
+	import common from '@/utils/common.js';
+	import mchart from '@/utils/chart.js';
 	import G2 from '@antv/g2';
+	
 	let that;
 	export default {
 		data() {
@@ -35,36 +37,54 @@
 				total_reserve: 0,
 				total_money: 0,
 				total_products: 0,
+				now_day: common.getDay(0),
 				userid: JSON.parse(localStorage.getItem('bmob')).objectId || '',
 			};
 		},
 
 		mounted() {
 			that = this;
-			const query = Bmob.Query("_User");
-			query.equalTo("objectId", "==", that.userid);
-			query.find().then(res => {
-				if (res[0].is_vip == false) {
-					localStorage.removeItem('bmob')
-					localStorage.removeItem('stocks')
-					localStorage.removeItem('frist_class')
-					this.$router.push({
-						path: '/'
-					})
-				} else {
-					this.gettoday_detail();
-				}
-			});
-
 			window.onresize = () => {
 				return (() => {
 					that.screenHeight = window.innerHeight;
 				})();
 			};
+			this.gettoday_detail();
+			
+			
+			let year = that.now_day.split("-")[0]
+			let month = that.now_day.split("-")[1]
+			mchart.getLineChart(year,month).then(res => {
+				console.log(res)
+				
+				var chart = new G2.Chart({
+				    container: 'c1',
+				    forceFit: true,
+				    height: 600
+				  });
+				  chart.source(res, {
+				    year: {
+				      type: 'linear',
+				      tickInterval: 50
+				    }
+				  });
+				  chart.tooltip({
+				    crosshairs: {
+				      type: 'line'
+				    },
+				    useHtml: false
+				  });
+				  chart.areaStack().position('date*_sumNum').color('desc');
+				  chart.lineStack().position('date*_sumNum').color('desc').size(2);
+				  chart.render();
+			})
+			
+			
+			
 		},
 
 		methods: {
-
+			
 			//得到今日概况
 			gettoday_detail: function() {
 				let get_reserve = 0;

@@ -16,6 +16,7 @@
     "@antv/g2": "^3.5.8-beta.1",
     "@xkeshi/vue-barcode": "^1.0.0",
     "canvas": "^2.5.0",
+    "hydrogen-js-sdk": "^2.2.0",
     "iview": "^3.4.2",
     "jr-qrcode": "^1.1.4",
     "jsbarcode": "^3.11.0",

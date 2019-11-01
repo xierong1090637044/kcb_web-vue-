@@ -1,59 +1,73 @@
 <template>
 	<div>
+		<div style="margin-bottom: 10px;">
+			<Breadcrumb  separator="<b style='color: #999;'>/</b>">
+				<BreadcrumbItem to="/">首页</BreadcrumbItem>
+				<BreadcrumbItem  to="/home/goods">产品管理</BreadcrumbItem>
+			</Breadcrumb>
+		</div>
+		
 		<div style="margin-bottom: 10px;display: flex;align-items: center;justify-content: space-between;">
 
 			<div style="display: flex;align-items: center;">
 				<Dropdown style="margin-right: 10px" @on-click="selected_options">
 					<Button type="primary">
-						选择操作
+						打印操作
 						<Icon type="ios-arrow-down"></Icon>
 					</Button>
 					<DropdownMenu slot="list">
-						<DropdownItem name="出库">
-							<Button type="primary" long> 出库</Button>
-						</DropdownItem>
-						<DropdownItem name="入库">
-							<Button type="primary" long> 入库</Button>
-						</DropdownItem>
-						<DropdownItem name="盘点">
-							<Button type="primary" long> 盘点</Button>
-						</DropdownItem>
-						<DropdownItem name="退货">
-							<Button type="primary" long> 退货</Button>
-						</DropdownItem>
 						<DropdownItem name="打印">
 							<Button type="primary" long v-print="'#print_selectedqr'"> 打印选中商品的二维码</Button>
 						</DropdownItem>
+						<DropdownItem name="批量打印当前页面二维码">
+							<Button type="primary" long v-print="'#print_allqr'"> 批量打印当前页面二维码</Button>
+						</DropdownItem>
 					</DropdownMenu>
 				</Dropdown>
-
-				<router-link to="/home/add_good">
-					<Button type="success" style="margin-right: 10px;" icon="md-add">添加产品</Button>
-				</router-link>
-
-				<Button type="warning" @click="delete_good()" icon="ios-trash-outline" style="margin-right: 10px;">删除</Button>
-
+				
+				<Dropdown style="margin-right: 10px">
+					<Button type="primary">
+						产品操作
+						<Icon type="ios-arrow-down"></Icon>
+					</Button>
+					<DropdownMenu slot="list">
+						<DropdownItem name="添加产品">
+							<router-link to="/home/add_good">
+								<Button type="primary" long style="margin-right: 10px;">添加产品</Button>
+							</router-link>
+						</DropdownItem>
+						<DropdownItem name="删除">
+							<Button type="primary" long @click="delete_good()" style="margin-right: 10px;">删除</Button>
+						</DropdownItem>
+					</DropdownMenu>
+				</Dropdown>
+				
+				<Dropdown style="margin-right: 10px">
+					<Button type="primary">
+						导入导出操作
+						<Icon type="ios-arrow-down"></Icon>
+					</Button>
+					<DropdownMenu slot="list">
+						<DropdownItem name="下载导入产品数据样本">
+							<Button type="primary" @click="download_demo()" long> 下载导入产品数据样本</Button>
+						</DropdownItem>
+						<DropdownItem name="导出产品数据">
+							<Button type="primary" @click="exportData()" long> 导出产品数据</Button>
+						</DropdownItem>
+						<DropdownItem name="上传Excel表格数据">
+							<input class="input-file" type="file" @change="importfile" accept=".csv,.excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+							 style="display: none;" />
+							<Button type="primary" @click="btnClick" long>上传Excel表格数据(一次最多50条数据)</Button>
+						</DropdownItem>
+					</DropdownMenu>
+				</Dropdown>
+				
 				<Button type="error" @click="modal1=true" icon="ios-funnel-outline">筛选</Button>
 			</div>
 		</div>
 
-		<div style="display: flex;align-items: center;margin-bottom: 10px;">
-			<Button type="primary" @click="exportData()" icon="ios-download-outline"> 导出产品数据</Button>
-
-			<Button type="primary" icon="ios-download-outline" style="margin-left: 10px;" v-print="'#print_allqr'"> 批量打印当前页面二维码</Button>
-
-			<Button type="primary" @click="download_demo()" icon="ios-download-outline" style="margin-left: 10px;"> 下载导入产品数据样本</Button>
-
-			<div style="margin-left:10px">
-				<input class="input-file" type="file" @change="importfile" accept=".csv,.excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-				 style="display: none;" />
-				<Button type="primary" @click="btnClick" icon="ios-cloud-upload-outline">上传Excel表格数据(一次最多50条数据)</Button>
-			</div>
-		</div>
-
 		<Table :columns="columns" :data="goods" :loading="loading" ref="table" border size="small" :height="screenHeight - 240"
-		 @on-select="get_select" @on-select-cancel="cancle_select" @on-selection-change="get_select" @on-select-all-cancel="cancle_select"
-		 id="print_table">
+		 @on-select="get_select" @on-select-cancel="cancle_select" @on-select-all-cancel="cancle_select" id="print_table">
 			<template slot-scope="{ row, index }" slot="action">
 				<Button type="primary" size="small" v-print="'#printMe'" @click="Print(row)">打印二维码</Button>
 			</template>
@@ -65,7 +79,7 @@
 			</div>
 		</div>
 
-		<Modal v-model="modal1" title="筛选" @on-ok="modal_confrim" @on-cancel="cancel" cancel-text="重置">
+		<Modal v-model="modal1" title="筛选" @on-ok="modal_confrim" @on-cancel="cancel" cancel-text="重置" :closable=false>
 			<Form :label-width="80">
 				<FormItem label="产品名字">
 					<Input v-model="search_goodMame" placeholder="请输入产品名字"></Input>
@@ -98,20 +112,44 @@
 			</Form>
 		</Modal>
 
-
+		<!--出库、入库、退货时的弹窗-->
 		<Drawer :title="option_title" v-model="value1" width="720" :mask-closable="false" :styles="styles">
-			<Card bordered shadow v-for="(item,index) in select_goods" :key="index">
-				<div slot="title" class="display_flex_bet">
-					<div>{{item.goodsName}}</div>
-					<div>库存:{{item.reserve}}</div>
-				</div>
-				<div>产品规格：{{item.packageContent}}/{{item.packingUnit}}</div>
-				<div class="display_flex">实际入库价（可修改）：<Input v-model="value14" placeholder="请输入实际入库价" clearable style="width: 200px" /></div>
-			</Card>
+			<Scroll :height="screenHeight - 160">
+				<Card bordered shadow v-for="(item,index) in select_goods" :key="index">
+					<div slot="title" class="display_flex_bet">
+						<div>{{item.goodsName}}</div>
+						<div>库存:{{item.reserve}}</div>
+					</div>
+					<div>产品规格：{{item.packageContent}}/{{item.packingUnit}}</div>
+					<div class="display_flex">实际入库价（可修改）：<Input placeholder="请输入实际入库价" clearable style="width: 200px" @on-change="modify_price($event,index)" /></div>
+					<div class="display_flex">数量：<InputNumber @on-change="modify_num($event,index)"></InputNumber>
+					</div>
+				</Card>
+			</Scroll>
 			<div class="demo-drawer-footer">
 				<Button style="margin-right: 8px" @click="value1 = false">取消</Button>
-				<Button type="primary" @click="value1 = false">确定</Button>
+				<Button type="primary" @click="value1 = false,value2=true">确定</Button>
 			</div>
+		</Drawer>
+
+		<!--出库、入库、退货时的弹窗-->
+		<Drawer :title="option_title" v-model="value2" width="720" :mask-closable="false" :styles="styles">
+			<div style='line-height:70rpx;padding: 20rpx 20rpx 0;'>已选产品</div>
+			<div style='max-height:25vh;overflow-x:scroll'>
+				<div v-for="(item,index) in select_goods" :key="index" class='pro_listitem'>
+					<div class='pro_list' style='color:#3D3D3D'>
+						<div>产品：{{item.goodsName}}</div>
+						<div>期初进货价：￥{{item.costPrice}}</div>
+					</div>
+					<div class='pro_list'>
+						<div>实际进货价：￥{{item.modify_retailPrice}}（X{{item.num}}）</div>
+						<div>合计：￥{{item.total_money}}</div>
+					</div>
+				</div>
+			</div>
+			<div class='pro_allmoney'>总计：￥{{modal2.all_money}}</div>
+
+
 		</Drawer>
 
 		<div id="printMe" style="text-align: center;" v-if="now_product" class="print">
@@ -120,17 +158,17 @@
 		</div>
 
 		<div id="print_allqr" style="text-align: center;width: 100%;" class="print">
-			<div v-for="(item,index) in goods" :key="index" style="width: 25%; display: inline-block;">
-				<img :src="item.qrcodeImg" style="width: 80px;" />
+			<div v-for="(item,index) in goods" :key="index" style="width: 33.33%; display: inline-block;">
+				<img :src="item.qrcodeImg" style="width: 160px;" />
 				<div style="color: #333;margin-top: 10px;"><text style="font-size: 10px;">{{item.goodsName}}</text></div>
 			</div>
 
 		</div>
 
-		<div id="print_selectedqr" style="width: 100%;" class="print">
-			<div v-for="(item,index) in select_goods" :key="index" style="width: 100%;">
-				<img :src="item.qrcodeImg" style="width: 120px;magrin-left:30px" />
-				<div style="color: #333;margin-top: 10px;magrin-left:30px"><text style="font-size: 28px;">{{item.goodsName}}</text></div>
+		<div id="print_selectedqr" style="text-align: center;width: 100%;" class="print">
+			<div v-for="(item,index) in select_goods" :key="index" style="width: 25%; display: inline-block;">
+				<img :src="item.qrcodeImg" style="width: 80px;" />
+				<div style="color: #333;margin-top: 10px;"><text style="font-size: 10px;">{{item.goodsName}}</text></div>
 			</div>
 
 		</div>
@@ -138,24 +176,28 @@
 	</div>
 </template>
 <script>
-	import barcode from '@xkeshi/vue-barcode'
+	//import barcode from '@xkeshi/vue-barcode'
 	import jrQrcode from "jr-qrcode";
 	import common from '@/serve/common.js';
 	import goods from '@/serve/goods.js';
 	import XLSX from 'xlsx';
-	import Print from 'vue-print-nb'
+	import Print from 'vue-print-nb';
 
 	//let userid = JSON.parse(localStorage.getItem('bmob')).objectId;
 	let that;
 	export default {
-		components: {
-			'barcode': barcode
-		},
+		components: {},
 		data() {
 			return {
+				modal2: {
+					all_money: 0,
+					real_money: 0,
+				},
+				retailPrice: '',
 				now_product: '',
 				option_title: '',
 				value1: false,
+				value2: false,
 				styles: {
 					height: 'calc(100% - 55px)',
 					overflow: 'auto',
@@ -173,7 +215,7 @@
 				modal1: false,
 				userid: JSON.parse(localStorage.getItem('bmob')).objectId || '',
 				all_stocks: [],
-				page_size: 100,
+				page_size: 50,
 				pege_number: 1,
 				screenHeight: window.innerHeight,
 				loading: true,
@@ -183,19 +225,7 @@
 						align: 'center',
 					},
 					{
-						width: 50,
-						type: 'index',
-						align: 'center',
-					},
-					{
-						width: 110,
-						title: '产品Id',
-						key: 'objectId',
-						align: 'center',
-						sortable: true,
-					},
-					{
-						width: 110,
+						width: 180,
 						title: '产品名字',
 						key: 'goodsName',
 						sortable: true,
@@ -213,8 +243,8 @@
 							}, [
 								h('img', {
 									style: {
-										width: "60px",
-										margin: "10px 0",
+										width:'60px',
+										padding:"4px 0",
 									},
 									attrs: {
 										src: params.row.goodsIcon
@@ -256,7 +286,7 @@
 						key: 'position',
 					},
 					{
-						width: 100,
+						width: 120,
 						align: 'center',
 						title: '库存',
 						key: 'reserve',
@@ -275,13 +305,13 @@
 						key: 'packingUnit',
 					},
 					{
-						width: 100,
+						width: 120,
 						align: 'center',
 						title: '登记编号',
 						key: 'regNumber',
 					},
 					{
-						width: 100,
+						width: 160,
 						align: 'center',
 						title: '产品简介',
 						key: 'product_info',
@@ -293,15 +323,15 @@
 						key: 'producer',
 					},
 					{
-						width: 100,
+						width: 160,
 						align: 'center',
 						title: '产品条码',
 						key: 'productCode',
 					},
 					{
 						title: '产品二维码',
-						key: 'qrcodeImg',
 						width: 100,
+						key: 'qrcodeImg',
 						render: (h, params) => {
 							return h('div', {
 								style: {
@@ -311,7 +341,6 @@
 								h('img', {
 									style: {
 										width: "65px",
-										margin: "10px 0",
 									},
 									attrs: {
 										src: params.row.qrcodeImg
@@ -321,23 +350,23 @@
 						}
 					},
 
-					{
-						title: '产品条形码',
-						width: 200,
-						type: 'barcode',
-						render: (h, params) => {
-							return h(barcode, {
-								style: {
-									width: "170px",
-									height: "80px",
-									margin: "10px 0",
-								},
-								attrs: {
-									value: (params.row.productCode) ? params.row.productCode : params.row.objectId + '-' + false
-								}
-							})
-						}
-					},
+					/*{
+					  title: '产品条形码',
+					  width: 200,
+					  type: 'barcode',
+					  render: (h, params) => {
+					    return h(barcode, {
+					      style: {
+					        width: "170px",
+					        height: "80px",
+					        margin: "10px 0",
+					      },
+					      attrs: {
+					        value: (params.row.productCode) ? params.row.productCode : params.row.objectId + '-' + false
+					      }
+					    })
+					  }
+					},*/
 					{
 						width: 160,
 						align: 'center',
@@ -346,6 +375,7 @@
 						sortable: true,
 					},
 					{
+						width: 160,
 						title: '操作',
 						slot: 'action',
 						align: 'center',
@@ -380,6 +410,22 @@
 
 		methods: {
 
+			//输入实际的出入库的价格
+			modify_price($event, index) {
+				//console.log($event, index)
+
+				that.select_goods[index].modify_retailPrice = $event.target.value
+				that.select_goods[index].total_money = that.select_goods[index].num * Number($event.target.value)
+			},
+
+			//输入数量时触发
+			modify_num($event, index) {
+				//console.log($event, index)
+
+				that.select_goods[index].num = Number($event)
+				that.select_goods[index].total_money = Number($event) * Number(that.select_goods[index].modify_retailPrice)
+			},
+
 			//打印点击
 			Print(row) {
 				that.now_product = row
@@ -393,9 +439,14 @@
 				} else {
 					that.option_title = name;
 					if (name == "入库" || name == "出库") {
-						that.value1 = true
-					} else if (name == "打印") {
-
+						that.value1 = true;
+						let index = 0;
+						for (let item of that.select_goods) {
+							that.select_goods[index].num = 1;
+							that.select_goods[index].total_money = 1 * that.select_goods[index].retailPrice;
+							that.select_goods[index].modify_retailPrice = that.select_goods[index].retailPrice;
+							index += 1;
+						}
 					}
 
 				}
@@ -433,6 +484,7 @@
 
 			//选择某一项时事件
 			get_select(selection) {
+				console.log(selection)
 				that.select_goods = selection
 			},
 
@@ -442,6 +494,7 @@
 			},
 
 			delete_good() {
+				
 				if (that.select_goods.length == 0) {
 					this.$Message.error('当前没有选择产品');
 				} else {
@@ -454,20 +507,7 @@
 			},
 
 			btnClick() {
-				const query = Bmob.Query('_User');
-				query.get(that.userid).then(res => {
-					console.log(res)
-					if (res.is_vip) {
-						document.querySelector('.input-file').click();
-					} else {
-						this.$Modal.warning({
-							title: '还不是会员，无法使用',
-							content: '请去小程序端成为会员后，再来登陆'
-						});
-					}
-				}).catch(err => {
-					console.log(err)
-				})
+				document.querySelector('.input-file').click();
 			},
 
 			importfile(event) {
@@ -526,15 +566,11 @@
 				const poiID = pointer.set(that.userid)
 				// 构造含有50个对象的数组
 				for (let good of goods) {
-					console.log(good)
 					var queryObj = Bmob.Query('Goods');
-					queryObj.set('goodsName', "" + (good.商品名字).toString());
+					queryObj.set('goodsName', "" + good.商品名字);
 					queryObj.set('costPrice', "" + good.成本价);
 					queryObj.set('retailPrice', "" + good.零售价);
-					queryObj.set('packingUnit', (good.单位).toString());
-					queryObj.set('position', (good.存放位置) ? (good.存放位置).toString() : '');
-					queryObj.set('productCode', good.条形码 ? (good.条形码).toString() : '');
-					queryObj.set('packageContent', good.规格 ? (good.规格).toString() : '');
+					queryObj.set('packingUnit', good.单位);
 					queryObj.set('reserve', Number("" + good.库存));
 					queryObj.set('userId', poiID);
 					queryArray.push(queryObj);
@@ -575,11 +611,10 @@
 				query.find().then(res => {
 					console.log(res);
 					for (let item of res) {
-						item.class = (item.goodsClass ? (item.goodsClass.class_text || "") : "") + "    " + (item.second_class ? (item.second_class
-							.class_text || "") : "")
+						item.class = (item.goodsClass ? (item.goodsClass.class_text || "") : "") + "    " + (item.second_class ?(item.second_class.class_text || "") : "")
 						item.stocks = (item.stocks) ? item.stocks.stock_name : ""
 
-						item.qrcodeImg = jrQrcode.getQrBase64((item.productCode) ? item.productCode : item.objectId + '-' + false)
+						item.qrcodeImg = jrQrcode.getQrBase64((item.productCode) ? item.productCode : item.objectId + '-' +false)
 						item.productCode = (item.productCode) ? item.productCode : item.objectId + '-' + false
 					}
 					this.goods = res;
@@ -597,7 +632,7 @@
 			display: none
 		}
 	}
-
+	
 	.display_flex {
 		display: flex;
 		align-items: center;

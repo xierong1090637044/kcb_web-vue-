@@ -31,21 +31,12 @@
 		<Layout>
 			<Header>
 				<Menu mode="horizontal" theme="dark" active-name="1" @on-select="select_horizontal_item">
-					<div class="layout-logo" style="color: #fff;line-height: 30px;font-weight: bold;font-size: 16px;background: unset;width: auto;margin-top: 4px;">库存表
-						V 1.0.0</div>
+					<div class="layout-logo" style="color: #fff;line-height: 30px;font-weight: bold;font-size: 16px;background: unset;width: auto;margin-top: 4px;">
+						库存管理V 1.0.0
+					</div>
 					<div class="layout-nav">
-						<MenuItem name="1" to='thanks'>
-						<Icon type="md-paper-plane" size="24" />
-						特别感谢
-						</MenuItem>
-						<MenuItem name="2" to='download'>
-						<Icon type="md-paper" size="24" />
-						加入我们
-						</MenuItem>
-
 						<MenuItem name="3">
-						<Icon type="ios-log-out" size="24" />
-						退出登录
+						<Icon type="ios-log-out" size="24" />退出登录
 						</MenuItem>
 
 						<MenuItem name="4">
@@ -141,7 +132,7 @@
 	}
 </script>
 <style>
-	.layout-nav{
+	.layout-nav {
 		width: 600px !important;
 		text-align: right !important;
 	}

@@ -2,7 +2,14 @@
 <template>
 	<div style="position: relative;">
 		<Spin size="large" fix v-if="loading"></Spin>
-
+		
+		<div style="margin-bottom: 10px;">
+			<Breadcrumb  separator="<b style='color: #999;'>/</b>">
+				<BreadcrumbItem to="/">首页</BreadcrumbItem>
+				<BreadcrumbItem  to="/home/goods">仓库管理</BreadcrumbItem>
+			</Breadcrumb>
+		</div>
+		
 		<div style="margin-bottom: 10px;display: flex;align-items: center;justify-content: space-between;">
 
 			<div style="display: flex;align-items: center;">
@@ -10,7 +17,7 @@
 			</div>
 
 		</div>
-		<Table :columns="columns" :data="data" stripe border>
+		<Table :columns="columns" :data="data" stripe border :height="screenHeight - 250">
 			<template slot-scope="{ row, index }" slot="action">
 				<Button type="primary" size="small" style="margin-right: 5px" @click="edit(row)">修改</Button>
 				<Button type="error" size="small" @click="remove(row)">删除</Button>
@@ -28,7 +35,7 @@
 		<Modal v-model="modal2" width="360">
 			<p slot="header" style="color:#f60;text-align:center">
 				<Icon type="ios-information-circle"></Icon>
-				<span>确定删除此分类</span>
+				<span>确定删除此仓库</span>
 			</p>
 			<div style="text-align:center">
 				<p>删除后将无法恢复</p>
@@ -70,14 +77,16 @@
 </template>
 <script>
 	import manage from '@/serve/manage.js';
-
+	import jrQrcode from "jr-qrcode";
+	
 	let that;
 	export default {
 		components: {
-
+			
 		},
 		data() {
 			return {
+				screenHeight: window.innerHeight,
 				charge:"",
 				stock: {
 					name: "",
@@ -98,8 +107,26 @@
 						align: 'center'
 					},
 					{
-						title: '仓库Id',
-						key: 'objectId',
+						title: '仓库图片',
+						key: 'Image',
+						width: 140,
+						render: (h, params) => {
+							return h('div', {
+								style: {
+									"text-align": "center"
+								},
+							}, [
+								h('img', {
+									style: {
+										height: "100px",
+										padding:"4px 0",
+									},
+									attrs: {
+										src: params.row.Image[0]
+									}
+								})
+							]);
+						}
 					},
 					{
 						title: '仓库名字',
@@ -124,6 +151,28 @@
 						key: 'beizhu',
 					},
 					{
+						title: '仓库二维码',
+						width: 100,
+						key: 'qrcodeImg',
+						render: (h, params) => {
+							return h('div', {
+								style: {
+									"text-align": "center",
+									"padding":"10px 0"
+								},
+							}, [
+								h('img', {
+									style: {
+										width: "65px",
+									},
+									attrs: {
+										src: params.row.qrcodeImg
+									}
+								})
+							]);
+						}
+					},
+					{
 						title: '创建时间',
 						key: 'createdAt',
 						sortable: true
@@ -141,6 +190,9 @@
 			that = this;
 			this.$Loading.start();
 			manage.getstock_list().then(res=>{
+				for(let item of res){
+					item.qrcodeImg = jrQrcode.getQrBase64((item.objectId + '-stock'))
+				}
 				that.data = res
 				manage.get_chargeList().then(res=>{
 					
