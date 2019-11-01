@@ -14,9 +14,9 @@ export default {
 		let start_date
 		let end_date
 
-			d = Day.getDate()
-			start_date = common.getDay(1) + " 00:00:00"
-			end_date = common.getDay(-d + 1) + " 00:00:00"
+		d = Day.getDate()
+		start_date = common.getDay(1) + " 00:00:00"
+		end_date = common.getDay(-d + 1) + " 00:00:00"
 
 
 		return new Promise((resolve, reject) => {
@@ -30,21 +30,21 @@ export default {
 			query.limit(1000)
 			query.find().then(res => {
 
-					for (let i = 0; i < d; i++) {
-						let data = {}
-						let data1 = {}
-						categories.push(common.getDay(-i))
-						data._sumNum = 0
-						data.desc = "入库"
-						data.type = 1
-						data.date = common.getDay(-i)
-						_data.push(data)
-						data1._sumNum = 0
-						data1.desc = "出库"
-						data1.type = -1
-						data1.date = common.getDay(-i)
-						_data.push(data1)
-					}
+				for (let i = 0; i < 31; i++) {
+					let data = {}
+					let data1 = {}
+					categories.push(common.getDay(-i))
+					data._sumNum = 0
+					data.desc = "入库"
+					data.type = 1
+					data.date = common.getDay(-i)
+					_data.push(data)
+					data1._sumNum = 0
+					data1.desc = "出库"
+					data1.type = -1
+					data1.date = common.getDay(-i)
+					_data.push(data1)
+				}
 
 				for (let a_data of _data) {
 					if (a_data.type == 1) {
@@ -61,7 +61,7 @@ export default {
 						}
 					}
 				}
-				
+
 				resolve(_data)
 				//console.log(lineReserve)
 			});

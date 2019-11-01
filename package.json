@@ -20,6 +20,7 @@
     "iview": "^3.4.2",
     "jr-qrcode": "^1.1.4",
     "jsbarcode": "^3.11.0",
+    "view-design": "^4.0.2",
     "vue": "^2.5.2",
     "vue-print-nb": "^1.4.0",
     "vue-router": "^3.0.1",

@@ -1,7 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import iView from 'iview';
-import 'iview/dist/styles/iview.css';
+import ViewUI from 'view-design';
+
+// import style
+import 'view-design/dist/styles/iview.css';
 import common from '@/serve/common.js';
 import expandRow from '@/components/component/expandRow.vue';
 import Print from 'vue-print-nb'
@@ -27,7 +29,7 @@ Bmob.initialize("825b954fe97e9186", "109063","47f76baf4ee4d90630d7b2bc17f7505c")
 
 Vue.use(Bmob)
 Vue.use(Router)
-Vue.use(iView)
+Vue.use(ViewUI)
 Vue.use(Print);
 
 export default new Router({

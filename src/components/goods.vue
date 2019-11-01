@@ -1,16 +1,16 @@
 <template>
 	<div>
 		<div style="margin-bottom: 10px;">
-			<Breadcrumb  separator="<b style='color: #999;'>/</b>">
+			<Breadcrumb separator="<b style='color: #999;'>/</b>">
 				<BreadcrumbItem to="/">首页</BreadcrumbItem>
-				<BreadcrumbItem  to="/home/goods">产品管理</BreadcrumbItem>
+				<BreadcrumbItem to="/home/goods">产品管理</BreadcrumbItem>
 			</Breadcrumb>
 		</div>
-		
+
 		<div style="margin-bottom: 10px;display: flex;align-items: center;justify-content: space-between;">
 
 			<div style="display: flex;align-items: center;">
-				<Dropdown style="margin-right: 10px" @on-click="selected_options">
+				<Dropdown style="margin-right: 10px" @on-click="selected_options" trigger="click" >
 					<Button type="primary">
 						打印操作
 						<Icon type="ios-arrow-down"></Icon>
@@ -24,25 +24,23 @@
 						</DropdownItem>
 					</DropdownMenu>
 				</Dropdown>
-				
-				<Dropdown style="margin-right: 10px">
+
+				<Dropdown style="margin-right: 10px" trigger="click" >
 					<Button type="primary">
 						产品操作
 						<Icon type="ios-arrow-down"></Icon>
 					</Button>
 					<DropdownMenu slot="list">
 						<DropdownItem name="添加产品">
-							<router-link to="/home/add_good">
-								<Button type="primary" long style="margin-right: 10px;">添加产品</Button>
-							</router-link>
+							<Button type="primary" long style="margin-right: 10px;" @click="addProduct">添加产品</Button>
 						</DropdownItem>
 						<DropdownItem name="删除">
 							<Button type="primary" long @click="delete_good()" style="margin-right: 10px;">删除</Button>
 						</DropdownItem>
 					</DropdownMenu>
 				</Dropdown>
-				
-				<Dropdown style="margin-right: 10px">
+
+				<Dropdown style="margin-right: 10px" trigger="click" >
 					<Button type="primary">
 						导入导出操作
 						<Icon type="ios-arrow-down"></Icon>
@@ -61,7 +59,7 @@
 						</DropdownItem>
 					</DropdownMenu>
 				</Dropdown>
-				
+
 				<Button type="error" @click="modal1=true" icon="ios-funnel-outline">筛选</Button>
 			</div>
 		</div>
@@ -170,8 +168,11 @@
 				<img :src="item.qrcodeImg" style="width: 80px;" />
 				<div style="color: #333;margin-top: 10px;"><text style="font-size: 10px;">{{item.goodsName}}</text></div>
 			</div>
-
 		</div>
+
+		<Modal title="产品图片" v-model="GoodImg.show" class-name="vertical-center-modal">
+			<img :src="GoodImg.attr" style="height: 800px;margin: 0 auto;" />
+		</Modal>
 
 	</div>
 </template>
@@ -189,6 +190,10 @@
 		components: {},
 		data() {
 			return {
+				GoodImg: {
+					show: false,
+					attr: ''
+				},
 				modal2: {
 					all_money: 0,
 					real_money: 0,
@@ -214,6 +219,7 @@
 				padding_size: 30,
 				modal1: false,
 				userid: JSON.parse(localStorage.getItem('bmob')).objectId || '',
+				user: JSON.parse(localStorage.getItem('bmob')),
 				all_stocks: [],
 				page_size: 50,
 				pege_number: 1,
@@ -243,11 +249,17 @@
 							}, [
 								h('img', {
 									style: {
-										width:'60px',
-										padding:"4px 0",
+										width: '60px',
+										padding: "4px 0",
 									},
 									attrs: {
 										src: params.row.goodsIcon
+									},
+									on: {
+										'click': function() {
+											that.GoodImg.show = true
+											that.GoodImg.attr = params.row.goodsIcon
+										}
 									}
 								})
 							]);
@@ -410,6 +422,26 @@
 
 		methods: {
 
+			//添加产品
+			addProduct() {
+				if (that.user.is_vip) {
+					this.$router.push({
+						path: '/home/add_good'
+					})
+				} else {
+					if (that.goods.length >= 30) {
+						this.$Message['error']({
+							background: true,
+							content: '非会员只能上传30条'
+						});
+					} else {
+						this.$router.push({
+							path: 'goods/addgood'
+						})
+					}
+				}
+			},
+
 			//输入实际的出入库的价格
 			modify_price($event, index) {
 				//console.log($event, index)
@@ -494,7 +526,7 @@
 			},
 
 			delete_good() {
-				
+
 				if (that.select_goods.length == 0) {
 					this.$Message.error('当前没有选择产品');
 				} else {
@@ -507,7 +539,13 @@
 			},
 
 			btnClick() {
-				document.querySelector('.input-file').click();
+				console.log(that.user);
+				if (that.user.is_vip) {
+					document.querySelector('.input-file').click();
+				} else {
+					return
+				}
+
 			},
 
 			importfile(event) {
@@ -611,10 +649,11 @@
 				query.find().then(res => {
 					console.log(res);
 					for (let item of res) {
-						item.class = (item.goodsClass ? (item.goodsClass.class_text || "") : "") + "    " + (item.second_class ?(item.second_class.class_text || "") : "")
+						item.class = (item.goodsClass ? (item.goodsClass.class_text || "") : "") + "    " + (item.second_class ? (item.second_class
+							.class_text || "") : "")
 						item.stocks = (item.stocks) ? item.stocks.stock_name : ""
 
-						item.qrcodeImg = jrQrcode.getQrBase64((item.productCode) ? item.productCode : item.objectId + '-' +false)
+						item.qrcodeImg = jrQrcode.getQrBase64((item.productCode) ? item.productCode : item.objectId + '-' + false)
 						item.productCode = (item.productCode) ? item.productCode : item.objectId + '-' + false
 					}
 					this.goods = res;
@@ -632,7 +671,7 @@
 			display: none
 		}
 	}
-	
+
 	.display_flex {
 		display: flex;
 		align-items: center;
@@ -642,5 +681,16 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
+	}
+
+	.vertical-center-modal {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		text-align: center;
+
+		.ivu-modal {
+			top: 0;
+		}
 	}
 </style>

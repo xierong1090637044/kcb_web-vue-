@@ -1,32 +1,49 @@
 <template>
 	<div style="position: relative;">
 		<Spin size="large" fix v-if="loading"></Spin>
-		<Row style="background:#eee;padding:20px">
-			<Col span="5">
-			<Card shadow style="background: #2db7f5;color: #fff;">
-				<p slot="title" style="color:#fff">今日详情</p>
-				<p>今日入库：{{get_reserve}}</p>
-				<p>今日出库：{{out_reserve}}</p>
-			</Card>
-			</Col>
-			<Col span="5" offset="2">
-			<Card shadow style="background: #ed4014;color: #fff;">
-				<p slot="title" style="color:#fff">库存详情</p>
-				<p>库存总量：{{total_reserve}}</p>
-				<p>库存成本：{{total_money}}</p>
-				<p>库存种类：{{total_products}}</p>
-			</Card>
-			</Col>
-		</Row>
+		
+		<div style="padding:20px;background: #FFFFFF;">
+			<div style="padding:0 0 20px 0;font-size: 16px;font-weight: bold;">库存概况：</div>
+			<Row>
+				<Col span="5">
+				<Card shadow style="background: #2db7f5;color: #fff;">
+					<p slot="title" style="color:#fff">今日详情</p>
+					<p>今日入库：{{get_reserve}}</p>
+					<p>今日出库：{{out_reserve}}</p>
+				</Card>
+				</Col>
+				<Col span="5" offset="2">
+				<Card shadow style="background: #ed4014;color: #fff;">
+					<p slot="title" style="color:#fff">库存详情</p>
+					<p>库存总量：{{total_reserve}}</p>
+					<p>库存成本：{{total_money}}</p>
+					<p>库存种类：{{total_products}}</p>
+				</Card>
+				</Col>
+			</Row>
+		</div>
+		
+		
+		<div style="padding:20px;background: #FFFFFF;margin-top: 20px;">
+			<div style="padding:0 0 20px 0;font-size: 16px;font-weight: bold;">出入库：</div>
+			<Row>
+				<Col>
+				<Card shadow>
+					<div id="c1" style="background: #FFFFFF;"></div>
+				</Card>
+				</Col>
+			</Row>
+		</div>
+		
 
-		<div id="c1"></div>
+
 	</div>
 </template>
 <script>
 	import common from '@/utils/common.js';
 	import mchart from '@/utils/chart.js';
 	import G2 from '@antv/g2';
-	
+
 	let that;
 	export default {
 		data() {
@@ -50,41 +67,37 @@
 				})();
 			};
 			this.gettoday_detail();
-			
-			
+
+
 			let year = that.now_day.split("-")[0]
 			let month = that.now_day.split("-")[1]
-			mchart.getLineChart(year,month).then(res => {
-				console.log(res)
-				
+			mchart.getLineChart(year, month).then(res => {
+				//console.log(res)
 				var chart = new G2.Chart({
-				    container: 'c1',
-				    forceFit: true,
-				    height: 600
-				  });
-				  chart.source(res, {
-				    year: {
-				      type: 'linear',
-				      tickInterval: 50
-				    }
-				  });
-				  chart.tooltip({
-				    crosshairs: {
-				      type: 'line'
-				    },
-				    useHtml: false
-				  });
-				  chart.areaStack().position('date*_sumNum').color('desc');
-				  chart.lineStack().position('date*_sumNum').color('desc').size(2);
-				  chart.render();
+					container: 'c1',
+					forceFit: true,
+					height: 600
+				});
+				chart.source(res, {
+					year: {
+						type: 'linear',
+						tickInterval: 50
+					}
+				});
+				chart.tooltip({
+					crosshairs: {
+						type: 'line'
+					},
+					useHtml: false
+				});
+				chart.areaStack().position('date*_sumNum').color('desc');
+				chart.lineStack().position('date*_sumNum').color('desc').size(1);
+				chart.render();
 			})
-			
-			
-			
 		},
 
 		methods: {
-			
+
 			//得到今日概况
 			gettoday_detail: function() {
 				let get_reserve = 0;

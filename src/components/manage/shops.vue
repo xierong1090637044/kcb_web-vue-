@@ -62,8 +62,10 @@
 				</FormItem>
 			</Form>
 		</Modal>
-
-
+		
+		<Modal title="门店图片" v-model="GoodImg.show" class-name="vertical-center-modal">
+			<img :src="GoodImg.attr" style="height: 800px;margin: 0 auto;width: 100%;" />
+		</Modal>
 	</div>
 </template>
 <script>
@@ -76,6 +78,10 @@
 		},
 		data() {
 			return {
+				GoodImg: {
+					show: false,
+					attr: ''
+				},
 				screenHeight: window.innerHeight,
 				shop: {
 					name: "",
@@ -96,8 +102,32 @@
 						align: 'center'
 					},
 					{
-						title: '门店Id',
-						key: 'objectId',
+						title: '门店图片',
+						key: 'Image',
+						width: 140,
+						render: (h, params) => {
+							return h('div', {
+								style: {
+									"text-align": "center"
+								},
+							}, [
+								h('img', {
+									style: {
+										height: "100px",
+										padding: "4px 0",
+									},
+									attrs: {
+										src: params.row.Image ? params.row.Image[0] : ''
+									},
+									on: {
+										'click': function() {
+											that.GoodImg.show = true
+											that.GoodImg.attr = params.row.Image[0]
+										}
+									}
+								})
+							]);
+						}
 					},
 					{
 						title: '门店名字',
@@ -207,3 +237,16 @@
 		},
 	}
 </script>
+
+<style>
+	.vertical-center-modal {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		text-align: center;
+	
+		.ivu-modal {
+			top: 0;
+		}
+	}
+</style>

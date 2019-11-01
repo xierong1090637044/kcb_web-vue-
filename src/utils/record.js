@@ -108,8 +108,6 @@ export default {
 				query.limit(1000);
 				query.find().then(res => {
 
-
-
 					for (let item of res) {
 						if (item.stocktype == 0) {
 							warn_num += 1;
