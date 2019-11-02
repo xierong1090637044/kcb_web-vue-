@@ -35,12 +35,16 @@ export default {
 					let data1 = {}
 					categories.push(common.getDay(-i))
 					data._sumNum = 0
-					data.desc = "入库"
+          data.total_money = 0
+					data.desc = "入库数量"
+          data.desc1 = "入库金额"
 					data.type = 1
 					data.date = common.getDay(-i)
 					_data.push(data)
 					data1._sumNum = 0
-					data1.desc = "出库"
+          data1.total_money = 0
+					data1.desc = "出库数量"
+          data1.desc1 = "出库金额"
 					data1.type = -1
 					data1.date = common.getDay(-i)
 					_data.push(data1)
@@ -51,12 +55,14 @@ export default {
 						for (let item of res) {
 							if (item.createdAt == a_data.date && item.type == 1) {
 								a_data._sumNum = item._sumNum
+                a_data.total_money = item._sumReally_total_money
 							}
 						}
 					} else {
 						for (let item of res) {
 							if (item.createdAt == a_data.date && item.type == -1) {
 								a_data._sumNum = item._sumNum
+                a_data.total_money = item._sumReally_total_money
 							}
 						}
 					}
