@@ -61,7 +61,7 @@
 		</div>
 		
 		<Modal title="产品图片" v-model="GoodImg.show" class-name="vertical-center-modal">
-			<img :src="GoodImg.attr" style="height: 800px;margin: 0 auto;" />
+			<img :src="GoodImg.attr" style="height: 800px;margin: 0 auto;width: 100%;" />
 		</Modal>
 
 	</div>

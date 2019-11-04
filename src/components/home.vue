@@ -55,22 +55,36 @@
 							<div style="margin-left: 10px;margin-top: 4px;">首页</div>
 						</div>
 						</MenuItem>
-
-						<MenuItem name="2" to='/home/goods'>
+						
+						<MenuItem name="2" to='/home/goodEnter'>
+						<div class="display_flex">
+							<Icon type="ios-exit" style="font-size: 20px;" />
+							<div style="margin-left: 10px;margin-top: 4px;">采购或入库</div>
+						</div>
+						</MenuItem>
+						
+						<MenuItem name="3" to='/home/index'>
 						<div class="display_flex">
 							<Icon type="md-cart" style="font-size: 20px;" />
+							<div style="margin-left: 10px;margin-top: 4px;">销售或出库</div>
+						</div>
+						</MenuItem>
+
+						<MenuItem name="4" to='/home/goods'>
+						<div class="display_flex">
+							<Icon type="md-cube" style="font-size: 20px;" />
 							<div style="margin-left: 10px;margin-top: 4px;">产品管理</div>
 						</div>
 						</MenuItem>
 
-						<MenuItem name="3" to='/home/operations'>
+						<MenuItem name="5" to='/home/operations'>
 						<div class="display_flex">
 							<Icon type="ios-paper" style="font-size: 20px;" />
 							<div style="margin-left: 10px;margin-top: 4px;">操作记录</div>
 						</div>
 						</MenuItem>
 
-						<Submenu name="4">
+						<Submenu name="6">
 							<template slot="title">
 								<Icon type="ios-keypad"></Icon>
 								管理

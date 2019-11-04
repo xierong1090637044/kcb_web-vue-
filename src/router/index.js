@@ -23,6 +23,7 @@ import shops from '@/components/manage/shops'; // 门店管理页面
 import staffs from '@/components/manage/staffs'; // 员工管理页面
 import customs from '@/components/manage/customs'; // 客户管理页面
 import producers from '@/components/manage/producers'; // 客户管理页面
+import goodEnter from '@/components/goodEnter'; // 入库或采购页面
 import Bmob from 'hydrogen-js-sdk'
 
 Bmob.initialize("825b954fe97e9186", "109063","47f76baf4ee4d90630d7b2bc17f7505c");
@@ -45,10 +46,15 @@ export default new Router({
 		  component: home,
 			children: [
         {
-          path: 'index',
-          name: 'index',
-          component: index
+          path: 'goodEnter',
+          name: 'goodEnter',
+          component: goodEnter
         },
+				{
+				  path: 'index',
+				  name: 'index',
+				  component: index
+				},
 				{
 				  path: 'thanks',
 				  name: 'thanks',

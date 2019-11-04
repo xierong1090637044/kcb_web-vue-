@@ -73,25 +73,13 @@
 					}],
 					password: [{
 							required: true,
-							message: '请输入密码',
+							message: '请输入验证码',
 							trigger: 'blur'
 						},
 						{
 							type: 'string',
 							min: 6,
-							message: '密码不能少于6位',
-							trigger: 'blur'
-						}
-					],
-					password: [{
-							required: true,
-							message: '请输入密码',
-							trigger: 'blur'
-						},
-						{
-							type: 'string',
-							min: 6,
-							message: '密码不能少于6位',
+							message: '验证码不能少于6位',
 							trigger: 'blur'
 						}
 					],
@@ -121,6 +109,7 @@
 				Bmob.User.signOrLoginByMobilePhone(Number(phone), Number(code)).then(res => {
 					console.log(res)
 					that.button_login = false
+					localStorage.setItem("identity", 1)
 					localStorage.setItem("bmob", JSON.stringify(res))
 					this.$router.push({
 						path: '/home/index'
