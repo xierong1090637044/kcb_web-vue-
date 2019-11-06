@@ -165,7 +165,7 @@
 					},
 					{
 						title: '仓库二维码',
-						width: 100,
+						width: 120,
 						key: 'qrcodeImg',
 						render: (h, params) => {
 							return h('div', {
