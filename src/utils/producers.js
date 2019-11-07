@@ -1,7 +1,7 @@
 import Bmob from "hydrogen-js-sdk";
 export default {
-	//得到门店列表
-
+	
+	//得到供货商列表
 	get_producerList(disabled,search_text) {
 		return new Promise((resolve, reject) => {
 			let userid = JSON.parse(localStorage.getItem('bmob')).objectId;

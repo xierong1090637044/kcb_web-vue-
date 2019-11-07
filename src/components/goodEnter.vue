@@ -7,8 +7,19 @@
 			</Breadcrumb>
 		</div>
 
-		<Table :columns="columns" :data="goods" :loading="loading" ref="table" border size="small" :height="screenHeight - 240"
-		 @on-select="get_select" @on-select-cancel="cancle_select" @on-select-all-cancel="cancle_select" id="print_table">
+		<div class="display_flex_bet" style="margin-bottom: 20px;">
+			<div class="display_flex">
+				<div>选择客户：</div>
+				<Select prefix="ios-contact" style="width:300px">
+					<Option v-for="item in customsList" :value="item.custom_name" :key="item.objectId">{{ item.custom_name }}</Option>
+				</Select>
+			</div>
+
+			<Input search enter-button placeholder="请输入产品名字" style="width: 300px" @on-search="searchGood" />
+		</div>
+
+		<Table :columns="columns" :data="goods" :loading="loading" ref="table" border size="small" :height="screenHeight - 640"
+		 @on-select="selectGoods">
 		</Table>
 
 		<div style="margin: 10px;overflow: hidden">
@@ -16,18 +27,33 @@
 				<Page :total="100" :current="pege_number" @on-change="changePage"></Page>
 			</div>
 		</div>
-		
+
+		<Form :model="formItem" :label-width="80">
+			<FormItem label="Input">
+				<Input v-model="formItem.input" placeholder="Enter something..."></Input>
+			</FormItem>
+			
+			
+			<FormItem label="Text">
+				<Input v-model="formItem.textarea" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="Enter something..."></Input>
+			</FormItem>
+			<FormItem>
+				<Button type="primary">确定</Button>
+			</FormItem>
+		</Form>
+
 		<!--产品图片展示-->
 		<Modal title="产品图片" v-model="GoodImg.show" class-name="vertical-center-modal">
 			<img :src="GoodImg.attr" style="height: 800px;margin: 0 auto;width: 100%;" />
 		</Modal>
-		
+
 	</div>
 </template>
 <script>
 	import common from '@/serve/common.js';
+	import customs from '@/serve/customs.js';
 	import goods from '@/serve/goods.js';
-	
+
 	let that;
 	export default {
 		components: {},
@@ -37,33 +63,8 @@
 					show: false,
 					attr: ''
 				},
-				modal2: {
-					all_money: 0,
-					real_money: 0,
-				},
-				retailPrice: '',
-				now_product: '',
-				option_title: '',
-				value1: false,
-				value2: false,
-				styles: {
-					height: 'calc(100% - 55px)',
-					overflow: 'auto',
-					paddingBottom: '53px',
-					position: 'static',
-					background: '#eee'
-				},
-				search_goodMame: '',
-				selected_stocks: null,
-				selected_goodsClass: null,
-				selected_second_class: null,
-				all_fristclass: [], //所有的一级分类
-				all_secondclass: [], //所有的二级分类
-				padding_size: 30,
-				modal1: false,
 				userid: JSON.parse(localStorage.getItem('bmob')).objectId || '',
 				user: JSON.parse(localStorage.getItem('bmob')),
-				all_stocks: [],
 				page_size: 50,
 				pege_number: 1,
 				screenHeight: window.innerHeight,
@@ -116,6 +117,18 @@
 						sortable: true,
 					},
 					{
+						width: 120,
+						align: 'center',
+						title: '数量',
+						key: 'num',
+					},
+					{
+						width: 120,
+						align: 'center',
+						title: '实际价格',
+						key: 'num',
+					},
+					{
 						width: 100,
 						align: 'center',
 						sortable: true,
@@ -154,30 +167,6 @@
 						key: 'stocks',
 					},
 					{
-						width: 100,
-						align: 'center',
-						title: '存放位置',
-						key: 'position',
-					},
-					{
-						width: 120,
-						align: 'center',
-						title: '登记编号',
-						key: 'regNumber',
-					},
-					{
-						width: 160,
-						align: 'center',
-						title: '产品简介',
-						key: 'product_info',
-					},
-					{
-						width: 100,
-						align: 'center',
-						title: '生产厂家',
-						key: 'producer',
-					},
-					{
 						width: 160,
 						align: 'center',
 						title: '创建时间',
@@ -186,7 +175,20 @@
 					}
 				],
 				goods: [],
-				select_goods: [] //选择模式下选择的产品数据
+				select_goods: [], //选择模式下选择的产品数据
+				customsList: [],
+				searchGoodText: '',
+				formItem: {
+					input: '',
+					select: '',
+					radio: 'male',
+					checkbox: [],
+					switch: true,
+					date: '',
+					time: '',
+					slider: [20, 50],
+					textarea: ''
+				}
 			};
 		},
 
@@ -199,186 +201,23 @@
 			};
 			this.get_productList();
 
-			goods.getstock_list().then(res => {
+			customs.get_customList(false, '').then(res => {
 				console.log(res)
-				that.all_stocks = res
-			});
-
-
-			goods.get_fristclass().then(res => {
-				console.log(res)
-				that.all_fristclass = res
-			});
+				that.customsList = res
+			})
 		},
 
 		methods: {
 
-			//添加产品
-			addProduct() {
-				if (that.user.is_vip) {
-					this.$router.push({
-						path: '/home/add_good'
-					})
-				} else {
-					if (that.goods.length >= 30) {
-						this.$Message['error']({
-							background: true,
-							content: '非会员只能上传30条'
-						});
-					} else {
-						this.$router.push({
-							path: 'goods/addgood'
-						})
-					}
-				}
+			//选择产品
+			selectGoods(e) {
+				console.log(e)
 			},
 
-			//输入实际的出入库的价格
-			modify_price($event, index) {
-				//console.log($event, index)
-
-				that.select_goods[index].modify_retailPrice = $event.target.value
-				that.select_goods[index].total_money = that.select_goods[index].num * Number($event.target.value)
-			},
-
-			//输入数量时触发
-			modify_num($event, index) {
-				//console.log($event, index)
-
-				that.select_goods[index].num = Number($event)
-				that.select_goods[index].total_money = Number($event) * Number(that.select_goods[index].modify_retailPrice)
-			},
-
-			//打印点击
-			Print(row) {
-				that.now_product = row
-			},
-
-			//选择操作是触发
-			selected_options(name) {
-				console.log(that.select_goods)
-				if (that.select_goods.length == 0) {
-					this.$Message.error('当前没有选择产品');
-				} else {
-					that.option_title = name;
-					if (name == "入库" || name == "出库") {
-						that.value1 = true;
-						let index = 0;
-						for (let item of that.select_goods) {
-							that.select_goods[index].num = 1;
-							that.select_goods[index].total_money = 1 * that.select_goods[index].retailPrice;
-							that.select_goods[index].modify_retailPrice = that.select_goods[index].retailPrice;
-							index += 1;
-						}
-					}
-
-				}
-			},
-
-			//点击下载导入模板
-			download_demo() {
-				window.open("/static/demo.xlsx");
-			},
-
-			//重置点击
-			cancel() {
-				that.loading = true,
-					that.search_goodMame = '',
-					that.selected_stocks = null,
-					that.selected_goodsClass = null,
-					that.selected_second_class = null,
-					that.get_productList()
-			},
-
-			//modal 确定点击
-			modal_confrim() {
-				that.loading = true,
-					that.get_productList()
-			},
-
-			//获得二级分类
-			get_secondclass(value) {
-				console.log(value)
-				goods.get_secondclass(value).then(res => {
-					//console.log(res)
-					this.all_secondclass = res
-				})
-			},
-
-			//选择某一项时事件
-			get_select(selection) {
-				console.log(selection)
-				that.select_goods = selection
-			},
-
-			//取消某一项时的事件
-			cancle_select(selection) {
-				that.select_goods = selection
-			},
-
-			delete_good() {
-
-				if (that.select_goods.length == 0) {
-					this.$Message.error('当前没有选择产品');
-				} else {
-					goods.delete_goods(that.select_goods).then(res => {
-						this.$Message.success('删除成功');
-						that.get_productList();
-					});
-
-				}
-			},
-
-			btnClick() {
-				console.log(that.user);
-				if (that.user.is_vip) {
-					document.querySelector('.input-file').click();
-				} else {
-					return
-				}
-
-			},
-
-			importfile(event) {
-				if (!event.currentTarget.files.length) {
-					return;
-				}
-				const that = this;
-				// 拿取文件对象
-				var f = event.currentTarget.files[0];
-				// 用FileReader来读取
-				var reader = new FileReader();
-				// 重写FileReader上的readAsBinaryString方法
-				FileReader.prototype.readAsBinaryString = function(f) {
-					var binary = '';
-					var wb; // 读取完成的数据
-					var outdata; // 你需要的数据
-					var reader = new FileReader();
-					reader.onload = function(e) {
-						// 读取成Uint8Array，再转换为Unicode编码（Unicode占两个字节）
-						var bytes = new Uint8Array(reader.result);
-						var length = bytes.byteLength;
-						for (var i = 0; i < length; i++) {
-							binary += String.fromCharCode(bytes[i]);
-						}
-						// 接下来就是xlsx了，具体可看api
-						wb = XLSX.read(binary, {
-							type: 'binary'
-						});
-						outdata = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-						// 自定义方法向父组件传递数据
-						that.add_all(outdata)
-					};
-					reader.readAsArrayBuffer(f);
-				};
-				reader.readAsBinaryString(f);
-			},
-
-			//导出数据表格点击
-			exportData(type) {
-				this.$refs.table.exportCsv({
-					filename: '产品数据',
-				});
+			//搜索产品
+			searchGood(e) {
+				that.searchGoodText = e
+				that.get_productList()
 			},
 
 			//改变页数
@@ -388,51 +227,14 @@
 				that.get_productList();
 			},
 
-			//批量增加
-			add_all(goods) {
-				const queryArray = new Array();
-				const pointer = Bmob.Pointer('_User')
-				const poiID = pointer.set(that.userid)
-				// 构造含有50个对象的数组
-				for (let good of goods) {
-					var queryObj = Bmob.Query('Goods');
-					queryObj.set('goodsName', "" + good.商品名字);
-					queryObj.set('costPrice', "" + good.成本价);
-					queryObj.set('retailPrice', "" + good.零售价);
-					queryObj.set('packingUnit', good.单位);
-					queryObj.set('reserve', Number("" + good.库存));
-					queryObj.set('userId', poiID);
-					queryArray.push(queryObj);
-				}
-
-				// 传入刚刚构造的数组
-				Bmob.Query('Goods')
-					.saveAll(queryArray)
-					.then(result => {
-						console.log(result);
-						this.$Message.success('导入成功');
-						that.get_productList()
-					})
-					.catch(err => {
-						console.log(err);
-					});
-			},
-
 			//查询产品列表
 			get_productList() {
-				console.log(that.selected_stocks, that.selected_second_class)
 				const query = Bmob.Query('Goods');
 				query.equalTo('userId', '==', that.userid);
 				query.include('second_class', 'goodsClass', 'stocks')
 
-				if (that.selected_stocks) {
-					query.equalTo("stocks", "==", that.selected_stocks);
-				}
-				if (that.selected_second_class) {
-					query.equalTo("second_class", "==", that.selected_second_class);
-				}
 				query.equalTo("goodsName", "==", {
-					"$regex": "" + that.search_goodMame + ".*"
+					"$regex": "" + that.searchGoodText + ".*"
 				});
 				query.limit(that.page_size);
 				query.skip(that.page_size * (that.pege_number - 1));
