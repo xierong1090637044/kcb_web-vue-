@@ -20,6 +20,9 @@
 
 		<Table :columns="columns" :data="goods" :loading="loading" ref="table" border size="small" :height="screenHeight - 640"
 		 @on-select="selectGoods">
+			<template slot-scope="{ row, index }" slot="num">
+				<Input type="text" v-model="editBirthday"/>
+			</template>
 		</Table>
 
 		<div style="margin: 10px;overflow: hidden">
@@ -32,8 +35,8 @@
 			<FormItem label="Input">
 				<Input v-model="formItem.input" placeholder="Enter something..."></Input>
 			</FormItem>
-			
-			
+
+
 			<FormItem label="Text">
 				<Input v-model="formItem.textarea" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="Enter something..."></Input>
 			</FormItem>
@@ -121,12 +124,7 @@
 						align: 'center',
 						title: '数量',
 						key: 'num',
-					},
-					{
-						width: 120,
-						align: 'center',
-						title: '实际价格',
-						key: 'num',
+						slot: 'num',
 					},
 					{
 						width: 100,
@@ -178,6 +176,8 @@
 				select_goods: [], //选择模式下选择的产品数据
 				customsList: [],
 				searchGoodText: '',
+				editBirthday: '', // 第三列输入框
+				editAddress: '', // 第四列输入框
 				formItem: {
 					input: '',
 					select: '',
