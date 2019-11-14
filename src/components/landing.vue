@@ -12,29 +12,25 @@
 		</div>
 
 		<div class="index_content">
+
 			<Card dis-hover :padding="padding_size" style="width: 30%;margin:10% 35% 0;margin-top: 15%;">
 				<div slot="title">
-					<p style="font-size: 18px;color:#333">手机登录 - 库存表管理系统</p>
+					<p style="font-size: 18px;color:#333"> 库存管理系统</p>
 					<div style="color: #b3424a;font-size: 12px;margin-top: 10px;">总有人会给你遮风挡雨</div>
 				</div>
 				<Form ref="formInline" :model="formInline" :rules="ruleInline">
-					<Alert type="error" show-icon v-if='alter_type =="phone_landing_error"'>手机号或者验证码不正确</Alert>
+					<Alert type="error" show-icon v-if='alter_type =="phone_landing_error"'>账号或者密码不正确</Alert>
 					<FormItem prop="phone">
-						<Input type="text" v-model="formInline.phone" placeholder="请输入手机号" autofocus>
+						<Input type="text" v-model="formInline.phone" placeholder="请输入账号" autofocus>
 						<Icon type="md-phone-portrait" slot="prepend" size="18" />
 						</Input>
 					</FormItem>
 
 					<FormItem prop="code">
 						<Row>
-							<Col span="11">
-							<Input type="text" v-model="formInline.code" placeholder="请输入验证码">
+							<Input type="text" v-model="formInline.code" placeholder="请输入密码">
 							<Icon type="ios-mail" slot="prepend" size="18" />
 							</Input>
-							</Col>
-							<Col span="4" offset="6">
-							<Button @click="send_code(formInline.phone)" :disabled="code_button">{{code_text}}</Button>
-							</Col>
 						</Row>
 					</FormItem>
 
@@ -73,28 +69,33 @@
 					}],
 					password: [{
 							required: true,
-							message: '请输入验证码',
+							message: '请输入密码',
 							trigger: 'blur'
 						},
 						{
 							type: 'string',
 							min: 6,
-							message: '验证码不能少于6位',
+							message: '密码不能少于6位',
 							trigger: 'blur'
 						}
 					],
-					phone: [{
+					password: [{
 							required: true,
-							message: '请输入手机号',
+							message: '请输入密码',
 							trigger: 'blur'
 						},
 						{
 							type: 'string',
-							min: 11,
-							message: '手机不能少于11位',
+							min: 6,
+							message: '密码不能少于6位',
 							trigger: 'blur'
 						}
-					]
+					],
+					phone: [{
+						required: true,
+						message: '请输入账号',
+						trigger: 'blur'
+					}]
 				},
 				vedioCanPlay: false,
 				fixStyle: ''
@@ -106,10 +107,9 @@
 			phone_login(phone, code) {
 				that.button_login = true
 				//console.log(phone, code)
-				Bmob.User.signOrLoginByMobilePhone(Number(phone), Number(code)).then(res => {
+				Bmob.User.login(phone, code).then(res => {
 					console.log(res)
 					that.button_login = false
-					localStorage.setItem("identity", 1)
 					localStorage.setItem("bmob", JSON.stringify(res))
 					this.$router.push({
 						path: '/home/index'
@@ -118,37 +118,6 @@
 					that.button_login = false
 					that.alter_type = "phone_landing_error"
 				});
-			},
-
-			//验证码点击
-			send_code(phone) {
-				console.log(phone)
-
-				if (phone.length == 11) {
-					that.code_text = 60
-					that.code_button = true;
-					let codeInterval = setInterval(function() {
-						if (that.code_text == 0) {
-							that.code_text = "发送验证码",
-								that.code_button = false;
-							clearInterval(codeInterval)
-						} else {
-							that.code_text = that.code_text - 1
-						}
-					}, 1000)
-
-					let params = {
-						mobilePhoneNumber: phone, //string
-					}
-
-					Bmob.requestSmsCode(params).then(function(response) {
-							console.log(response);
-						})
-						.catch(function(error) {
-							console.log(error);
-						});
-				}
-
 			},
 
 			canplay() {

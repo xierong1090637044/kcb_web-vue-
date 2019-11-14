@@ -540,12 +540,7 @@
 
 			btnClick() {
 				console.log(that.user);
-				if (that.user.is_vip) {
-					document.querySelector('.input-file').click();
-				} else {
-					return
-				}
-
+				document.querySelector('.input-file').click();
 			},
 
 			importfile(event) {
