@@ -31,7 +31,6 @@ export default {
 
 			}
 			query.find().then(res => {
-				localStorage.setItem("stocks", JSON.stringify(res))
 				resolve(res)
 			});
 		})

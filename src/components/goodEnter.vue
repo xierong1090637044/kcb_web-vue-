@@ -7,33 +7,43 @@
 			</Breadcrumb>
 		</div>
 
-		<div class="display_flex_bet" style="margin-bottom: 20px;">
+		<div class="display_flex" style="margin-bottom: 20px;">
 			<div class="display_flex">
-				<div>选择客户：</div>
-				<Select prefix="ios-contact" style="width:300px">
-					<Option v-for="item in customsList" :value="item.custom_name" :key="item.objectId">{{ item.custom_name }}</Option>
+				<div>选择仓库：</div>
+				<Select style="width:300px" @on-change='selectStock'>
+					<Option v-for="item in stockList" :value="item.objectId" :key="item.objectId">{{ item.stock_name }}</Option>
 				</Select>
 			</div>
 
-			<Input search enter-button placeholder="请输入产品名字" style="width: 300px" @on-search="searchGood" />
+			<Input search enter-button placeholder="请输入产品名字" style="width: 300px;margin-left: 20px;" @on-search="searchGood" />
 		</div>
-
-		<Table :columns="columns" :data="goods" :loading="loading" ref="table" border size="small" :height="screenHeight - 640"
-		 @on-select="selectGoods">
-			<template slot-scope="{ row, index }" slot="num">
-				<Input type="text" v-model="editBirthday"/>
-			</template>
-		</Table>
-
-		<div style="margin: 10px;overflow: hidden">
-			<div style="float: right;">
-				<Page :total="100" :current="pege_number" @on-change="changePage"></Page>
+		
+		<div>
+			<Table :columns="columns" :data="goods" :loading="loading" ref="table" border size="small" :height="screenHeight - 640"
+			 @on-select="selectGoods">
+				<template slot-scope="{ row, index }" slot="num">
+					<Input type="text" @on-change="changeGoodNum($event,index)" :value="row.num"/>
+				</template>
+			</Table>
+			
+			<div style="margin: 10px;overflow: hidden">
+				<div style="float: right;">
+					<Page :total="100" :current="pege_number" @on-change="changePage"></Page>
+				</div>
 			</div>
 		</div>
-
+		
+		
+		<!--表单提交-->
 		<Form :model="formItem" :label-width="80">
 			<FormItem label="Input">
 				<Input v-model="formItem.input" placeholder="Enter something..."></Input>
+			</FormItem>
+			
+			<FormItem label="选择客户">
+				<Select style="width:300px">
+					<Option v-for="item in customsList" :value="item.custom_name" :key="item.objectId">{{ item.custom_name }}</Option>
+				</Select>
 			</FormItem>
 
 
@@ -174,8 +184,13 @@
 				],
 				goods: [],
 				select_goods: [], //选择模式下选择的产品数据
-				customsList: [],
-				searchGoodText: '',
+				customsList: JSON.parse(localStorage.getItem("customs")),//客户列表
+				stockList:JSON.parse(localStorage.getItem("stocks")),//仓库列表
+				search:{
+					searchGoodText: '',
+					stockId:''
+				},//搜索条件
+				
 				editBirthday: '', // 第三列输入框
 				editAddress: '', // 第四列输入框
 				formItem: {
@@ -199,12 +214,7 @@
 					that.screenHeight = window.innerHeight;
 				})();
 			};
-			this.get_productList();
-
-			customs.get_customList(false, '').then(res => {
-				console.log(res)
-				that.customsList = res
-			})
+			this.get_productList();	
 		},
 
 		methods: {
@@ -213,10 +223,22 @@
 			selectGoods(e) {
 				console.log(e)
 			},
+			
+			changeGoodNum(e,row){
+				let value = e.target.value
+				console.log(value,row)
+			},
 
 			//搜索产品
 			searchGood(e) {
-				that.searchGoodText = e
+				that.search.searchGoodText = e
+				that.get_productList()
+			},
+			
+			//选择仓库
+			selectStock(e){
+				//console.log(e)
+				that.search.stockId = e
 				that.get_productList()
 			},
 
@@ -228,13 +250,13 @@
 			},
 
 			//查询产品列表
-			get_productList() {
+			get_productList(stockId) {
 				const query = Bmob.Query('Goods');
 				query.equalTo('userId', '==', that.userid);
+				query.equalTo('stocks', '==', that.search.stockId);
 				query.include('second_class', 'goodsClass', 'stocks')
-
 				query.equalTo("goodsName", "==", {
-					"$regex": "" + that.searchGoodText + ".*"
+					"$regex": "" + that.search.searchGoodText + ".*"
 				});
 				query.limit(that.page_size);
 				query.skip(that.page_size * (that.pege_number - 1));
@@ -245,7 +267,8 @@
 						item.class = (item.goodsClass ? (item.goodsClass.class_text || "") : "") + "    " + (item.second_class ? (item.second_class
 							.class_text || "") : "")
 						item.stocks = (item.stocks) ? item.stocks.stock_name : ""
-
+						
+						item.num = 0
 						item.qrcodeImg = jrQrcode.getQrBase64((item.productCode) ? item.productCode : item.objectId + '-' + false)
 						item.productCode = (item.productCode) ? item.productCode : item.objectId + '-' + false
 					}
