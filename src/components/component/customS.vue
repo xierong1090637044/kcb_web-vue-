@@ -1,8 +1,8 @@
 <template>
 	<div>
-		<Modal title="选择供应商" :closable="false" width="80%" :value="show" @on-cancel="outData">
+		<Modal title="选择客户" :value="show" :closable="false" width="80%" @on-cancle="outData">
 
-			<Table :columns="columns" :data="data" stripe border :height="screenHeight - 350" :loading="loading" size="small">
+			<Table :columns="columns" :data="data" stripe border :height="screenHeight - 350" :loading="loading">
 				<template slot-scope="{ row, index }" slot="action">
 					<Button type="primary" size="small" style="margin-right: 5px" @click="choose(row)">选择</Button>
 				</template>
@@ -12,7 +12,7 @@
 </template>
 
 <script>
-	import producers from '@/serve/producers.js';
+	import customs from '@/serve/customs.js';
 	let that;
 	export default {
 		props: ['show'],
@@ -28,20 +28,20 @@
 						align: 'center'
 					},
 					{
-						title: '供货商Id',
+						title: '客户Id',
 						key: 'objectId',
 					},
 					{
-						title: '供货商名字',
-						key: 'producer_name',
+						title: '客户名字',
+						key: 'custom_name',
 					},
 					{
-						title: '供货商地址',
-						key: 'producer_address',
+						title: '客户地址',
+						key: 'custom_address',
 					},
 					{
-						title: '供货商电话',
-						key: 'producer_phone',
+						title: '客户电话',
+						key: 'custom_phone',
 					},
 					{
 						title: '是否已启用',
@@ -70,7 +70,7 @@
 
 		mounted() {
 			that = this;
-			producers.get_producerList().then(res => {
+			customs.get_customList().then(res => {
 				console.log(res)
         that.loading = false;
 				that.data = res;
@@ -89,8 +89,7 @@
         this.$emit('select',row)
       },
 
-    },
-
+    }
 	};
 </script>
 

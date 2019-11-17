@@ -3,7 +3,7 @@
     <div style="margin-bottom: 10px;">
       <Breadcrumb separator="<b style='color: #999;'>/</b>">
         <BreadcrumbItem to="/">首页</BreadcrumbItem>
-        <BreadcrumbItem to="/home/goods">采购或入库</BreadcrumbItem>
+        <BreadcrumbItem to="/home/goods">销售或出库</BreadcrumbItem>
       </Breadcrumb>
     </div>
 
@@ -45,20 +45,14 @@
         <Form :model="formItem" :label-width="100" style="margin-top: 1.875rem;">
           <div class="display_flex">
 
-            <!--<FormItem label="仓库" style="width: 15.625rem;">
-              <Input placeholder="选择仓库" :readonly="true" @on-focus="stockShow = true" :value="formItem.stock.stock_name">
-              <Icon type="ios-arrow-down" slot="suffix" />
-              </Input>
-            </FormItem>-->
-
             <FormItem label="门店" style="width: 15.625rem;">
               <Input placeholder="选择门店" :readonly="true" @on-focus="shopShow = true" :value="formItem.shop.name">
               <Icon type="ios-arrow-down" slot="suffix" />
               </Input>
             </FormItem>
 
-            <FormItem label="供应商" style="margin-left: 1.875rem;">
-              <Input placeholder="选择供应商" :readonly="true" @on-focus="producerShow = true" :value="formItem.producer.producer_name">
+            <FormItem label="客户" style="margin-left: 1.875rem;">
+              <Input placeholder="选择客户" :readonly="true" @on-focus="customShow = true" :value="formItem.custom.custom_name">
               <Icon type="ios-arrow-down" slot="suffix" />
               </Input>
             </FormItem>
@@ -84,8 +78,8 @@
           </div>
 
           <FormItem style="text-align: center;">
-            <Button type="primary" size="large" style="margin-right: 3.125rem;" @click="handleSubmit(1)" :disabled="button_disabled">采购</Button>
-            <Button type="success" size="large" @click="handleSubmit(2)" :disabled="button_disabled">入库</Button>
+            <Button type="primary" size="large" style="margin-right: 3.125rem;" @click="handleSubmit(1)" :disabled="button_disabled">销售</Button>
+            <Button type="success" size="large" @click="handleSubmit(2)" :disabled="button_disabled">出库</Button>
           </FormItem>
         </Form>
 
@@ -96,7 +90,7 @@
     <!--选择产品模板-->
     <goodsS :show="goodsShow" @cancle="goodsShow = false" @confrimGoods="confrimSelectGoods" type="enter"></goodsS>
     <!--生产商列表-->
-    <producerS @cancle="producerShow = false" :show="producerShow" @select="selectProducter"></producerS>
+    <customS @cancle="customShow = false" :show="customShow" @select="selectProducter"></customS>
     <!--门店列表-->
     <shopS @cancle="shopShow = false" :show="shopShow" @select="selectShop"></shopS>
 
@@ -106,7 +100,7 @@
 </template>
 <script>
   import goodsS from '@/components/component/goodsS.vue';
-  import producerS from '@/components/component/producerS.vue';
+  import customS from '@/components/component/customS.vue';
   import shopS from '@/components/component/shopS.vue';
   import stocksS from '@/components/component/stocksS.vue';
 
@@ -118,7 +112,7 @@
   export default {
     components: {
       goodsS,
-      producerS,
+      customS,
       stocksS,
       shopS
     },
@@ -127,11 +121,11 @@
         button_disabled: false,
         stockShow: false,
         shopShow: false,
-        producerShow: false,
+        customShow: false,
         goodsShow: false,
         formItem: {
           shop: '',
-          producer: '',
+          custom: '',
           stock: '',
           outType: '', //发货方式
           expressNum: '', //快递单号
@@ -370,8 +364,8 @@
             query.set('real_money', Number(that.formItem.real_money));
             query.set('debt', that.formItem.all_money - that.formItem.real_money);
 
-            if (that.formItem.producer) {
-              let producer = Bmob.Pointer('producers');
+            if (that.formItem.custom) {
+              let custom = Bmob.Pointer('producers');
               let producerID = producer.set(that.formItem.producer.objectId);
               query.set("producer", producerID);
 
@@ -500,8 +494,8 @@
 
       //选择供应商
       selectProducter(row) {
-        that.producerShow = false
-        that.formItem.producer = row
+        that.customShow = false
+        that.formItem.custom = row
       },
 
       selectShop(row) {

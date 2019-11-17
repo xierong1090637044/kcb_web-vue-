@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<Modal title="选择供应商" :closable="false" width="80%" :value="show" @on-cancel="outData">
+		<Modal title="选择门店" :closable="false" width="80%" :value="show" @on-cancel="outData">
 
 			<Table :columns="columns" :data="data" stripe border :height="screenHeight - 350" :loading="loading" size="small">
 				<template slot-scope="{ row, index }" slot="action">
@@ -12,7 +12,7 @@
 </template>
 
 <script>
-	import producers from '@/serve/producers.js';
+	import shops from '@/serve/shops.js';
 	let that;
 	export default {
 		props: ['show'],
@@ -28,20 +28,38 @@
 						align: 'center'
 					},
 					{
-						title: '供货商Id',
-						key: 'objectId',
+						title: '门店图片',
+						key: 'Image',
+						width: 140,
+						render: (h, params) => {
+							return h('div', {
+								style: {
+									"text-align": "center"
+								},
+							}, [
+								h('img', {
+									style: {
+										height: "100px",
+										padding: "4px 0",
+									},
+									attrs: {
+										src: params.row.Image ? params.row.Image[0] : ''
+									}
+								})
+							]);
+						}
 					},
 					{
-						title: '供货商名字',
-						key: 'producer_name',
+						title: '门店名字',
+						key: 'name',
 					},
 					{
-						title: '供货商地址',
-						key: 'producer_address',
+						title: '门店地址',
+						key: 'address',
 					},
 					{
-						title: '供货商电话',
-						key: 'producer_phone',
+						title: '门店电话',
+						key: 'phone',
 					},
 					{
 						title: '是否已启用',
@@ -51,8 +69,8 @@
 						}
 					},
 					{
-						title: '欠款金额',
-						key: 'debt',
+						title: '备注',
+						key: 'beizhu',
 					},
 					{
 						title: '创建时间',
@@ -70,7 +88,7 @@
 
 		mounted() {
 			that = this;
-			producers.get_producerList().then(res => {
+			shops.get_shopList().then(res=>{
 				console.log(res)
         that.loading = false;
 				that.data = res;

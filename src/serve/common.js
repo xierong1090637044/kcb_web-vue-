@@ -1,9 +1,92 @@
 
 export default{
+  //入库时增加产品数量
+  enterAddGoodNum(products){
+  	return new Promise((resolve, reject) => {
+  		for (let i = 0; i < products.length; i++) {
+  			let num = 0;
+  			const query = Bmob.Query('Goods');
+  			query.get(products[i].objectId).then(res => {
+  				console.log(products[i])
+
+  				if (products[i].selectd_model) {
+  					for (let model of products[i].selected_model) {
+  						for (let item of products[i].models) {
+  							if (item.id == model.id) {
+  								item.reserve = Number(item.reserve) + Number(model.num)
+  							}
+  							delete item.num   // 清除没用的属行
+  						}
+  					}
+  					num = Number(products[i].reserve) + Number(products[i].num);
+  					res.set('models', products[i].models)
+  				} else {
+  					num = Number(products[i].reserve) + Number(products[i].num);
+  				}
+  				res.set('reserve', num)
+  				res.set('stocktype', (num > products[i].warning_num) ? 1 : 0)
+  				res.save()
+
+  				if(i == products.length - 1){
+  					resolve(true)
+  				}
+  			}).catch(err => {
+  				console.log(err)
+  			})
+  		}
+  	})
+  },
+
+
+  //出库时减少产品数量
+  outRedGoodNum(products){
+  	return new Promise((resolve, reject) => {
+  		for (let i = 0; i < products.length; i++) {
+  			let num = 0;
+  			const query = Bmob.Query('Goods');
+  			query.get(products[i].objectId).then(res => {
+  				//console.log(res)
+
+  				if (products[i].selectd_model) {
+  					for (let model of products[i].selected_model) {
+  						for (let item of products[i].models) {
+  							num += Number(item.reserve)
+  							if (item.id == model.id) {
+  								item.reserve = Number(item.reserve) - Number(model.num)
+  							}
+  							delete item.num   // 清除没用的属行
+  						}
+  					}
+  					num = Number(products[i].reserve) - Number(products[i].num);
+  					res.set('models', products[i].models)
+  				} else {
+  					num = Number(products[i].reserve) - Number(products[i].num);
+  				}
+
+  				res.set('reserve', num)
+  				res.set('stocktype', (num >= products[i].warning_num) ? 1 : 0)
+  				res.save()
+
+  				if (products[i].warning_num >= num) {
+  					this.log(products[i].goodsName + "出库了" + products[i].num + "件，已经低于预警数量" + products[i].warning_num, -2, products[i].objectId);
+  				}
+  				this.record_staffOut(Number(products[i].num))
+
+  				if(i == products.length - 1){
+  					resolve(true)
+  				}
+  			}).catch(err => {
+  				console.log(err)
+  			})
+  		}
+  	})
+  },
+
 	//日志功能
 	log(log, type, id) {
+    let uid = localStorage.getItem('uid')
 		let pointer = Bmob.Pointer('_User')
-		let userid = pointer.set(uni.getStorageSync("uid"));
+		let userid = pointer.set(uid);
 
 		const query = Bmob.Query('logs');
 		query.set("parent", userid);
@@ -29,7 +112,7 @@ export default{
 			console.log(err)
 		})
 	},
-	
+
 	//记录员工的出库数量
 	record_staffOut(have_out) {
 		console.log(have_out,uni.getStorageSync("user").have_out)
@@ -45,7 +128,7 @@ export default{
 
 	//获得库存成本和总库存
 	get_allCost() {
-		let userid = uni.getStorageSync("uid")
+    let userid = localStorage.getItem('uid')
 		console.log(userid)
 		const query = Bmob.Query("Goods");
 		query.equalTo("userId", "==", userid);
