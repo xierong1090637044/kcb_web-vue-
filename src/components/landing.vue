@@ -111,6 +111,8 @@
 					console.log(res)
 					that.button_login = false
 					localStorage.setItem("bmob", JSON.stringify(res))
+          localStorage.setItem("uid", res.objectId)
+          localStorage.setItem("masterId", res.objectId)
 					this.$router.push({
 						path: '/home/index'
 					})

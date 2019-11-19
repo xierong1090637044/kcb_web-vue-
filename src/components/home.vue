@@ -63,7 +63,7 @@
 						</div>
 						</MenuItem>
 						
-						<MenuItem name="3" to='/home/index'>
+						<MenuItem name="3" to='/home/goodOut'>
 						<div class="display_flex">
 							<Icon type="md-cart" style="font-size: 20px;" />
 							<div style="margin-left: 10px;margin-top: 4px;">销售或出库</div>
