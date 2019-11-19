@@ -21,7 +21,7 @@ export default {
 	get_stafflist(disabled,search_text) {
 		return new Promise((resolve, reject) => {
 			let userid = JSON.parse(localStorage.getItem('bmob')).objectId;
-			const query = Bmob.Query("staffs");
+			const query = Bmob.Query("_User");
 			query.order("num");
 			query.equalTo("masterId", "==", userid);
 			query.equalTo("disabled", "==",disabled);
@@ -77,7 +77,7 @@ export default {
 				})
 			} else {
 				
-				const query = Bmob.Query("staffs");
+				const query = Bmob.Query("_User");
 				query.equalTo("masterId", "==", userid);
 				query.equalTo("mobilePhoneNumber", "==", params.mobilePhoneNumber);
 				query.find().then(res => {
@@ -117,7 +117,7 @@ export default {
 	//删除门店
 	delete_staff(id) {
 		return new Promise((resolve, reject) => {
-			const query = Bmob.Query("staffs");
+			const query = Bmob.Query("_User");
 			query.destroy(id).then(res => {
 				resolve(res)
 			}).catch(err => {

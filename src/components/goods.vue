@@ -70,6 +70,12 @@
 				<Button type="primary" size="small" v-print="'#printMe'" @click="Print(row)">打印二维码</Button>
 			</template>
 		</Table>
+		
+		<Table :columns="columns" :data="allGoods" ref="tableAll" border size="small" hidden>
+			<template slot-scope="{ row, index }" slot="action">
+				<Button type="primary" size="small" v-print="'#printMe'" @click="Print(row)">打印二维码</Button>
+			</template>
+		</Table>
 
 		<div style="margin: 10px;overflow: hidden">
 			<div style="float: right;">
@@ -210,6 +216,7 @@
 					position: 'static',
 					background: '#eee'
 				},
+				allGoods:[],
 				search_goodMame: '',
 				selected_stocks: null,
 				selected_goodsClass: null,
@@ -580,7 +587,7 @@
 
 			//导出数据表格点击
 			exportData(type) {
-				this.$refs.table.exportCsv({
+				this.$refs.tableAll.exportCsv({
 					filename: '产品数据',
 				});
 			},
@@ -638,6 +645,7 @@
 				query.equalTo("goodsName", "==", {
 					"$regex": "" + that.search_goodMame + ".*"
 				});
+				query.equalTo("order", "==",0)
 				query.limit(that.page_size);
 				query.skip(that.page_size * (that.pege_number - 1));
 				query.order("-createdAt"); //按照条件降序
@@ -653,6 +661,21 @@
 					}
 					this.goods = res;
 					this.loading = false;
+					that.getAllproducts()
+				});
+			},
+			
+			
+			getAllproducts(){
+				const query = Bmob.Query('Goods');
+				query.equalTo('userId', '==', that.userid);
+				query.include('second_class', 'goodsClass', 'stocks')
+				query.equalTo("order", "==",0)
+				query.limit(500);
+				query.order("-createdAt"); //按照条件降序
+				query.find().then(res => {
+					console.log(res);
+					this.allGoods = res;
 				});
 			},
 
