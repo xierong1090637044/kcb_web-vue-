@@ -116,7 +116,7 @@
 				let get_reserve_num = 0;
 				let out_reserve_num = 0;
 
-				const query = Bmob.Query('Bills');
+				const query = Bmob.Query('NBills');
 				query.equalTo('userId', '==', that.userid);
 				query.equalTo('createdAt', '>=', common.getDay(0, true));
 				query.equalTo('createdAt', '<=', common.getDay(1, true));
@@ -145,7 +145,7 @@
 			loadallGoods: function() {
 				var total_reserve = 0;
 				var total_money = 0;
-				const query = Bmob.Query('Goods');
+				const query = Bmob.Query('NGoods');
 				query.equalTo('userId', '==', that.userid);
 				query.limit(500);
 				query.find().then(res => {
@@ -153,7 +153,7 @@
 						total_reserve = total_reserve + res[i].reserve;
 						total_money = total_money + res[i].reserve * res[i].costPrice;
 						if (i == res.length - 1 && res.length == 500) {
-							const query = Bmob.Query('Goods');
+							const query = Bmob.Query('NGoods');
 							query.equalTo('userId', '==', that.userid);
 							query.skip(500);
 							query.limit(500);

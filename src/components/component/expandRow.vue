@@ -43,7 +43,7 @@
 			/*const query = Bmob.Query('order_opreations');
 			query.include("goodsId");
 			query.field('relations', this.row.objectId);
-			query.relation('Bills').then(res => {
+			query.relation('NBills').then(res => {
 				console.log(res);
 				this.details = res.results;
 				this.loading = false;

@@ -6,7 +6,7 @@ export default {
 		let uid = JSON.parse(localStorage.getItem('bmob')).objectId
 
 		return new Promise((resolve, reject) => {
-			const query = Bmob.Query("Goods");
+			const query = Bmob.Query("NGoods");
 			query.equalTo("userId", "==", uid);
 			query.count().then(res => {
 				resolve(res)
@@ -27,7 +27,7 @@ export default {
 		let params = {};
 
 		return new Promise((resolve, reject) => {
-			const query = Bmob.Query("Bills");
+			const query = Bmob.Query("NBills");
 			query.equalTo("userId", "==", uid);
 			query.equalTo("createdAt", ">=", start_date);
 			query.equalTo("createdAt", "<=", end_date);
@@ -101,7 +101,7 @@ export default {
 			let params = {}
 			this.querycount().then(count => {
 				params.total_products = count
-				const query = Bmob.Query("Goods");
+				const query = Bmob.Query("NGoods");
 				query.equalTo("userId", "==", uid);
 				query.equalTo("status", "!=", -1);
 				query.select("reserve", "costPrice", "stocktype");

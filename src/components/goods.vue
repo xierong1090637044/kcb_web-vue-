@@ -10,7 +10,7 @@
 		<div style="margin-bottom: 10px;display: flex;align-items: center;justify-content: space-between;">
 
 			<div style="display: flex;align-items: center;">
-				<Dropdown style="margin-right: 10px" @on-click="selected_options" trigger="click" >
+				<Dropdown style="margin-right: 10px" @on-click="selected_options" trigger="click">
 					<Button type="primary">
 						打印操作
 						<Icon type="ios-arrow-down"></Icon>
@@ -25,7 +25,7 @@
 					</DropdownMenu>
 				</Dropdown>
 
-				<Dropdown style="margin-right: 10px" trigger="click" >
+				<Dropdown style="margin-right: 10px" trigger="click">
 					<Button type="primary">
 						产品操作
 						<Icon type="ios-arrow-down"></Icon>
@@ -40,7 +40,7 @@
 					</DropdownMenu>
 				</Dropdown>
 
-				<Dropdown style="margin-right: 10px" trigger="click" >
+				<Dropdown style="margin-right: 10px" trigger="click">
 					<Button type="primary">
 						导入导出操作
 						<Icon type="ios-arrow-down"></Icon>
@@ -70,7 +70,7 @@
 				<Button type="primary" size="small" v-print="'#printMe'" @click="Print(row)">打印二维码</Button>
 			</template>
 		</Table>
-		
+
 		<Table :columns="columns" :data="allGoods" ref="tableAll" border size="small" hidden>
 			<template slot-scope="{ row, index }" slot="action">
 				<Button type="primary" size="small" v-print="'#printMe'" @click="Print(row)">打印二维码</Button>
@@ -216,7 +216,7 @@
 					position: 'static',
 					background: '#eee'
 				},
-				allGoods:[],
+				allGoods: [],
 				search_goodMame: '',
 				selected_stocks: null,
 				selected_goodsClass: null,
@@ -291,12 +291,6 @@
 						align: 'center',
 						title: '所属分类',
 						key: 'class',
-					},
-					{
-						width: 100,
-						align: 'center',
-						title: '所属仓库',
-						key: 'stocks',
 					},
 					{
 						width: 100,
@@ -601,12 +595,115 @@
 
 			//批量增加
 			add_all(goods) {
-				const queryArray = new Array();
+				console.log(goods)
+
+				for (let item of goods) {
+					let stocks = ["852cbd9955","51366551c2","9d735b68f2","181e2febaa","c9822a49e4","199150f69c","9bf6255e8f","7fb3aeaedf","7271ff2cf0","503bcaa757",
+					"50b18f3028","fcce26d95f","4909267279","e32e9295fd","e98fa156bd","fea3b51f51","6c20af8fa7","94a14809a7","b102c0231a","54495e6b27","d18c2c9c52",
+					"e7cd064bf5","a9fb74fc3d","1fa673a4ca","586de4ec0b","ed2243fa51"]
+					let reserve_s = []
+					let stocksReserve = []
+					let stocksReserveItem = {}
+					let p_class_user_id;
+
+					let pointer2 = Bmob.Pointer('class_user')
+
+					switch (item.物资类型) {
+						case "工具设备":
+							p_class_user_id = pointer2.set("990b175abb") //一级分类id关联
+							break;
+						case "电子设备":
+							p_class_user_id = pointer2.set("ccac7e7abd") //一级分类id关联
+							break;
+						case "管钳":
+							p_class_user_id = pointer2.set("726741f6a2") //一级分类id关联
+							break;
+						case "活动扳手":
+							p_class_user_id = pointer2.set("d7b8801f26") //一级分类id关联
+							break;
+						case "计量设备":
+							p_class_user_id = pointer2.set("e05133bf33") //一级分类id关联
+							break;
+						case "开口扳手":
+							p_class_user_id = pointer2.set("9951708783") //一级分类id关联
+							break;
+						case "劳保物资":
+							p_class_user_id = pointer2.set("be50c10927") //一级分类id关联
+							break;
+						case "梅花扳手":
+							p_class_user_id = pointer2.set("097f3ff8ff") //一级分类id关联
+							break;
+						case "日常耗材":
+							p_class_user_id = pointer2.set("7abdf9710e") //一级分类id关联
+							break;
+						case "应急物资":
+							p_class_user_id = pointer2.set("e5f8e807bd") //一级分类id关联
+							break;
+					}
+					
+					reserve_s.push(item.更合仓库)
+					
+					console.log(reserve_s)
+					
+
+					/*const pointer = Bmob.Pointer('_User')
+					const userid = pointer.set(uid)
+
+					const query = Bmob.Query('NGoods');
+					query.set("goodsName", item.产品)
+					query.set("costPrice", 0)
+					query.set("retailPrice", 0)
+					query.set("reserve", Number(item.合计))
+					query.set("packingUnit", item.单位)
+					query.set("warning_num", 0)
+					query.set("stocktype", (0 >= Number(that.reserve)) ? 0 : 1) //库存数量类型 0代表库存不足 1代表库存充足
+					query.set("order", 0)
+					query.set("goodsClass", p_class_user_id)
+					query.set("userId", userid)
+					query.save().then(res => {
+
+						let this_result = res
+						let stocksReserve = uni.getStorageSync("warehouse") || []
+						const queryArray = new Array();
+						// 构造含有50个对象的数组
+						for (var i = 0; i < 25; i++) {
+							const pointer1 = Bmob.Pointer('stocks')
+							const p_stock_id = pointer1.set(stocksReserve[i].objectId) //仓库的id关联
+
+							const pointer2 = Bmob.Pointer('NGoods')
+							const p_good_id = pointer2.set(this_result.objectId) //仓库的id关联
+
+							var queryObj = Bmob.Query('NGoods');
+							queryObj.set("order", 1)
+							queryObj.set("goodsName", good.goodsName)
+							queryObj.set("costPrice", 0)
+							queryObj.set("retailPrice", 0)
+							queryObj.set("header", p_good_id)
+							queryObj.set("userId", userid)
+							queryObj.set("stocks", p_stock_id)
+							queryObj.set("reserve", Number(stocksReserve[i].reserve))
+							queryArray.push(queryObj);
+						}
+
+						// 传入刚刚构造的数组
+						Bmob.Query('NGoods').saveAll(queryArray).then(result => {
+							console.log(result);
+						}).catch(err => {
+							console.log(err);
+						});
+
+						//that.handledata()
+					}).catch(err => {
+						console.log(err)
+					})*/
+
+				}
+				/*const queryArray = new Array();
 				const pointer = Bmob.Pointer('_User')
 				const poiID = pointer.set(that.userid)
 				// 构造含有50个对象的数组
 				for (let good of goods) {
-					var queryObj = Bmob.Query('Goods');
+					var queryObj = Bmob.Query('NGoods');
 					queryObj.set('goodsName', "" + good.商品名字);
 					queryObj.set('costPrice', "" + good.成本价);
 					queryObj.set('retailPrice', "" + good.零售价);
@@ -617,7 +714,7 @@
 				}
 
 				// 传入刚刚构造的数组
-				Bmob.Query('Goods')
+				Bmob.Query('NGoods')
 					.saveAll(queryArray)
 					.then(result => {
 						console.log(result);
@@ -626,13 +723,13 @@
 					})
 					.catch(err => {
 						console.log(err);
-					});
+					});*/
 			},
 
 			//查询产品列表
 			get_productList() {
 				console.log(that.selected_stocks, that.selected_second_class)
-				const query = Bmob.Query('Goods');
+				const query = Bmob.Query('NGoods');
 				query.equalTo('userId', '==', that.userid);
 				query.include('second_class', 'goodsClass', 'stocks')
 
@@ -645,7 +742,7 @@
 				query.equalTo("goodsName", "==", {
 					"$regex": "" + that.search_goodMame + ".*"
 				});
-				query.equalTo("order", "==",0)
+				query.equalTo("order", "==", 0)
 				query.limit(that.page_size);
 				query.skip(that.page_size * (that.pege_number - 1));
 				query.order("-createdAt"); //按照条件降序
@@ -664,13 +761,13 @@
 					that.getAllproducts()
 				});
 			},
-			
-			
-			getAllproducts(){
-				const query = Bmob.Query('Goods');
+
+
+			getAllproducts() {
+				const query = Bmob.Query('NGoods');
 				query.equalTo('userId', '==', that.userid);
 				query.include('second_class', 'goodsClass', 'stocks')
-				query.equalTo("order", "==",0)
+				query.equalTo("order", "==", 0)
 				query.limit(500);
 				query.order("-createdAt"); //按照条件降序
 				query.find().then(res => {

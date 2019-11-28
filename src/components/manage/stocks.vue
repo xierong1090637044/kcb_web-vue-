@@ -114,6 +114,10 @@
 						align: 'center'
 					},
 					{
+						title: '类别Id',
+						key: 'objectId',
+					},
+					{
 						title: '仓库图片',
 						key: 'Image',
 						width: 140,

@@ -4,7 +4,7 @@ export default {
 		return new Promise((resolve, reject) => {
 			let count = 0;
 			for (let good of goods) {
-				const query = Bmob.Query('Goods');
+				const query = Bmob.Query('NGoods');
 				query.destroy(good.objectId).then(res => {
 
 					count += 1;
@@ -33,7 +33,7 @@ export default {
 			let pointer3 = Bmob.Pointer('second_class')
 			let p_second_class_id = pointer3.set(good.second_class) //仓库的id关联
 
-			const query = Bmob.Query("Goods");
+			const query = Bmob.Query("NGoods");
 			query.equalTo("userId", "==", uid);
 			query.equalTo("goodsName", "==", good.goodsName);
 			query.equalTo("position", "==", good.position);
@@ -48,7 +48,7 @@ export default {
 					const pointer1 = Bmob.Pointer('stocks')
 					const p_stock_id = pointer1.set(good.stocks) //仓库的id关联
 
-					const query = Bmob.Query('Goods');
+					const query = Bmob.Query('NGoods');
 					query.set("goodsName", good.goodsName)
 					query.set("goodsIcon", good.goodsIcon)
 					query.set("costPrice", good.costPrice)

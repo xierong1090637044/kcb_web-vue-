@@ -20,7 +20,7 @@ export default {
 
 
 		return new Promise((resolve, reject) => {
-			const query = Bmob.Query("Bills");
+			const query = Bmob.Query("NBills");
 			query.equalTo("userId", "==", uid);
 			query.equalTo("createdAt", "<=", start_date);
 			query.equalTo("createdAt", ">=", end_date);
