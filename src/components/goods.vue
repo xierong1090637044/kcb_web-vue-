@@ -641,16 +641,16 @@
 							break;
 					}
 					
-					reserve_s.push(item.更合仓库)
+					reserve_s.push(item.a,item.b,item.c,item.d,item.e,item.f,item.g,item.h,item.i,item.j,item.k,item.l,item.m,item.n,item.o,item.p,item.q,item.r,item.s,item.t,item.u,item.v,item.w,item.x,item.y,item.z)
 					
-					console.log(reserve_s)
-					
+					console.log(p_class_user_id)
+					let goodname = item.产品目录
 
-					/*const pointer = Bmob.Pointer('_User')
-					const userid = pointer.set(uid)
+					const pointer = Bmob.Pointer('_User')
+					const userid = pointer.set(that.userid)
 
 					const query = Bmob.Query('NGoods');
-					query.set("goodsName", item.产品)
+					query.set("goodsName", goodname)
 					query.set("costPrice", 0)
 					query.set("retailPrice", 0)
 					query.set("reserve", Number(item.合计))
@@ -663,25 +663,24 @@
 					query.save().then(res => {
 
 						let this_result = res
-						let stocksReserve = uni.getStorageSync("warehouse") || []
 						const queryArray = new Array();
 						// 构造含有50个对象的数组
-						for (var i = 0; i < 25; i++) {
+						for (var i = 0; i < stocks.length; i++) {
 							const pointer1 = Bmob.Pointer('stocks')
-							const p_stock_id = pointer1.set(stocksReserve[i].objectId) //仓库的id关联
+							const p_stock_id = pointer1.set(stocks[i]) //仓库的id关联
 
 							const pointer2 = Bmob.Pointer('NGoods')
 							const p_good_id = pointer2.set(this_result.objectId) //仓库的id关联
 
 							var queryObj = Bmob.Query('NGoods');
 							queryObj.set("order", 1)
-							queryObj.set("goodsName", good.goodsName)
+							queryObj.set("goodsName", goodname)
 							queryObj.set("costPrice", 0)
 							queryObj.set("retailPrice", 0)
 							queryObj.set("header", p_good_id)
 							queryObj.set("userId", userid)
 							queryObj.set("stocks", p_stock_id)
-							queryObj.set("reserve", Number(stocksReserve[i].reserve))
+							queryObj.set("reserve", Number(reserve_s[i]))
 							queryArray.push(queryObj);
 						}
 
@@ -695,7 +694,7 @@
 						//that.handledata()
 					}).catch(err => {
 						console.log(err)
-					})*/
+					})
 
 				}
 				/*const queryArray = new Array();
