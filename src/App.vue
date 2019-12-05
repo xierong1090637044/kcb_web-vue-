@@ -6,7 +6,7 @@
 <script>
 	import manage from '@/serve/manage.js';
 	import customs from '@/serve/customs.js';
-	
+
 	export default {
 		data() {
 			return {
@@ -31,8 +31,8 @@
 				if (identity == 1) {
 					localStorage.setItem("bmob", JSON.stringify(current))
 				}
-				
-				manage.getstock_list(false,'').then(res=>{
+
+				manage.getstock_list(false, '').then(res => {
 					localStorage.setItem("stocks", JSON.stringify(res))
 				})
 				customs.get_customList(false, '').then(res => {
@@ -44,3 +44,10 @@
 		methods: {}
 	};
 </script>
+<style scoped>
+.display_flex_bet{
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+</style>

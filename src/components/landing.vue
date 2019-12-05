@@ -1,48 +1,53 @@
 <template>
 	<div class="homepage-hero-module">
 		<div class="video-container">
-			<div :style="fixStyle" class="filter"></div>
-			<video :style="fixStyle" autoplay loop class="fillWidth" v-on:canplay="canplay">
-				<source src="@/assets/bg.mp4" type="video/mp4" />
-				浏览器不支持 video 标签，建议升级浏览器。
-			</video>
-			<div class="poster hidden" v-if="!vedioCanPlay">
+			<div class="poster">
 				<img :style="fixStyle" src="@/assets/bg.jpg" alt="">
 			</div>
 		</div>
 
 		<div class="index_content">
-			<Card dis-hover :padding="padding_size" style="width: 30%;margin:10% 35% 0;margin-top: 15%;">
-				<div slot="title">
-					<p style="font-size: 18px;color:#333">手机登录 - 库存表管理系统</p>
-					<div style="color: #b3424a;font-size: 12px;margin-top: 10px;">总有人会给你遮风挡雨</div>
+			
+			<div style="width: 30%;position: absolute;top: 24%;right: 6%;">
+				<div class="display_flex_bet header">
+					<div class="header-item" style="border-right: 1px solid#999;">手机验证码登陆</div>
+					<div class="header-item">账号密码登陆</div>
 				</div>
-				<Form ref="formInline" :model="formInline" :rules="ruleInline">
-					<Alert type="error" show-icon v-if='alter_type =="phone_landing_error"'>手机号或者验证码不正确</Alert>
-					<FormItem prop="phone">
-						<Input type="text" v-model="formInline.phone" placeholder="请输入手机号" autofocus>
-						<Icon type="md-phone-portrait" slot="prepend" size="18" />
-						</Input>
-					</FormItem>
-
-					<FormItem prop="code">
-						<Row>
-							<Col span="11">
-							<Input type="text" v-model="formInline.code" placeholder="请输入验证码">
-							<Icon type="ios-mail" slot="prepend" size="18" />
+				
+				<Card dis-hover :padding="padding_size" >
+					<div slot="title">
+						
+						<p style="font-size: 18px;color:#333">手机登录 - 库存表管理系统</p>
+						<div style="color: #b3424a;font-size: 12px;margin-top: 10px;">总有人会给你遮风挡雨</div>
+					</div>
+					<Form ref="formInline" :model="formInline" :rules="ruleInline">
+						<Alert type="error" show-icon v-if='alter_type =="phone_landing_error"'>手机号或者验证码不正确</Alert>
+						<FormItem prop="phone">
+							<Input type="text" v-model="formInline.phone" placeholder="请输入手机号" autofocus>
+							<Icon type="md-phone-portrait" slot="prepend" size="18" />
 							</Input>
-							</Col>
-							<Col span="4" offset="6">
-							<Button @click="send_code(formInline.phone)" :disabled="code_button">{{code_text}}</Button>
-							</Col>
-						</Row>
-					</FormItem>
-
-					<FormItem>
-						<Button @click="phone_login(formInline.phone,formInline.code)" style="background:#b3424a;color: #fff ;" :loading="button_login">登录</Button>
-					</FormItem>
-				</Form>
-			</Card>
+						</FormItem>
+				
+						<FormItem prop="code">
+							<Row>
+								<Col span="11">
+								<Input type="text" v-model="formInline.code" placeholder="请输入验证码">
+								<Icon type="ios-mail" slot="prepend" size="18" />
+								</Input>
+								</Col>
+								<Col span="4" offset="6">
+								<Button @click="send_code(formInline.phone)" :disabled="code_button">{{code_text}}</Button>
+								</Col>
+							</Row>
+						</FormItem>
+				
+						<FormItem>
+							<Button @click="phone_login(formInline.phone,formInline.code)" style="background:#b3424a;color: #fff ;" :loading="button_login">登录</Button>
+						</FormItem>
+					</Form>
+				</Card>
+			</div>
+			
 		</div>
 	</div>
 </template>
@@ -198,6 +203,29 @@
 </script>
 
 <style scoped>
+	.display_flex_bet{
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+	
+	.header{
+		background: #FFFFFF;
+		padding: 1.25rem 0;
+		border-top-left-radius: 8px;
+		border-top-right-radius: 8px;
+	}
+	.header-item{
+		width: 50%;
+		height: 100%;;
+		text-align: center;
+	}
+	
+	.ivu-card
+	{
+		border-bottom-left-radius: 8px;
+		border-bottom-right-radius: 8px;
+	}
 	.index_content {
 		position: fixed;
 		left: 0;
