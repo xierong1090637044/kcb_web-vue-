@@ -1,31 +1,3 @@
-<style scoped>
-	.layout{
-    border: 1px solid #d7dde4;
-    background: #f5f7f9;
-    position: relative;
-    border-radius: 4px;
-    overflow: hidden;
-}
-.layout-logo{
-    width: 100px;
-    height: 30px;
-    background: #5b6270;
-    border-radius: 3px;
-    float: left;
-    position: relative;
-    top: 15px;
-    left: 20px;
-}
-.layout-nav{
-    width: 420px;
-    margin: 0 auto;
-    margin-right: 20px;
-}
-.display_flex{
-	display: flex;
-	align-items: center;
-}
-</style>
 <template>
 	<div class="layout" :style="{height:screenHeight+'px'}">
 		<Layout>
@@ -47,7 +19,7 @@
 			</Header>
 			<Layout>
 				<Sider hide-trigger :style="{height:screenHeight - 64+'px'}">
-					<Menu :active-name="activename" theme="dark" width="auto">
+					<Menu :active-name="activename" theme="light" width="auto">
 
 						<MenuItem name="1" to='/home/index'>
 						<div class="display_flex">
@@ -55,14 +27,14 @@
 							<div style="margin-left: 10px;margin-top: 4px;">首页</div>
 						</div>
 						</MenuItem>
-						
+
 						<MenuItem name="2" to='/home/goodEnter'>
 						<div class="display_flex">
 							<Icon type="ios-exit" style="font-size: 20px;" />
 							<div style="margin-left: 10px;margin-top: 4px;">采购或入库</div>
 						</div>
 						</MenuItem>
-						
+
 						<MenuItem name="3" to='/home/goodOut'>
 						<div class="display_flex">
 							<Icon type="md-cart" style="font-size: 20px;" />
@@ -113,6 +85,7 @@
 
 		data() {
 			return {
+				activeIndex: '1',
 				activename: "1",
 				user: JSON.parse(localStorage.getItem('bmob')),
 				screenHeight: window.innerHeight,
@@ -129,6 +102,10 @@
 		},
 
 		methods: {
+
+			handleSelect(key, keyPath) {
+				console.log(key, keyPath);
+			},
 
 			//水平导航栏的子类点击
 			select_horizontal_item(name) {
@@ -149,5 +126,43 @@
 	.layout-nav {
 		width: 600px !important;
 		text-align: right !important;
+	}
+	
+	.ivu-layout-sider{
+		background: #426ab3 !important;
+	}
+	.ivu-menu{
+		background: #426ab3 !important;
+		color: #fff !important;
+	}
+	
+	.ivu-layout-header{
+		background: #426ab3 !important;
+	}
+	
+	.layout{
+	    border: 1px solid #d7dde4;
+	    position: relative;
+	    border-radius: 4px;
+	    overflow: hidden;
+	}
+	.layout-logo{
+	    width: 100px;
+	    height: 30px;
+	    background: #5b6270;
+	    border-radius: 3px;
+	    float: left;
+	    position: relative;
+	    top: 15px;
+	    left: 20px;
+	}
+	.layout-nav{
+	    width: 420px;
+	    margin: 0 auto;
+	    margin-right: 20px;
+	}
+	.display_flex{
+		display: flex;
+		align-items: center;
 	}
 </style>

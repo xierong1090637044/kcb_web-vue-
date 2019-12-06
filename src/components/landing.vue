@@ -7,47 +7,40 @@
 		</div>
 
 		<div class="index_content">
-			
+
 			<div style="width: 30%;position: absolute;top: 24%;right: 6%;">
-				<div class="display_flex_bet header">
-					<div class="header-item" style="border-right: 1px solid#999;">手机验证码登陆</div>
-					<div class="header-item">账号密码登陆</div>
-				</div>
-				
-				<Card dis-hover :padding="padding_size" >
+
+				<!--<div class="header">
+					<p style="font-size: 18px;color:#333">库存表管理系统</p>
+				</div>-->
+				<Card dis-hover :padding="padding_size">
 					<div slot="title">
-						
-						<p style="font-size: 18px;color:#333">手机登录 - 库存表管理系统</p>
-						<div style="color: #b3424a;font-size: 12px;margin-top: 10px;">总有人会给你遮风挡雨</div>
+						<p style="font-size: 18px;color:#333">库存表管理系统</p>
 					</div>
 					<Form ref="formInline" :model="formInline" :rules="ruleInline">
 						<Alert type="error" show-icon v-if='alter_type =="phone_landing_error"'>手机号或者验证码不正确</Alert>
 						<FormItem prop="phone">
-							<Input type="text" v-model="formInline.phone" placeholder="请输入手机号" autofocus>
+							<Input type="text" v-model="formInline.phone" placeholder="请输入账号" autofocus>
 							<Icon type="md-phone-portrait" slot="prepend" size="18" />
 							</Input>
 						</FormItem>
-				
+
 						<FormItem prop="code">
-							<Row>
-								<Col span="11">
-								<Input type="text" v-model="formInline.code" placeholder="请输入验证码">
-								<Icon type="ios-mail" slot="prepend" size="18" />
-								</Input>
-								</Col>
-								<Col span="4" offset="6">
+							<Input type="text" v-model="formInline.code" placeholder="请输入密码">
+							<Icon type="ios-lock" slot="prepend" size="18" />
+							</Input>
+							<!--<Col span="4" offset="6">
 								<Button @click="send_code(formInline.phone)" :disabled="code_button">{{code_text}}</Button>
-								</Col>
-							</Row>
+								</Col>-->
 						</FormItem>
-				
+
 						<FormItem>
 							<Button @click="phone_login(formInline.phone,formInline.code)" style="background:#b3424a;color: #fff ;" :loading="button_login">登录</Button>
 						</FormItem>
 					</Form>
 				</Card>
 			</div>
-			
+
 		</div>
 	</div>
 </template>
@@ -78,19 +71,19 @@
 					}],
 					password: [{
 							required: true,
-							message: '请输入验证码',
+							message: '请输入密码',
 							trigger: 'blur'
 						},
 						{
 							type: 'string',
 							min: 6,
-							message: '验证码不能少于6位',
+							message: '密码不能少于6位',
 							trigger: 'blur'
 						}
 					],
 					phone: [{
 							required: true,
-							message: '请输入手机号',
+							message: '请输入账号',
 							trigger: 'blur'
 						},
 						{
@@ -111,20 +104,42 @@
 			phone_login(phone, code) {
 				that.button_login = true
 				//console.log(phone, code)
-				Bmob.User.signOrLoginByMobilePhone(Number(phone), Number(code)).then(res => {
+				Bmob.User.login(phone, code).then(res => {
 					console.log(res)
+					if(res.masterId || res.identity == 2){
+						let now_staff = res
+						let master = res.masterId
+						uni.hideLoading();
+						if (master.is_vip) {
+							now_staff.is_vip = true
+							now_staff.vip_time = master.vip_time
+						} else {
+							now_staff.is_vip = false
+							now_staff.vip_time = 0
+						}
+						
+						localStorage.setItem("user", now_staff)
+						localStorage.setItem("identity", 2) //1是老板，2是员工
+						localStorage.setItem("masterId", res.objectId)
+						localStorage.setItem("uid", master.objectId)
+					}else{
+						localStorage.setItem("user", res)
+						localStorage.setItem("masterId", res.objectId)
+						localStorage.setItem("identity", 1); //1是老板，2是员工
+						localStorage.setItem("uid", res.objectId)
+					}
+					
 					that.button_login = false
-					localStorage.setItem("identity", 1)
-					localStorage.setItem("bmob", JSON.stringify(res))
-          localStorage.setItem("uid", res.objectId)
-          localStorage.setItem("masterId", res.objectId)
 					this.$router.push({
 						path: '/home/index'
 					})
+				
 				}).catch(err => {
 					that.button_login = false
 					that.alter_type = "phone_landing_error"
+					console.log(err)
 				});
+				
 			},
 
 			//验证码点击
@@ -203,29 +218,30 @@
 </script>
 
 <style scoped>
-	.display_flex_bet{
+	.display_flex_bet {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
 	}
-	
-	.header{
+
+	.header {
 		background: #FFFFFF;
 		padding: 1.25rem 0;
 		border-top-left-radius: 8px;
 		border-top-right-radius: 8px;
 	}
-	.header-item{
+
+	.header-item {
 		width: 50%;
-		height: 100%;;
+		height: 1.875rem;
+		line-height: 1.875rem;
 		text-align: center;
 	}
-	
-	.ivu-card
-	{
-		border-bottom-left-radius: 8px;
-		border-bottom-right-radius: 8px;
+
+	.ivu-card {
+		border-radius: 0.5rem;
 	}
+
 	.index_content {
 		position: fixed;
 		left: 0;

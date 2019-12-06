@@ -10,7 +10,7 @@
 		<div style="margin-bottom: 10px;display: flex;align-items: center;justify-content: space-between;">
 
 			<div style="display: flex;align-items: center;">
-				<Dropdown style="margin-right: 10px" @on-click="selected_options" trigger="click" >
+				<Dropdown style="margin-right: 10px" @on-click="selected_options" trigger="click">
 					<Button type="primary">
 						打印操作
 						<Icon type="ios-arrow-down"></Icon>
@@ -25,7 +25,7 @@
 					</DropdownMenu>
 				</Dropdown>
 
-				<Dropdown style="margin-right: 10px" trigger="click" >
+				<Dropdown style="margin-right: 10px" trigger="click">
 					<Button type="primary">
 						产品操作
 						<Icon type="ios-arrow-down"></Icon>
@@ -40,7 +40,7 @@
 					</DropdownMenu>
 				</Dropdown>
 
-				<Dropdown style="margin-right: 10px" trigger="click" >
+				<Dropdown style="margin-right: 10px" trigger="click">
 					<Button type="primary">
 						导入导出操作
 						<Icon type="ios-arrow-down"></Icon>
@@ -67,7 +67,13 @@
 		<Table :columns="columns" :data="goods" :loading="loading" ref="table" border size="small" :height="screenHeight - 240"
 		 @on-select="get_select" @on-select-cancel="cancle_select" @on-select-all-cancel="cancle_select" id="print_table">
 			<template slot-scope="{ row, index }" slot="action">
-				<Button type="primary" size="small" v-print="'#printMe'" @click="Print(row)">打印二维码</Button>
+				<div style="display: flex;justify-content: center;">
+					<div style="margin-right: 10px"><Button type="primary" size="small">库存</Button></div>
+					<div><Button type="primary" size="small">删除</Button></div>
+					<!--<div><Button type="primary" size="small" v-print="'#printMe'" @click="Print(row)">打印</Button></div>-->
+					
+				</div>
+
 			</template>
 		</Table>
 
@@ -170,7 +176,7 @@
 			</div>
 		</div>
 
-		<Modal title="产品图片" v-model="GoodImg.show" class-name="vertical-center-modal">
+		<Modal title="产品图片" v-model="GoodImg.show" :styles="{top: '4%'}">
 			<img :src="GoodImg.attr" style="height: 800px;margin: 0 auto;width: 100%;" />
 		</Modal>
 
@@ -288,12 +294,6 @@
 					{
 						width: 100,
 						align: 'center',
-						title: '所属仓库',
-						key: 'stocks',
-					},
-					{
-						width: 100,
-						align: 'center',
 						title: '存放位置',
 						key: 'position',
 					},
@@ -337,57 +337,12 @@
 					{
 						width: 160,
 						align: 'center',
-						title: '产品条码',
-						key: 'productCode',
-					},
-					{
-						title: '产品二维码',
-						width: 100,
-						key: 'qrcodeImg',
-						render: (h, params) => {
-							return h('div', {
-								style: {
-									"text-align": "center"
-								},
-							}, [
-								h('img', {
-									style: {
-										width: "65px",
-									},
-									attrs: {
-										src: params.row.qrcodeImg
-									}
-								})
-							]);
-						}
-					},
-
-					/*{
-					  title: '产品条形码',
-					  width: 200,
-					  type: 'barcode',
-					  render: (h, params) => {
-					    return h(barcode, {
-					      style: {
-					        width: "170px",
-					        height: "80px",
-					        margin: "10px 0",
-					      },
-					      attrs: {
-					        value: (params.row.productCode) ? params.row.productCode : params.row.objectId + '-' + false
-					      }
-					    })
-					  }
-					},*/
-					{
-						width: 160,
-						align: 'center',
 						title: '创建时间',
 						key: 'createdAt',
 						sortable: true,
 					},
 					{
-						width: 160,
+						width: 260,
 						title: '操作',
 						slot: 'action',
 						align: 'center',
@@ -633,7 +588,7 @@
 				const query = Bmob.Query('Goods');
 				query.equalTo('userId', '==', that.userid);
 				query.include('second_class', 'goodsClass', 'stocks')
-
+				query.equalTo("order", "!=", 1);
 				if (that.selected_stocks) {
 					query.equalTo("stocks", "==", that.selected_stocks);
 				}

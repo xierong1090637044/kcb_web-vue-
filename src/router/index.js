@@ -1,6 +1,10 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import ViewUI from 'view-design';
+import Element from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
+import '@/assets/all.css';
+Vue.use(Element);
 
 // import style
 import 'view-design/dist/styles/iview.css';
