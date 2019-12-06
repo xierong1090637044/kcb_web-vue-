@@ -71,7 +71,7 @@
 					<div style="margin-right: 10px"><Button type="primary" size="small">库存</Button></div>
 					<div><Button type="primary" size="small">删除</Button></div>
 					<!--<div><Button type="primary" size="small" v-print="'#printMe'" @click="Print(row)">打印</Button></div>-->
-					
+
 				</div>
 
 			</template>
@@ -82,79 +82,6 @@
 				<Page :total="100" :current="pege_number" @on-change="changePage"></Page>
 			</div>
 		</div>
-
-		<Modal v-model="modal1" title="筛选" @on-ok="modal_confrim" @on-cancel="cancel" cancel-text="重置" :closable=false>
-			<Form :label-width="80">
-				<FormItem label="产品名字">
-					<Input v-model="search_goodMame" placeholder="请输入产品名字"></Input>
-				</FormItem>
-
-				<FormItem label="产品分类">
-					<Row>
-						<Col span="6">
-						<Select v-model="selected_goodsClass" placeholder="请选择一级分类" @on-change="get_secondclass">
-							<Option v-for="(value,index) in all_fristclass" :value="value.objectId" :key="index">{{value.class_text}}</Option>
-						</Select>
-						</Col>
-						<Col span="6" style="margin-left: 20px;">
-						<Select v-model="selected_second_class" placeholder="请选择二级分类">
-							<Option v-for="(value,index) in all_secondclass" :value="value.objectId" :key="index">{{value.class_text}}</Option>
-						</Select>
-						</Col>
-					</Row>
-				</FormItem>
-
-				<FormItem label="存放仓库">
-					<Row>
-						<Col span="6">
-						<Select v-model="selected_stocks" placeholder="请选择存放仓库">
-							<Option v-for="(value,index) in all_stocks" :value="value.objectId" :key="index">{{value.stock_name}}</Option>
-						</Select>
-						</Col>
-					</Row>
-				</FormItem>
-			</Form>
-		</Modal>
-
-		<!--出库、入库、退货时的弹窗-->
-		<Drawer :title="option_title" v-model="value1" width="720" :mask-closable="false" :styles="styles">
-			<Scroll :height="screenHeight - 160">
-				<Card bordered shadow v-for="(item,index) in select_goods" :key="index">
-					<div slot="title" class="display_flex_bet">
-						<div>{{item.goodsName}}</div>
-						<div>库存:{{item.reserve}}</div>
-					</div>
-					<div>产品规格：{{item.packageContent}}/{{item.packingUnit}}</div>
-					<div class="display_flex">实际入库价（可修改）：<Input placeholder="请输入实际入库价" clearable style="width: 200px" @on-change="modify_price($event,index)" /></div>
-					<div class="display_flex">数量：<InputNumber @on-change="modify_num($event,index)"></InputNumber>
-					</div>
-				</Card>
-			</Scroll>
-			<div class="demo-drawer-footer">
-				<Button style="margin-right: 8px" @click="value1 = false">取消</Button>
-				<Button type="primary" @click="value1 = false,value2=true">确定</Button>
-			</div>
-		</Drawer>
-
-		<!--出库、入库、退货时的弹窗-->
-		<Drawer :title="option_title" v-model="value2" width="720" :mask-closable="false" :styles="styles">
-			<div style='line-height:70rpx;padding: 20rpx 20rpx 0;'>已选产品</div>
-			<div style='max-height:25vh;overflow-x:scroll'>
-				<div v-for="(item,index) in select_goods" :key="index" class='pro_listitem'>
-					<div class='pro_list' style='color:#3D3D3D'>
-						<div>产品：{{item.goodsName}}</div>
-						<div>期初进货价：￥{{item.costPrice}}</div>
-					</div>
-					<div class='pro_list'>
-						<div>实际进货价：￥{{item.modify_retailPrice}}（X{{item.num}}）</div>
-						<div>合计：￥{{item.total_money}}</div>
-					</div>
-				</div>
-			</div>
-			<div class='pro_allmoney'>总计：￥{{modal2.all_money}}</div>
-
-
-		</Drawer>
 
 		<div id="printMe" style="text-align: center;" v-if="now_product" class="print">
 			<img :src="now_product.qrcodeImg" />
@@ -200,10 +127,7 @@
 					show: false,
 					attr: ''
 				},
-				modal2: {
-					all_money: 0,
-					real_money: 0,
-				},
+				
 				retailPrice: '',
 				now_product: '',
 				option_title: '',
@@ -349,6 +273,7 @@
 						fixed: 'right',
 					}
 				],
+
 				goods: [],
 				select_goods: [] //选择模式下选择的产品数据
 			};
