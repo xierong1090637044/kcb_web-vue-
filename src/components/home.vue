@@ -70,7 +70,7 @@
 						</Submenu>
 					</Menu>
 				</Sider>
-				<Layout :style="{height:screenHeight - 64+'px',background:'#fff'}">
+				<Layout :style="{height:screenHeight - 64+'px'}">
 					<Content style="padding: 20px;">
 						<router-view></router-view>
 					</Content>
@@ -127,7 +127,7 @@
 		width: 600px !important;
 		text-align: right !important;
 	}
-
+	
 	.ivu-layout-sider{
 		background: #426ab3 !important;
 	}
@@ -135,11 +135,11 @@
 		background: #426ab3 !important;
 		color: #fff !important;
 	}
-
+	
 	.ivu-layout-header{
 		background: #426ab3 !important;
 	}
-
+	
 	.layout{
 	    border: 1px solid #d7dde4;
 	    position: relative;
