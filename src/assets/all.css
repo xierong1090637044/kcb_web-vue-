@@ -1,4 +1,26 @@
+.display_flex{
+  display: flex;
+  align-items: center;
+}
+.display_flex_bet{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 .ivu-btn-primary{
-	background-color: #426ab3 !important;
+	background-color: #426ab3  !important;
 	border-color: #426ab3!important;
+}
+.ivu-btn-success{
+  background-color: #42b394  !important;
+  border-color: #42b394 !important;
+}
+
+.ivu-input-search{
+  background-color: #426ab3  !important;
+  border-color: #426ab3!important;
+}
+
+.ivu-menu-light.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu):after{
+  background: unset !important;
 }
