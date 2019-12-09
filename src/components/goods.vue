@@ -18,7 +18,7 @@
     </div>
 
     <Table :columns="columns" :data="goods" :loading="loading" ref="table" border size="small" :height="screenHeight - 240"
-      @on-select="get_select" @on-select-cancel="cancle_select" @on-select-all-cancel="cancle_select" id="print_table">
+      @on-select="get_select" @on-select-all="get_select"	@on-select-cancel="cancle_select" @on-select-all-cancel="cancle_select" id="print_table">
       <template slot-scope="{ row, index }" slot="action">
         <div style="display: flex;justify-content: center;">
           <div style="margin-right: 10px" @click="showReserve(row)"><Button type="primary" size="small">库存</Button></div>
@@ -172,6 +172,13 @@
             key: 'retailPrice',
             sortable: true,
           },
+					{
+					  width: 120,
+					  align: 'center',
+					  title: '库存',
+					  key: 'reserve',
+					  sortable: true,
+					},
           {
             width: 100,
             align: 'center',
@@ -183,13 +190,6 @@
             align: 'center',
             title: '存放位置',
             key: 'position',
-          },
-          {
-            width: 120,
-            align: 'center',
-            title: '库存',
-            key: 'reserve',
-            sortable: true,
           },
           {
             width: 100,

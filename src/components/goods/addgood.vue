@@ -73,10 +73,6 @@
 							<el-switch v-model="formValidate.productMoreG"></el-switch>
 						</FormItem>
 
-						<!--<FormItem label="规格设置" v-if="formValidate.productMoreG">
-              <Input suffix="ios-arrow-forward" placeholder="请设置多规格" style="width: auto" @on-focus="productMoreG.show = true"/>
-            </FormItem>-->
-
 						<FormItem></FormItem>
 						<FormItem></FormItem>
 					</div>
@@ -100,10 +96,10 @@
 						</FormItem>
 
 						<FormItem label="预警库存">
-							<Input v-model="item.warning_num" placeholder="预警库存" type="number"></Input>
+							<Input v-model="formValidate.warning_num" placeholder="预警库存" type="number"></Input>
 						</FormItem>
 						<FormItem label="最大库存">
-							<Input v-model="item.max_num" placeholder="最大库存" type="number"></Input>
+							<Input v-model="formValidate.max_num" placeholder="最大库存" type="number"></Input>
 						</FormItem>
 						<FormItem>
 							<Button type="success" shape="circle" icon="md-add" @click="addReserve"></Button>
@@ -156,7 +152,7 @@
 		<!--规格设置-->
 		<Modal title="多规格设置" v-model="productMoreG.show" :styles="{top: '4%'}" width="70%" @on-ok="changeReserve" @on-cancel="changeReserve">
 			<Form :label-width="80">
-				<div v-for="(item,index) in productMoreG.model" :key="index">
+				<div v-for="(item,index) in formValidate.stockReserve[stockIndex].models" :key="index">
 
 					<div style="padding:0.625rem 0;font-size: 1rem;font-weight: bold;">规格{{index+1}}</div>
 					<div class="display_flex_bet">
@@ -209,29 +205,9 @@
 				imgs: {},
 				imgLen: 0,
 				productMoreG: {
-					show: false,
-					model: [{
-						id: 0,
-						custom1: {
-							"name": "颜色",
-							value: ""
-						},
-						custom2: {
-							"name": "尺寸",
-							value: ""
-						},
-						custom3: {
-							"name": "",
-							value: ""
-						},
-						custom4: {
-							"name": "",
-							value: ""
-						},
-						reserve: 0,
-					}],
+					show: false
 				},
-				stockIndex: '',
+				stockIndex: 0,
 				formValidate: {
 					goodsName: '', //产品名字
 					productCode: '', //条形码
@@ -248,10 +224,30 @@
 					regNumber: '',
 					producer: '', //生产厂家
 					productMoreG: false, //是否多规格
+					warning_num:0,//预警库存
+					max_num:0,//最大库存
 					stockReserve: [{
+						models: [{
+							id: 0,
+							custom1: {
+								"name": "颜色",
+								value: ""
+							},
+							custom2: {
+								"name": "尺寸",
+								value: ""
+							},
+							custom3: {
+								"name": "",
+								value: ""
+							},
+							custom4: {
+								"name": "",
+								value: ""
+							},
+							reserve: 0,
+						}],
 						stocks: "", // 存放仓库
-						warning_num: '', //预警库存
-						max_num: '', //最大库存
 						reserve: '', //库存数量
 					}],
 				},
@@ -291,10 +287,17 @@
 			changeReserve() {
 				console.log(that.stockIndex)
 				let thisStockReserve = 0
-				for (let item of that.productMoreG.model) {
+				let totalReserve = 0
+				for (let item of that.formValidate.stockReserve[that.stockIndex].models) {
 					thisStockReserve += Number(item.reserve)
 				}
 				that.formValidate.stockReserve[that.stockIndex].reserve = thisStockReserve
+				
+				for(let item of that.formValidate.stockReserve){
+					totalReserve+=Number(item.reserve)
+				}
+				
+				that.formValidate.reserve = totalReserve
 			},
 
 			//增加规格数量
@@ -318,8 +321,8 @@
 					},
 					reserve: 0,
 				}
-				model.id = that.productMoreG.model.length
-				that.productMoreG.model.push(model)
+				model.id = that.formValidate.stockReserve[that.stockIndex].models.length
+				that.formValidate.stockReserve[that.stockIndex].models.push(model)
 			},
 
 			//添加一行记录
@@ -329,6 +332,26 @@
 					warning_num: '', //预警库存
 					max_num: '', //最大库存
 					reserve: '', //库存数量
+					models: [{
+						id: 0,
+						custom1: {
+							"name": "颜色",
+							value: ""
+						},
+						custom2: {
+							"name": "尺寸",
+							value: ""
+						},
+						custom3: {
+							"name": "",
+							value: ""
+						},
+						custom4: {
+							"name": "",
+							value: ""
+						},
+						reserve: 0,
+					}],
 				}
 				that.formValidate.stockReserve.push(item)
 			},
@@ -346,7 +369,7 @@
 			},
 
 			reduceModel(index) {
-				that.productMoreG.model.splice(index, 1)
+				that.formValidate.stockReserve[that.stockIndex].models.splice(index, 1)
 			},
 
 			//获得二级分类
@@ -360,8 +383,10 @@
 
 			//上传产品
 			handleSubmit(formValidate) {
-				console.log(formValidate)
+				
 				if (formValidate.goodsName) {
+					console.log(formValidate)
+					
 					goods.upload_good(formValidate).then(res => {
 						if (res[0]) {
 							this.$Message.success('上传成功');
