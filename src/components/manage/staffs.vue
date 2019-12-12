@@ -2,20 +2,20 @@
 <template>
 	<div style="position: relative;">
 		<Spin size="large" fix v-if="loading"></Spin>
-		
+
 		<div style="margin-bottom: 10px;">
-			<Breadcrumb  separator="<b style='color: #999;'>/</b>">
+			<Breadcrumb separator="<b style='color: #999;'>/</b>">
 				<BreadcrumbItem to="/">首页</BreadcrumbItem>
-				<BreadcrumbItem  to="/home/goods">员工管理</BreadcrumbItem>
+				<BreadcrumbItem to="/home/goods">员工管理</BreadcrumbItem>
 			</Breadcrumb>
 		</div>
-		
+
 		<div style="margin-bottom: 10px;display: flex;align-items: center;justify-content: space-between;">
 			<div style="display: flex;align-items: center;">
 				<Button type="warning" @click="modal3 = true" icon="md-add" style="margin-right: 10px;background: #ed4014;">添加员工</Button>
 			</div>
 		</div>
-		
+
 		<Table :columns="columns" :data="data" stripe border :height="screenHeight - 250">
 			<template slot-scope="{ row, index }" slot="action">
 				<Button type="primary" size="small" style="margin-right: 5px" @click="edit(row)">修改</Button>
@@ -37,21 +37,21 @@
 		</Modal>
 
 		<!--添加员工-->
-		<Modal v-model="modal3" title="添加员工" @on-ok="add_staff" @on-cancel="staff= {}">
+		<Modal v-model="modal3" title="添加员工" @on-ok="add_staff" @on-cancel="handleData">
 			<Form :label-width="80">
 				<FormItem label="名字">
 					<Input v-model="staff.name" placeholder="请输入员工的名字"></Input>
 				</FormItem>
 
 				<FormItem label="账号">
-					<Input v-model="staff.mobilePhoneNumber" placeholder="请输入员工的登陆"></Input>
+					<Input v-model="staff.mobilePhoneNumber" placeholder="请输入员工的登陆" maxlength="11"></Input>
 				</FormItem>
 				<FormItem label="密码">
 					<Input v-model="staff.password" placeholder="请输入员工的登陆密码"></Input>
 				</FormItem>
 
 				<FormItem label="负责门店">
-					<Select v-model="staff.shop" placeholder="请选择负责的门店">
+					<Select v-model="staff.shop" placeholder="请选择负责的门店" style="text-align: left;">
 						<Option v-for="(item,index) in shops" :value="item.objectId" :key="index">{{item.name}}</Option>
 					</Select>
 				</FormItem>
@@ -61,28 +61,50 @@
 				</FormItem>
 
 				<FormItem label="启用">
-					<i-switch v-model="staff.disabled" size="large">
+					<i-switch v-model="staff.disabled" size="large" style="text-align: left;">
 						<span slot="open">启</span>
 						<span slot="close">关</span>
 					</i-switch>
 				</FormItem>
 
 				<FormItem label="管理权限">
-					<CheckboxGroup v-model="staff.rights.current">
-						<Checkbox v-for="(item,index) in frist_rights" :label="index" :key="index">
-							<span>{{item}}</span>
-						</Checkbox>
+					<CheckboxGroup v-model="staff.rights.current" style="text-align: left;">
+						<span v-for="(item,index) in manage" @click="getThisIndex(index)">
+							<Checkbox  :label="''+index" :key="index">
+								<span>{{item.name}}</span>
+							</Checkbox>
+						</span>
 					</CheckboxGroup>
 				</FormItem>
 
 				<FormItem label="查看权限">
-					<CheckboxGroup v-model="staff.rights.recodecurrent">
-						<Checkbox v-for="(item,index) in second_rights" :label="index" :key="index">
-							<span>{{item}}</span>
+					<CheckboxGroup v-model="staff.rights.recodecurrent" style="text-align: left;">
+						<Checkbox v-for="(item,index) in recode" :label="''+index" :key="index">
+							<span>{{item.name}}</span>
+						</Checkbox>
+					</CheckboxGroup>
+				</FormItem>
+
+				<FormItem label="其他权限">
+					<CheckboxGroup v-model="staff.rights.othercurrent" style="text-align: left;">
+						<Checkbox v-for="(item,index) in others" :label="''+index" :key="index">
+							<span>{{item.name}}</span>
 						</Checkbox>
 					</CheckboxGroup>
 				</FormItem>
 			</Form>
+		</Modal>
+
+		<!--选择管理的仓库-->
+		<Modal title="选择管理的仓库" v-model="newStock.show" :styles="{top: '4%'}">
+			<div class="display_flex_bet">
+				<div style="margin-right: 10px;">选择管理的仓库</div>
+				<CheckboxGroup v-model="staff.selectStock" style="text-align: left;">
+					<Checkbox v-for="(item,index) in newStock.allStocks" :label="index" :key="index">
+						<span>{{item.stock_name}}</span>
+					</Checkbox>
+				</CheckboxGroup>
+			</div>
 		</Modal>
 
 
@@ -91,6 +113,7 @@
 <script>
 	import staffs from '@/serve/staffs.js';
 	import shops from '@/serve/shops.js';
+	import goods from '@/serve/goods.js';
 	import expandRights from '@/components/component/expandRights.vue';
 
 	let that;
@@ -100,10 +123,91 @@
 		},
 		data() {
 			return {
+				newStock: {
+					show: false,
+					allStocks: [],
+				},
 				screenHeight: window.innerHeight,
 				shops: [],
-				frist_rights: ["产品管理", "员工管理", "仓库管理", "门店管理", "客户管理", "产品类别管理"],
-				second_rights: ["入库记录", "出库记录", "客户退货记录", "盘点记录", "经营状况"],
+				manage: [{
+						id: 1,
+						name: '产品管理'
+					},
+					{
+						id: 2,
+						name: '员工管理'
+					},
+					{
+						id: 3,
+						name: '仓库管理'
+					},
+					{
+						id: 4,
+						name: '门店管理'
+					},
+					{
+						id: 5,
+						name: '客户管理'
+					},
+					{
+						id: 6,
+						name: '产品类别管理'
+					},
+					{
+						id: 7,
+						name: '单品统计'
+					}
+				],
+				recode: [{
+						id: 1,
+						name: '入库记录'
+					},
+					{
+						id: 2,
+						name: '出库记录'
+					},
+					{
+						id: 3,
+						name: '采购记录'
+					},
+					{
+						id: 4,
+						name: '销售记录'
+					},
+					{
+						id: 5,
+						name: '调拨记录'
+					},
+					{
+						id: 6,
+						name: '客户退货记录'
+					},
+					{
+						id: 7,
+						name: '盘点记录'
+					},
+					{
+						id: 8,
+						name: '经营状况'
+					},
+					{
+						id: 9,
+						name: '报表查看'
+					},
+				],
+				others: [{
+					id: 1,
+					name: '进价隐藏'
+				}, {
+					id: 2,
+					name: '销售'
+				}, {
+					id: 3,
+					name: '采购'
+				}, {
+					id: 4,
+					name: '审核'
+				}],
 				staff: {
 					name: "",
 					mobilePhoneNumber: "",
@@ -113,9 +217,11 @@
 					disabled: true,
 					rights: {
 						current: [],
-						recodecurrent: []
+						recodecurrent: [],
+						othercurrent: [], //其他权限
 					},
 					objectId: "",
+					selectStock: [], //选择的仓库
 				}, //添加员工的对象
 				loading: false,
 				modal: false,
@@ -143,11 +249,7 @@
 					},
 					{
 						title: '员工名字',
-						key: 'username',
-					},
-					{
-						title: '联系地址',
-						key: 'address',
+						key: 'nickName',
 					},
 					{
 						title: '登录账号',
@@ -155,14 +257,18 @@
 					},
 					{
 						title: '登录密码',
-						key: 'password',
+						key: 'pwd',
 					},
 					{
 						title: '负责门店',
 						key: 'shop',
 						render: (h, params) => {
-							return h('div', [params.row.shop?params.row.shop.name:"无"])
+							return h('div', [params.row.shop ? params.row.shop.name : "无"])
 						}
+					},
+					{
+						title: '联系地址',
+						key: 'address',
 					},
 					{
 						title: '是否已启用',
@@ -189,18 +295,38 @@
 			that = this;
 			this.$Loading.start();
 			staffs.get_stafflist().then(res => {
-				console.log(res)
-				this.$Loading.finish();
+				//console.log(res)
+
 				that.data = res;
+
+				shops.get_shopList().then(res => {
+					//console.log(res)
+					that.shops = res;
+					goods.getstock_list().then(res => {
+						console.log(res)
+						that.newStock.allStocks = res
+						this.$Loading.finish();
+						//that.all_fristclass = res
+					});
+				})
 			})
 
-			shops.get_shopList().then(res => {
-				console.log(res)
-				that.shops = res;
-			})
+
 		},
 
 		methods: {
+
+			//选择第一个权限是触发
+			getThisIndex(index) {
+				console.log(index,that.staff.rights.current,that.staff.rights.current.indexOf('2'))
+				if (index == 2) {
+					setTimeout(function(){
+						if(that.staff.rights.current.indexOf('2') !=-1){
+							that.newStock.show = true;
+						}
+					},100)
+				}
+			},
 
 			//添加员工点击确定
 			add_staff() {
@@ -225,11 +351,15 @@
 				that.modal3 = true;
 				that.staff.name = row.username
 				that.staff.mobilePhoneNumber = row.mobilePhoneNumber
-				that.staff.password = row.password
-				that.staff.shop = (row.shop.name) ? (row.shop.name) : ""
+				that.staff.password = row.pwd
+				that.staff.shop = (row.shop) ? (row.shop.name) : ""
 				that.staff.address = row.address
 				that.staff.objectId = row.objectId
 				that.staff.disabled = !row.disabled
+
+				that.staff.rights.current = row.rights.current || []
+				that.staff.rights.recodecurrent = row.rights.recodecurrent || []
+				that.staff.rights.othercurrent = row.rights.othercurrent || []
 			},
 
 			//删除分类点击
@@ -251,6 +381,24 @@
 				})
 			},
 
+			//重置数据
+			handleData() {
+				that.staff = {
+					name: "",
+					mobilePhoneNumber: "",
+					password: "",
+					shop: '',
+					address: "",
+					disabled: true,
+					rights: {
+						current: [],
+						recodecurrent: [],
+						othercurrent: []
+					},
+					objectId: "",
+					selectStock: [], //选择的仓库
+				} //添加员工的对象
+			},
 
 		},
 	}

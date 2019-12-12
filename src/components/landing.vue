@@ -118,12 +118,12 @@
 							now_staff.vip_time = 0
 						}
 						
-						localStorage.setItem("user", now_staff)
+						localStorage.setItem("user", JSON.stringify(now_staff))
 						localStorage.setItem("identity", 2) //1是老板，2是员工
 						localStorage.setItem("masterId", res.objectId)
 						localStorage.setItem("uid", master.objectId)
 					}else{
-						localStorage.setItem("user", res)
+						localStorage.setItem("user", JSON.stringify(res))
 						localStorage.setItem("masterId", res.objectId)
 						localStorage.setItem("identity", 1); //1是老板，2是员工
 						localStorage.setItem("uid", res.objectId)

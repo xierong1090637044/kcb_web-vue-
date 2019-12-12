@@ -13,6 +13,7 @@
 
 						<MenuItem name="4">
 						<Avatar :src="user.avatarUrl" />
+						<span>{{user.nickName}}</span>
 						</MenuItem>
 					</div>
 				</Menu>
@@ -128,40 +129,44 @@
 		text-align: right !important;
 	}
 
-	.ivu-layout-sider{
+	.ivu-layout-sider {
 		background: #426ab3 !important;
 	}
-	.ivu-menu{
+
+	.ivu-menu {
 		background: #426ab3 !important;
 		color: #fff !important;
 	}
 
-	.ivu-layout-header{
+	.ivu-layout-header {
 		background: #426ab3 !important;
 	}
 
-	.layout{
-	    border: 1px solid #d7dde4;
-	    position: relative;
-	    border-radius: 4px;
-	    overflow: hidden;
+	.layout {
+		border: 1px solid #d7dde4;
+		position: relative;
+		border-radius: 4px;
+		overflow: hidden;
 	}
-	.layout-logo{
-	    width: 100px;
-	    height: 30px;
-	    background: #5b6270;
-	    border-radius: 3px;
-	    float: left;
-	    position: relative;
-	    top: 15px;
-	    left: 20px;
+
+	.layout-logo {
+		width: 100px;
+		height: 30px;
+		background: #5b6270;
+		border-radius: 3px;
+		float: left;
+		position: relative;
+		top: 15px;
+		left: 20px;
 	}
-	.layout-nav{
-	    width: 420px;
-	    margin: 0 auto;
-	    margin-right: 20px;
+
+	.layout-nav {
+		width: 420px;
+		margin: 0 auto;
+		margin-right: 20px;
 	}
-	.display_flex{
+
+	.display_flex {
 		display: flex;
 		align-items: center;
 	}

@@ -174,6 +174,7 @@
 
       //选择当前操作返回
       confrimGoods() {
+				console.log(that.select_goods)
         this.$emit('confrimGoods', that.select_goods)
       },
 
@@ -227,11 +228,18 @@
       get_productList(stockId) {
         const query = Bmob.Query('Goods');
         query.equalTo('userId', '==', that.userid);
-        query.equalTo('stocks', '==', that.search.stockId);
+				query.equalTo("status", "!=", -1);
+				query.equalTo("order", "!=", 0);
+				if(that.search.stockId)query.equalTo('stocks', '==', that.search.stockId);
         query.include('second_class', 'goodsClass', 'stocks')
-        query.equalTo("goodsName", "==", {
-          "$regex": "" + that.search.searchGoodText + ".*"
-        });
+				const query1 = query.equalTo("goodsName", "==", {
+					"$regex": "" + that.search.searchGoodText + ".*"
+				});
+				const query2 = query.equalTo("packageContent", "==", {
+					"$regex": "" + that.search.searchGoodText + ".*"
+				});
+				query.or(query1, query2);
+				
         query.limit(that.page_size);
         query.skip(that.page_size * (that.pege_number - 1));
         query.order("-createdAt"); //按照条件降序
@@ -242,13 +250,12 @@
               item._disabled = true
             }
             item.class = (item.goodsClass ? (item.goodsClass.class_text || "") : "") + "    " + (item.second_class ?
-              (item.second_class
-                .class_text || "") : "")
+              (item.second_class.class_text || "") : "")
             item.stocks = (item.stocks) ? item.stocks.stock_name : ""
 
-            item.qrcodeImg = jrQrcode.getQrBase64((item.productCode) ? item.productCode : item.objectId + '-' +
+            /*item.qrcodeImg = jrQrcode.getQrBase64((item.productCode) ? item.productCode : item.objectId + '-' +
               false)
-            item.productCode = (item.productCode) ? item.productCode : item.objectId + '-' + false
+            item.productCode = (item.productCode) ? item.productCode : item.objectId + '-' + false*/
 
             if (item.models) {
               let count = 0

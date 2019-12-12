@@ -74,7 +74,7 @@
   import XLSX from 'xlsx';
   import Print from 'vue-print-nb';
 
-  let uid = JSON.parse(localStorage.getItem('bmob')).objectId;
+  let uid;
   let that;
   export default {
     components: {
@@ -268,20 +268,22 @@
       window.onresize = () => {
         return (() => {
           that.screenHeight = window.innerHeight;
+					uid = JSON.parse(localStorage.getItem('bmob')).objectId;
         })();
       };
       this.get_productList();
 
       goods.getstock_list().then(res => {
-        console.log(res)
+        //console.log(res)
         that.all_stocks = res
+				goods.get_fristclass().then(res => {
+				  //console.log(res)
+				  that.all_fristclass = res
+				});
       });
 
 
-      goods.get_fristclass().then(res => {
-        console.log(res)
-        that.all_fristclass = res
-      });
+      
     },
 
     methods: {
