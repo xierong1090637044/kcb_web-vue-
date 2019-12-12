@@ -91,7 +91,7 @@
 				order_bills: [],
 				padding_size: 30,
 				modal1: false,
-				userid: JSON.parse(localStorage.getItem('bmob')).objectId || '',
+				userid: JSON.parse(localStorage.getItem('user')).objectId || '',
 				page_size: 100,
 				pege_number: 1,
 				screenHeight: window.innerHeight,

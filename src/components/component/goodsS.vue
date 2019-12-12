@@ -60,8 +60,8 @@
           real_money: 0,
         },
 
-        userid: JSON.parse(localStorage.getItem('bmob')).objectId || '',
-        user: JSON.parse(localStorage.getItem('bmob')),
+        userid: JSON.parse(localStorage.getItem('user')).objectId || '',
+        user: JSON.parse(localStorage.getItem('user')),
         page_size: 50,
         pege_number: 1,
         screenHeight: window.innerHeight,

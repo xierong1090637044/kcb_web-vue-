@@ -6,7 +6,7 @@ export default {
 		let categories = []
 		let _data = []
 
-		let uid = JSON.parse(localStorage.getItem('bmob')).objectId
+		let uid = JSON.parse(localStorage.getItem('user')).objectId
 		let Day = new Date()
 		let d
 		let now_month = Day.getMonth() + 1

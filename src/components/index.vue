@@ -52,7 +52,7 @@
 				total_money: 0,
 				total_products: 0,
 				now_day: common.getDay(0),
-				userid: JSON.parse(localStorage.getItem('bmob')).objectId || '',
+				userid: JSON.parse(localStorage.getItem('user')).objectId || '',
 			};
 		},
 

@@ -19,7 +19,7 @@ export default {
 		console.log(content,color)
 		
 		return new Promise((resolve, reject) => {
-			let userid = JSON.parse(localStorage.getItem('bmob')).objectId;
+			let userid = JSON.parse(localStorage.getItem('user')).objectId;
 			let pointer = Bmob.Pointer('_User')
 			let user = pointer.set(userid);
 			

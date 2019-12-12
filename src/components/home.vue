@@ -88,7 +88,7 @@
 			return {
 				activeIndex: '1',
 				activename: "1",
-				user: JSON.parse(localStorage.getItem('bmob')),
+				user: JSON.parse(localStorage.getItem('user')),
 				screenHeight: window.innerHeight,
 			}
 		},

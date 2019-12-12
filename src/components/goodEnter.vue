@@ -160,8 +160,8 @@
         ],
         selectIndex: 0,
         selectGoods: [],
-        userid: JSON.parse(localStorage.getItem('bmob')).objectId || '',
-        user: JSON.parse(localStorage.getItem('bmob')),
+        userid: JSON.parse(localStorage.getItem('user')).objectId || '',
+        user: JSON.parse(localStorage.getItem('user')),
         screenHeight: window.innerHeight,
         loading: true,
         columns: [{
@@ -252,7 +252,7 @@
         that.$Loading.start();
         let selectGoods = []
         let uid = localStorage.getItem('uid')
-        let thisUser = JSON.parse(localStorage.getItem('bmob'))
+        let thisUser = JSON.parse(localStorage.getItem('user'))
         for (let item of that.selectGoods) {
           if (item.goodsName) {
             selectGoods.push(item)

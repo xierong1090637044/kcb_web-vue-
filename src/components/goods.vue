@@ -111,8 +111,8 @@
         all_secondclass: [], //所有的二级分类
         padding_size: 30,
         modal1: false,
-        userid: JSON.parse(localStorage.getItem('bmob')).objectId || '',
-        user: JSON.parse(localStorage.getItem('bmob')),
+        userid: JSON.parse(localStorage.getItem('user')).objectId || '',
+        user: JSON.parse(localStorage.getItem('user')),
         all_stocks: [],
         page_size: 50,
         pege_number: 1,
@@ -268,7 +268,7 @@
       window.onresize = () => {
         return (() => {
           that.screenHeight = window.innerHeight;
-					uid = JSON.parse(localStorage.getItem('bmob')).objectId;
+					uid = JSON.parse(localStorage.getItem('user')).objectId;
         })();
       };
       this.get_productList();

@@ -121,7 +121,7 @@
 
 		mounted() {
 			that = this;
-			uid = JSON.parse(localStorage.getItem('bmob')).objectId;
+			uid = JSON.parse(localStorage.getItem('user')).objectId;
 			//得到仓库列表
 			goods.getstock_list().then(res => {
 				console.log(res)

@@ -88,7 +88,7 @@ export default {
 	//上传商品
 	upload_good(good) {
 		return new Promise((resolve, reject) => {
-			let uid = JSON.parse(localStorage.getItem('bmob')).objectId;
+			let uid = JSON.parse(localStorage.getItem('user')).objectId;
 
 			const pointer = Bmob.Pointer('_User')
 			const userid = pointer.set(uid)
@@ -188,7 +188,7 @@ export default {
 
 	//获得产品一级分类
 	get_fristclass() {
-		let userid = JSON.parse(localStorage.getItem('bmob')).objectId;
+		let userid = JSON.parse(localStorage.getItem('user')).objectId;
 		return new Promise((resolve, reject) => {
 
 			const query = Bmob.Query("class_user");
@@ -217,7 +217,7 @@ export default {
 
 	//得到仓库列表
 	getstock_list: function(search_text) {
-		let userid = JSON.parse(localStorage.getItem('bmob')).objectId;
+		let userid = JSON.parse(localStorage.getItem('user')).objectId;
 		return new Promise((resolve, reject) => {
 			const query = Bmob.Query("stocks");
 			query.order("-num");

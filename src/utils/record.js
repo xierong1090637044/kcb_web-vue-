@@ -3,7 +3,7 @@ export default {
 
 	//得到记录的总条数
 	querycount: function() {
-		let uid = JSON.parse(localStorage.getItem('bmob')).objectId
+		let uid = JSON.parse(localStorage.getItem('user')).objectId
 
 		return new Promise((resolve, reject) => {
 			const query = Bmob.Query("Goods");
@@ -17,7 +17,7 @@ export default {
 
 	//得到今日概况
 	gettoday_detail: function(start_date, end_date) {
-		let uid = JSON.parse(localStorage.getItem('bmob')).objectId
+		let uid = JSON.parse(localStorage.getItem('user')).objectId
 		let get_reserve = 0; //入库数量
 		let out_reserve = 0; //出库数量
 		let get_reserve_real_money = 0;
@@ -90,7 +90,7 @@ export default {
 
 	//获得库存成本和总库存
 	loadallGoods: function() {
-		let uid = JSON.parse(localStorage.getItem('bmob')).objectId
+		let uid = JSON.parse(localStorage.getItem('user')).objectId
 
 		return new Promise((resolve, reject) => {
 			var total_reserve = 0;

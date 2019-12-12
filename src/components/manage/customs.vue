@@ -43,7 +43,7 @@
 		</Modal>
 
 		<!--添加客户-->
-		<Modal v-model="modal3" title="添加客户" @on-ok="add_custom"  @on-cancel="custom= {}">>
+		<Modal v-model="modal3" title="添加客户" @on-ok="add_custom"  @on-cancel="custom= {}">
 			<Form :label-width="80">
 				<FormItem label="名字">
 					<Input v-model="custom.custom_name" placeholder="请输入客户的名字"></Input>

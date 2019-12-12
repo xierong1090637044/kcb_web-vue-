@@ -3,7 +3,7 @@ export default {
 	//得到员工列表
 	get_stafflist(disabled,search_text) {
 		return new Promise((resolve, reject) => {
-			let userid = JSON.parse(localStorage.getItem('bmob')).objectId;
+			let userid = JSON.parse(localStorage.getItem('user')).objectId;
 			const query = Bmob.Query("_User");
 			query.order("num");
 			query.equalTo("masterId", "==", userid);
@@ -25,7 +25,7 @@ export default {
 	
 	//增加数据操作
 	add_staff(params) {
-		let userid = JSON.parse(localStorage.getItem('bmob')).objectId;
+		let userid = JSON.parse(localStorage.getItem('user')).objectId;
 		
 		return new Promise((resolve, reject) => {
 			const pointer = Bmob.Pointer('_User');
