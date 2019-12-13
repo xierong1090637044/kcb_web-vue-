@@ -38,6 +38,7 @@
 </template>
 <script>
 	import common from '@/utils/common.js';
+	import record from '@/serve/record.js';
 	import mchart from '@/utils/chart.js';
 	import G2 from '@antv/g2';
 
@@ -53,6 +54,7 @@
 				total_products: 0,
 				now_day: common.getDay(0),
 				userid: JSON.parse(localStorage.getItem('user')).objectId || '',
+				user: JSON.parse(localStorage.getItem('user')),
 			};
 		},
 
@@ -138,43 +140,23 @@
 					that.get_reserve = get_reserve.toFixed(2);
 					that.out_reserve = out_reserve.toFixed(2);
 					this.loadallGoods()
+					
 				});
 			},
 
 			//得到总库存数和总金额
 			loadallGoods: function() {
-				var total_reserve = 0;
-				var total_money = 0;
-				const query = Bmob.Query('Goods');
-				query.equalTo('userId', '==', that.userid);
-				query.limit(500);
-				query.find().then(res => {
-					for (var i = 0; i < res.length; i++) {
-						total_reserve = total_reserve + res[i].reserve;
-						total_money = total_money + res[i].reserve * res[i].costPrice;
-						if (i == res.length - 1 && res.length == 500) {
-							const query = Bmob.Query('Goods');
-							query.equalTo('userId', '==', that.userid);
-							query.skip(500);
-							query.limit(500);
-							query.find().then(res => {
-								for (var i = 0; i < res.length; i++) {
-									total_reserve = total_reserve + res[i].reserve;
-									total_money = total_money + res[i].reserve * res[i].costPrice;
-								}
-							});
-							(that.total_money = total_money.toFixed(2)), (that.total_reserve = total_reserve.toFixed(2)), (that
-								.total_products =
-								res.length);
-						} else {
-							(that.total_money = total_money.toFixed(2)), (that.total_reserve = total_reserve.toFixed(2)), (that
-								.total_products =
-								res.length);
-						}
+				record.loadallGoods().then(res => {
+					if(that.user.rights&&that.user.rights.othercurrent[0] != '0'){
+						that.total_money = 0
+					}else{
+						that.total_money = res.total_money
 					}
-
+					that.total_reserve = res.total_reserve
+					that.total_products = res.total_products
+					
 					that.loading = false
-				});
+				})
 			}
 		}
 	};

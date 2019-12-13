@@ -7,27 +7,30 @@
 			</Breadcrumb>
 		</div>
 
-		<div style="display: flex;align-items: center;margin-bottom: 20px;">
-			<Dropdown style="margin-right: 10px" @on-click="selected_options">
-				<Button type="primary">
-					选择操作类型
-					<Icon type="ios-arrow-down"></Icon>
-				</Button>
-				<DropdownMenu slot="list">
-					<DropdownItem name="0"><Button type="primary"> 全部</Button></DropdownItem>
-					<DropdownItem name="-1"><Button type="primary"> 出库</Button></DropdownItem>
-					<DropdownItem name="4"><Button type="primary"> 销售</Button></DropdownItem>
-					<DropdownItem name="1"><Button type="primary"> 入库</Button></DropdownItem>
-					<DropdownItem name="5"><Button type="primary"> 采购</Button></DropdownItem>
-					<DropdownItem name="2"><Button type="primary"> 退货</Button></DropdownItem>
-					<DropdownItem name="3"><Button type="primary"> 盘点</Button></DropdownItem>
-				</DropdownMenu>
-			</Dropdown>
-
-			<Button type="error" @click="modal1=true" icon="ios-funnel-outline" style="margin-right: 10px;">筛选</Button>
-
-			<Button type="primary" @click="exportData()" icon="ios-download-outline"> 导出操作数据</Button>
-
+		<div style="margin-bottom: 20px;" class="display_flex_bet">
+			<div class="display_flex">
+				<Input search enter-button placeholder="请输入产品名称" @on-search='searchOpreations'/>
+				<Button type="error" @click="modal1=true" icon="ios-funnel-outline" style="margin-left: 10px;">筛选</Button>
+			</div>
+			
+			<div>
+				<Dropdown style="margin-right: 10px" @on-click="selected_options">
+					<Button type="primary">
+						操作类型
+						<Icon type="ios-arrow-down"></Icon>
+					</Button>
+					<DropdownMenu slot="list">
+						<DropdownItem name="0"><Button type="primary"> 全部</Button></DropdownItem>
+						<DropdownItem name="-1"><Button type="primary"> 出库</Button></DropdownItem>
+						<DropdownItem name="4"><Button type="primary"> 销售</Button></DropdownItem>
+						<DropdownItem name="1"><Button type="primary"> 入库</Button></DropdownItem>
+						<DropdownItem name="5"><Button type="primary"> 采购</Button></DropdownItem>
+						<DropdownItem name="2"><Button type="primary"> 退货</Button></DropdownItem>
+						<DropdownItem name="3"><Button type="primary"> 盘点</Button></DropdownItem>
+					</DropdownMenu>
+				</Dropdown>
+				<Button type="primary" @click="exportData()" icon="ios-download-outline"> 导出操作数据</Button>
+			</div>
 		</div>
 
 		<Table :columns="columns" :data="order_opreations" :loading="loading" ref="table" border size="small" :height="screenHeight - 250">
@@ -48,16 +51,18 @@
 		<Modal v-model="modal1" title="筛选" @on-ok="modal_confrim" @on-cancel="cancel" cancel-text="重置">
 			<Form :label-width="80">
 
-				<FormItem label="请选择时间">
-					<DatePicker type="date" placeholder="选择起始时间" style="width: 200px" @on-change="change_startdata" v-model="start_time"></DatePicker>
-					<DatePicker type="date" placeholder=" 选择结束时间" style="width: 200px" @on-change="change_enddata" v-model="end_time"></DatePicker>
+				<FormItem label="时间">
+					<DatePicker type="date" placeholder="起始时间" style="width: 200px" @on-change="change_startdata" v-model="start_time"></DatePicker>
+					<DatePicker type="date" placeholder="结束时间" style="width: 200px" @on-change="change_enddata" v-model="end_time"></DatePicker>
 				</FormItem>
 
 
-				<FormItem label="请选择客户" v-if="type == -1" style="margin-top: 10px;">
-					<router-link to="/home/manage/customs?type=choose">
-						<Input v-model="select_custom.custom_name" placeholder="请选择客户"></Input>
-					</router-link>
+				<FormItem label="客户" style="margin-top: 10px;">
+					<Input v-model="search.custom.custom_name" placeholder="请选择客户" @on-focus="customShow = true"></Input>
+				</FormItem>
+				
+				<FormItem label="供应商" style="margin-top: 10px;">
+					<Input v-model="search.producer.producer_name" placeholder="请选择供应商" @on-focus="producerShow = true"></Input>
 				</FormItem>
 
 			</Form>
@@ -223,6 +228,10 @@
 				
 			</div>
 		</Modal>
+		
+		<!--生产商列表-->
+		<producerS @cancle="producerShow = false" :show="producerShow" @select="selectProducter"></producerS>
+		<customS @cancle="customShow = false" :show="customShow" @select="selectCustom"></customS>
 
 	</div>
 </template>
@@ -232,14 +241,20 @@
 	import Print from 'vue-print-nb';
 
 	import expandRow from '@/components/component/expandRow.vue';
+	import customS from '@/components/component/customS.vue';
+	import producerS from '@/components/component/producerS.vue';
 	let that;
 	let user;
 	export default {
 		components: {
-			expandRow
+			expandRow,
+			customS,
+			producerS
 		},
 		data() {
 			return {
+				customShow: false,
+				producerShow:false,
 				GoodImg: {
 					show: false,
 					attr: ''
@@ -279,14 +294,13 @@
 					},
 					{
 						title: '客户或供应商',
-						key: 'goodsName',
 						sortable: true,
 						render: (h, params) => {
 							if (params.row.type == 1) {
-								return h('div', [params.row.producer?params.row.producer.producer_name:'']);
+								return h('div', [params.row.producer_name]);
 							}
 							if (params.row.type == -1) {
-								return h('div', [params.row.custom?params.row.custom.custom_name:'']);
+								return h('div', [params.row.custom_name]);
 							}
 							
 						}
@@ -381,9 +395,9 @@
 					},
 					{
 						title: '操作者',
-						key: 'opreater',
+						key: 'nickName',
 						render: (h, params) => {
-							return h('div', [params.row.opreater.nickName]);
+							return h('div', [params.row.nickName]);
 						}
 					},
 					{
@@ -401,6 +415,12 @@
 						fixed: 'right',
 					}
 				],
+				
+				search:{
+					goodName:'',
+					producer:'',
+					custom:''
+				}
 			};
 		},
 
@@ -421,6 +441,24 @@
 		},
 
 		methods: {
+			
+			//选择客户
+			selectCustom(row){
+				that.customShow = false
+				that.search.custom = row
+			},
+			
+			//选择供应商
+			selectProducter(row) {
+			  that.producerShow = false
+			  that.search.producer = row
+			},
+			
+			//输入产品名字筛选
+			searchOpreations(value){
+				that.search.goodName = value
+				that.get_operations()
+			},
 
 			showReserve(row) {
 				console.log(row)
@@ -433,7 +471,7 @@
 				if (e) {
 					that.start_time = e + " 00:00:00"
 				}
-
+				
 			},
 
 			//选择结束时间
@@ -450,8 +488,12 @@
 
 			//筛选取消
 			cancel() {
+				that.search = {
+					goodName:'',
+					producer:'',
+					custom:''
+				},
 				that.select_custom = ''
-				localStorage.removeItem("select_custom")
 				that.start_time = ''
 				that.end_time = ''
 				that.get_operations();
@@ -521,11 +563,34 @@
 						query.equalTo('type', '==', that.type);
 					}
 				}
+				
+				if(that.search.goodName){
+					query.equalTo("goodsName","==", { "$regex": "" + that.search.goodName + ".*" });
+				}
+				
+				if(that.search.producer){
+					query.equalTo("producer","==", that.search.producer.objectId);
+				}
+				
+				if(that.search.custom){
+					query.equalTo("custom","==", that.search.custom.objectId);
+				}
 				query.include("opreater", "custom", "producer");
 				query.limit(that.page_size);
 				query.skip(that.page_size * (that.pege_number - 1));
 				query.order("-createdAt"); //按照条件降序
 				query.find().then(res => {
+					for(let item of res){
+						if(item.producer){
+							item.producer_name = item.producer.producer_name
+						}
+						
+						if(item.custom){
+							item.custom_name = item.custom.custom_name
+						}
+						
+						item.nickName = item.opreater.nickName
+					}
 					this.order_opreations = res;
 					this.loading = false;
 				});
@@ -551,6 +616,7 @@
 				query.include("operater", "custom", "producer");
 				query.find().then(res => {
 					console.log(res);
+					
 					that.products = res.detail;
 					that.order_bills = res
 				});

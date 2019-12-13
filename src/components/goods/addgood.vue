@@ -4,7 +4,8 @@
 			<Breadcrumb separator="<b style='color: #999;'>/</b>">
 				<BreadcrumbItem to="/">首页</BreadcrumbItem>
 				<BreadcrumbItem to="/home/goods">产品管理</BreadcrumbItem>
-				<BreadcrumbItem>添加产品</BreadcrumbItem>
+				<BreadcrumbItem v-if="type =='edit'">修改产品</BreadcrumbItem>
+				<BreadcrumbItem v-else>添加产品</BreadcrumbItem>
 			</Breadcrumb>
 		</div>
 
@@ -81,7 +82,7 @@
 			</div>
 
 
-			<div>
+			<div v-if="type !='edit'">
 				<div style="font-size: 16px;color: #333333;font-weight: bold;">库存信息</div>
 				<div style="padding: 0.625rem 0;">
 					<div class="display_flex_bet" v-for="(item,index) in formValidate.stockReserve">
@@ -122,8 +123,8 @@
 						<FormItem label="生产厂家" prop="producer">
 							<Input v-model="formValidate.producer" placeholder="请输入生产厂家"></Input>
 						</FormItem>
-						<FormItem label="货架编号" prop="position">
-							<Input v-model="formValidate.position" placeholder="请输入货架编号"></Input>
+						<FormItem label="货架位置" prop="position">
+							<Input v-model="formValidate.position" placeholder="请输入货架位置"></Input>
 						</FormItem>
 						<FormItem label="货号" prop="regNumber">
 							<Input v-model="formValidate.regNumber" placeholder="货号"></Input>
@@ -257,11 +258,14 @@
 						message: '产品名字必填',
 						trigger: 'blur'
 					}],
-				}
+				},
+				type:'',//操作类型
 			}
 		},
 		mounted() {
 			that = this
+			that.type = that.getParameterByName("type")
+			
 			//获得一级分类
 			goods.get_fristclass().then(res => {
 				//console.log(res)
@@ -274,9 +278,41 @@
 				that.all_stocks = res
 				//that.all_fristclass = res
 			});
+			
+			if(that.getParameterByName("type") == 'edit'){
+				let editGood =JSON.parse(localStorage.getItem("editGood"))
+				that.formValidate.goodsName = editGood.goodsName
+				that.formValidate.productCode = editGood.productCode
+				that.formValidate.costPrice = editGood.costPrice
+				that.formValidate.retailPrice = editGood.retailPrice
+				that.formValidate.position = editGood.position
+				that.formValidate.goodsClass = editGood.goodsClass?editGood.goodsClass.objectId:''
+				that.formValidate.second_class = editGood.second_class?editGood.second_class.objectId:''
+				that.formValidate.reserve = editGood.reserve
+				that.formValidate.packingUnit = editGood.packingUnit
+				that.formValidate.packageContent = editGood.packageContent
+				that.formValidate.goodsIcon = editGood.goodsIcon
+				that.formValidate.product_info = editGood.product_info
+				that.formValidate.regNumber = editGood.regNumber
+				that.formValidate.producer = editGood.producer
+				that.formValidate.warning_num = editGood.warning_num
+				that.formValidate.max_num = editGood.max_num
+				that.formValidate.objectId = editGood.objectId
+			}
 		},
 
 		methods: {
+			
+			
+			getParameterByName(name, url) {
+			    if (!url) url = window.location.href;
+			    name = name.replace(/[\[\]]/g, '\\$&');
+			    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+			        results = regex.exec(url);
+			    if (!results) return null;
+			    if (!results[2]) return '';
+			    return decodeURIComponent(results[2].replace(/\+/g, ' '));
+			},
 
 			showModal(index) {
 				that.productMoreG.show = true;

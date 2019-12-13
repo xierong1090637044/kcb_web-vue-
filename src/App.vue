@@ -4,6 +4,7 @@
 	</div>
 </template>
 <script>
+	import mine from '@/serve/mine.js';
 	import manage from '@/serve/manage.js';
 	import customs from '@/serve/customs.js';
 
@@ -24,12 +25,12 @@
 
 			let current = Bmob.User.current()
 			console.log(current)
-			if (localStorage.getItem('bmob')) {
+			if (localStorage.getItem('user')) {
 				let identity = localStorage.getItem('identity')
 				let current = Bmob.User.current()
 				current.user = ''
 				if (identity == 1) {
-					localStorage.setItem("bmob", JSON.stringify(current))
+					localStorage.setItem("user", JSON.stringify(current))
 				}
 
 				manage.getstock_list(false, '').then(res => {
@@ -38,6 +39,8 @@
 				customs.get_customList(false, '').then(res => {
 					localStorage.setItem("customs", JSON.stringify(res))
 				})
+				
+				mine.query_setting()
 			}
 		},
 

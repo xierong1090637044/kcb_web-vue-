@@ -1,37 +1,91 @@
+import Bmob from "hydrogen-js-sdk";
+let uid = localStorage.getItem('uid');
+let setting = JSON.parse(localStorage.getItem('setting')) || {};
 export default {
-	
-	
-	//得到感谢的人
-	get_thanks(){
+
+	//修改配置信息
+	modify_setting(params) {
 		return new Promise((resolve, reject) => {
-			const query = Bmob.Query("thanks");
-			query.order("-star");
-			query.include("user");
+			/*uni.showLoading({
+				title: "上传中"
+			});*/
+			const query = Bmob.Query("setting");
+			const pointer = Bmob.Pointer('_User')
+			const poiID = pointer.set(uid)
+
+			if (setting.objectId) query.set("id", setting.objectId)
+			query.set("show_float", Number(params.show_float))
+			query.set("USER", params.USER)
+			query.set("UKEY", params.UKEY)
+			query.set("number", ''+params.number)
+			query.set("wx_openid", params.wx_openid)
+			query.set("auto_print", params.auto_print)
+			query.set("production", params.production)
+			query.set("negativeOut", params.negativeOut)
+			query.set("parent", poiID)
+			//query.set("beizhu", "Bmob")
+			query.save().then(res => {
+				console.log(res)
+				/*uni.hideLoading();
+				uni.showToast({
+					title: "保存成功",
+				})*/
+				this.query_setting()
+
+			}).catch(err => {
+				console.log(err)
+			})
+		})
+
+	},
+
+
+	//查询当前用户的设置
+	query_setting() {
+		return new Promise((resolve, reject) => {
+			const query = Bmob.Query("setting");
+			query.equalTo("parent", "==", uid);
 			query.find().then(res => {
-			    resolve(res)
+				console.log(res)
+				if(res[0]){
+					localStorage.setItem("setting",JSON.stringify(res[0]))
+				}else{
+					res[0] = {}
+					res[0].show_float = 2
+					localStorage.setItem("setting", JSON.stringify(res[0]))
+				}
+				resolve(res)
 			});
 		})
-		
 	},
 	
-	//输入需求
-	upload_xuqiu(content,color){
-		console.log(content,color)
-		
+	//得到用户信息
+	getUserInfo(){
 		return new Promise((resolve, reject) => {
-			let userid = JSON.parse(localStorage.getItem('user')).objectId;
-			let pointer = Bmob.Pointer('_User')
-			let user = pointer.set(userid);
-			
-			const query = Bmob.Query('thanks');
-			query.set("thanks",content)
-			query.set("color",color)
-			query.set("user",user)
-			query.save().then(res => {
-				resolve(res)
+			const query = Bmob.Query('_User');
+			query.get(uid).then(res => {
+				localStorage.setItem("user",res)
+				resolve(true,res)
 			}).catch(err => {
-			  console.log(err)
+			  resolve(false,err)
 			})
 		})
 	},
+	//修改用户信息
+	update_user(user) {
+		return new Promise((resolve, reject) => {
+			const query = Bmob.Query('_User');
+			query.get(uid).then(res => {
+			  res.set('avatarUrl', user.avatarUrl)
+			  res.set('nickName', user.nickName)
+			  res.set('sex', Number(user.sex)?Number(user.sex):0)
+			  res.save()
+				resolve(true,res)
+			}).catch(err => {
+			  resolve(false,err)
+			})
+		})
+	},
+
+
 }
