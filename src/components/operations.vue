@@ -14,11 +14,13 @@
 					<Icon type="ios-arrow-down"></Icon>
 				</Button>
 				<DropdownMenu slot="list">
-					<DropdownItem name="0"><Button type="primary" > 全部</Button></DropdownItem>
-					<DropdownItem name="-1"><Button type="primary" > 出库</Button></DropdownItem>
-					<DropdownItem name="1"><Button type="primary" > 入库</Button></DropdownItem>
-					<DropdownItem name="2"><Button type="primary" > 退货</Button></DropdownItem>
-					<DropdownItem name="3"><Button type="primary" > 盘点</Button></DropdownItem>
+					<DropdownItem name="0"><Button type="primary"> 全部</Button></DropdownItem>
+					<DropdownItem name="-1"><Button type="primary"> 出库</Button></DropdownItem>
+					<DropdownItem name="4"><Button type="primary"> 销售</Button></DropdownItem>
+					<DropdownItem name="1"><Button type="primary"> 入库</Button></DropdownItem>
+					<DropdownItem name="5"><Button type="primary"> 采购</Button></DropdownItem>
+					<DropdownItem name="2"><Button type="primary"> 退货</Button></DropdownItem>
+					<DropdownItem name="3"><Button type="primary"> 盘点</Button></DropdownItem>
 				</DropdownMenu>
 			</Dropdown>
 
@@ -30,13 +32,15 @@
 
 		<Table :columns="columns" :data="order_opreations" :loading="loading" ref="table" border size="small" :height="screenHeight - 250">
 			<template slot-scope="{ row, index }" slot="action">
-			  <div style="display: flex;justify-content: center;">
-			    <div style="margin-right: 10px" @click="showReserve(row)"><Button type="primary" size="small">详情</Button></div>
-					<div v-if="row.type == 1 && row.status == false" style="margin-right: 10px"><Button type="primary" size="small" v-print="'#printMe'" @click="Print(row)">采购入库</Button></div>
-					<div v-if="row.type == -1 && row.status == false" style="margin-right: 10px"><Button type="primary" size="small" v-print="'#printMe'" @click="Print(row)">销售出库</Button></div>
-			    <div @click="deleteHeaderGood(row.objectId)"><Button type="error" size="small">撤销</Button></div>
-			  </div>
-			
+				<div style="display: flex;justify-content: center;">
+					<div style="margin-right: 10px" @click="showReserve(row)"><Button type="primary" size="small">详情</Button></div>
+					<div v-if="row.type == 1 && row.status == false" style="margin-right: 10px"><Button type="primary" size="small"
+						 v-print="'#printMe'" @click="Print(row)">采购入库</Button></div>
+					<div v-if="row.type == -1 && row.status == false" style="margin-right: 10px"><Button type="primary" size="small"
+						 v-print="'#printMe'" @click="Print(row)">销售出库</Button></div>
+					<div @click="deleteHeaderGood(row.objectId)"><Button type="error" size="small">撤销</Button></div>
+				</div>
+
 			</template>
 		</Table>
 
@@ -68,252 +72,155 @@
 		<Modal title="产品图片" v-model="GoodImg.show" class-name="vertical-center-modal">
 			<img :src="GoodImg.attr" style="height: 800px;margin: 0 auto;width: 100%;" />
 		</Modal>
-		
-		<Modal title="操作详情" v-model="detailShow" class-name="vertical-center-modal">
-			<div >
-				<div style='line-height:70rpx;padding: 0 20rpx;'>操作产品</div>
-				<div v-if="detail.type == 3">
-					<div>
-						<div v-for="(item,index) in products" :key="index" class='pro_listitem'>
-							<div class='pro_list' style='color:#000'>
-								<div>产品：{{item.goodsName}}</div>
-								<div v-if="item.stock">盘点仓库：{{item.stock}}</div>
-							</div>
-							<div class='pro_list'>
-								<div>盘点前库存：{{item.reserve}}</div>
-								<div>盘点后库存：{{item.now_reserve}}</div>
-							</div>
+
+
+		<Modal title="详情"  v-model="detailShow" width="60%">
+			<div>
+				<Button type="primary" v-print="'#printTest'" style="float: left;">打印</Button>
+			</div>
+			
+			<div id="printTest" v-if="detail.type==-1">
+				<div v-if="detail.extra_type == 1">
+					<div style="font-size: 22px;padding-bottom:10px;font-weight:800;font-family:宋体; text-align:center">销售单</div>
+					<div class="display_flex_bet" style="margin-bottom: 10px;">
+						<div style="font-size:16px;font-family:宋体;">客户：{{detail.custom?detail.custom.custom_name:'未填写'}}</div>
+						<div style="font-size:16px;font-family:宋体;">销售日期：{{detail.createdTime?detail.createdTime.iso.split(" ")[0]:detail.createdAt}}</div>
+					</div>
+				</div>
+				
+				<div v-if="detail.extra_type == 2">
+					<div style="font-size: 22px;padding-bottom:10px;font-weight:800;font-family:宋体; text-align:center">出库单</div>
+				</div>
+				
+
+				<table>
+					<thead>
+						<th>产品名称</th>
+						<th>单位</th>
+						<th>数量</th>
+						<th>单价</th>
+						<th>合计</th>
+					</thead>
+					<tbody>
+						<tr v-for="item in detail.detail" :key="item.id">
+							<td>{{item.goodsName}}</td>
+							<td>{{item.packingUnit?item.packingUnit:'未记录'}}</td>
+							<td>{{item.num}}</td>
+							<td>{{item.modify_retailPrice}}</td>
+							<td>{{item.modify_retailPrice * item.num}}</td>
+						</tr>
+					</tbody>
+				</table>
+				
+				<div v-if="detail.extra_type == 1">
+					<div class="display_flex_bet" style="margin-top: 10px;">
+						<div style="font-size:16px;font-family:宋体;">实际付款：{{detail.real_money}}</div>
+						<div style="font-size:16px;font-family:宋体;" class="display_flex">
+							<div>操作者：</div>
+							<div style="width:100px">{{detail.opreater?detail.opreater.nickName:''}}</div>
+						</div>
+					</div>
+					<div class="display_flex_bet" style="margin-bottom: 40px;">
+						<div style="font-size:16px;font-family:宋体;">备注：{{detail.beizhu?detail.beizhu:'未填写'}}</div>
+						<div style="font-size:16px;font-family:宋体;" class="display_flex">
+							<div>经办人签字或盖章：</div>
+							<div style="width:100px"></div>
 						</div>
 					</div>
 				</div>
-			
-				<div v-else-if="detail.type == 2">
-					<div>
-						<div v-for="(item,index) in products" :key="index" class='pro_listitem'>
-							<div class='pro_list_item' style='color:#000'>
-								<div>产品：{{item.goodsName}}（成本价：￥{{item.goodsId.costPrice}}）</div>
-							</div>
-							<div class='pro_list'>
-								<div>退货数量：X{{item.num}}</div>
-								<div style="text-align: right;">建议零售价：￥{{item.goodsId.retailPrice}}</div>
-							</div>
-							<!--<div style="text-align: right;">总价：￥{{item.total_money}}</div>-->
+				
+				<div v-if="detail.extra_type == 2">
+					<div class="display_flex_bet" style="margin-top: 10px;">
+						<div style="font-size:16px;font-family:宋体;">出库日期：{{detail.createdTime?detail.createdTime.iso.split(" ")[0]:detail.createdAt}}</div>
+						<div style="font-size:16px;font-family:宋体;" class="display_flex">
+							<div>操作者：</div>
+							<div style="width:100px">{{detail.opreater?detail.opreater.nickName:''}}</div>
 						</div>
 					</div>
-					<div class='pro_allmoney'>总计：￥{{detail.all_money}}</div>
-				</div>
-			
-				<div v-else-if="detail.type == -2">
-					<div>
-						<div v-for="(item,index) in products" :key="index" class='pro_listitem'>
-							<div class='pro_list' style='color:#000;border-bottom: 1rpx solid#EEEEEE;padding:0 0 10rpx;'>
-								<div>产品：{{item.goodsName}}</div>
-								<div>调拨数量：{{item.num}}</div>
-							</div>
-							<div class='pro_list' style="padding: 10rpx 0;">
-								<div>调出仓库：{{item.stock}}</div>
-								<div>调拨后库存：{{item.reserve - item.num}}</div>
-							</div>
-							<div class='pro_list'>
-								<div>调入仓库：{{item.out_stock}}</div>
-								<!--<div>调拨后库存：{{item.out_reserve + item.num}}</div>-->
-							</div>
-						</div>
-					</div>
-					<div class='pro_allmoney' v-if="detail.type != -2">总计：￥{{detail.all_money}}</div>
-				</div>
-			
-				<div v-else>
-					<div>
-						<div v-for="(item,index) in products" :key="index" class='pro_listitem'>
-							<div class='pro_list_item' style='color:#000'>
-								<div>产品：{{item.goodsName}}
-									<text v-if="(user.rights&&user.rights.othercurrent[0] != '0') || detail.type == -1"></text>
-									<text v-else>（成本价：￥{{item.goodsId.costPrice}}）</text>
-								</div>
-							</div>
-							<div v-if="item.goodsId.selected_model">
-								<div v-for="(model,index) in item.goodsId.selected_model" :key="index" class="display_flex_bet" v-if="model.num > 0">
-									<div style="font-size: 24rpx;color: #999;">{{model.custom1.value + model.custom2.value + model.custom3.value + model.custom4.value}}</div>
-									<div style="font-size: 24rpx;color: #f30;">{{model.num}}</div>
-								</div>
-							</div>
-							<div class='pro_list'>
-								<div v-if="item.type == -1">
-									<div v-if="item.stock">出库仓库:{{item.stock}}</div>
-									<div v-else>出库仓库:未填写</div>
-								</div>
-								<div v-else-if="item.type == 1">
-									<div v-if="item.stock">存放仓库:{{item.stock}}</div>
-									<div v-else>存放仓库:未填写</div>
-								</div>
-			
-								<div>数量：X{{item.num}}</div>
-							</div>
-							<div class='pro_list'>
-								<div>建议零售价：￥{{item.goodsId.retailPrice}}</div>
-								<div v-if="item.type == -1">实际卖出价：￥{{item.modify_retailPrice}}</div>
-								<div v-else>
-									<text v-if="user.rights&&user.rights.othercurrent[0] != '0'">实际进货价：￥0</text>
-									<text v-else>实际进货价：￥{{item.modify_retailPrice}}</text>
-								</div>
-							</div>
-			
-							<!--<div style="text-align: right;" v-if="user.rights&&user.rights.othercurrent[0] != '0'">总价：￥0</div>
-							<div style="text-align: right;" v-else>总价：￥{{item.total_money }}</div>-->
-						</div>
-					</div>
-					<div class='pro_allmoney' v-if="user.rights&&user.rights.othercurrent[0] != '0'">总计：￥0</div>
-					<div class='pro_allmoney' v-else>总计：￥{{detail.all_money }}</div>
-				</div>
-			
-				<div v-if="detail.type == -1">
-					<div class="kaidanmx" v-if="detail.extra_type == 1">
-						<div style="padding: 10rpx 30rpx;">销售明细</div>
-						<div v-if="detail.custom" class="display_flex" style="border-bottom: 1rpx solid#F7F7F7;">
-							<div class="left_content">客户姓名</div>
-							<div>{{detail.custom.custom_name}}</div>
-						</div>
-						<div v-if="detail.discount" class="display_flex" style="border-bottom: 1rpx solid#F7F7F7;">
-							<div class="left_content">折扣率</div>
-							<div>{{detail.discount}}%</div>
-						</div>
-						<div class="display_flex" style="border-bottom: 1rpx solid#F7F7F7;">
-							<div class="left_content">实际付款</div>
-							<div class="real_color">{{detail.real_money == null ?'未填写':detail.real_money }}</div>
-						</div>
-						<div class="display_flex" v-if="detail.debt > 0" style="border-bottom: 1rpx solid#F7F7F7;">
-							<div class="left_content">欠款</div>
-							<div class="real_color">{{detail.debt}}</div>
-						</div>
-						<div class="display_flex_bet" v-if="detail.typeDesc" style="background: #fff;border-bottom: 1rpx solid#F7F7F7;">
-							<div class="display_flex">
-								<div class="left_content">发送方式</div>
-								<div class="real_color">{{detail.typeDesc}}</div>
-							</div>
-							<div class="display_flex" v-if="detail.typeDesc =='物流' || detail.typeDesc =='快递'">
-								<div class="real_color">{{detail.expressNum}}</div>
-							</div>
-						</div>
-						<div class="display_flex_bet" v-if="detail.typeDesc" style="background: #fff;justify-content: flex-end;padding: 0rpx 30rpx;border-bottom: 1rpx solid#F7F7F7;"
-						 @click="gotoexpressDet">
-							<div style="margin-right: 10rpx;color: #0a53c3;">查快递 </div>
-							<fa-icon type="angle-right" size="20" color="#0a53c3" />
-						</div>
-						<div class="display_flex">
-							<div class="left_content" v-if="detail.createdTime">销售时间</div>
-							<div>{{detail.createdTime.iso.split(" ")[0]}}</div>
-						</div>
-						
-					</div>
-					<div class="kaidanmx" v-else-if="detail.extra_type == 2">
-						<div style="padding: 10rpx 30rpx;">出库明细</div>
-						<div v-if="detail.custom" class="display_flex" style="border-bottom: 1rpx solid#F7F7F7;">
-							<div class="left_content">客户姓名</div>
-							<div>{{detail.custom.custom_name}}</div>
-						</div>
-						<div v-if="detail.discount" class="display_flex" style="border-bottom: 1rpx solid#F7F7F7;">
-							<div class="left_content">折扣率</div>
-							<div>{{detail.discount}}%</div>
-						</div>
-						<div class="display_flex" style="border-bottom: 1rpx solid#F7F7F7;">
-							<div class="left_content">实际付款</div>
-							<div class="real_color">{{detail.real_money == null ?'未填写':detail.real_money }}</div>
-						</div>
-						<div class="display_flex" v-if="detail.debt > 0" style="border-bottom: 1rpx solid#F7F7F7;">
-							<div class="left_content">欠款</div>
-							<div class="real_color">{{detail.debt}}</div>
-						</div>
-						<div class="display_flex_bet" v-if="detail.typeDesc" style="background: #fff;border-bottom: 1rpx solid#F7F7F7;">
-							<div class="display_flex">
-								<div class="left_content">发送方式</div>
-								<div class="real_color">{{detail.typeDesc}}</div>
-							</div>
-							<div class="display_flex" v-if="detail.typeDesc =='物流' || detail.typeDesc =='快递'">
-								<div class="real_color">{{detail.expressNum}}</div>
-							</div>
-						</div>
-						<div class="display_flex_bet" v-if="detail.typeDesc" style="background: #fff;justify-content: flex-end;padding: 0rpx 30rpx;border-bottom: 1rpx solid#F7F7F7;"
-						 @click="gotoexpressDet">
-							<div style="margin-right: 10rpx;color: #0a53c3;">查快递 </div>
-							<fa-icon type="angle-right" size="20" color="#0a53c3" />
-						</div>
-						<div class="display_flex" v-if="detail.createdTime">
-							<div class="left_content">出库时间</div>
-							<div>{{detail.createdTime.iso.split(" ")[0]}}</div>
+					<div class="display_flex_bet" style="margin-bottom: 40px;">
+						<div style="font-size:16px;font-family:宋体;">备注：{{detail.beizhu?detail.beizhu:'未填写'}}</div>
+						<div style="font-size:16px;font-family:宋体;" class="display_flex">
+							<div>经办人签字或盖章：</div>
+							<div style="width:100px"></div>
 						</div>
 					</div>
 				</div>
+				
+			</div>
 			
-				<!--入库以及采购明细-->
-				<div v-else-if="detail.type == 1">
-					<div class="kaidanmx" v-if="detail.extra_type == 1">
-						<div style="padding: 10rpx 30rpx;">采购明细</div>
-						<div v-if="detail.producer" class="display_flex" style="border-bottom: 1rpx solid#F7F7F7;">
-							<div class="left_content">供货商姓名</div>
-							<div>{{detail.producer.producer_name}}</div>
-						</div>
-						<div class="display_flex" style="border-bottom: 1rpx solid#F7F7F7;">
-							<div class="left_content">实际付款</div>
-							<div class="real_color">{{detail.real_money == null ?'未填写':detail.real_money }}</div>
-						</div>
-						<div class="display_flex" v-if="detail.debt > 0">
-							<div class="left_content">欠款</div>
-							<div class="real_color">{{detail.debt}}</div>
-						</div>
-						<div class="display_flex">
-							<div class="left_content" v-if="detail.createdTime">采购时间</div>
-							<div>{{detail.createdTime.iso.split(" ")[0]}}</div>
-						</div>
+			<div id="printTest" v-if="detail.type==1">
+				<div v-if="detail.extra_type == 1">
+					<div style="font-size: 22px;padding-bottom:10px;font-weight:800;font-family:宋体; text-align:center">采购单</div>
+					<div class="display_flex_bet" style="margin-bottom: 10px;">
+						<div style="font-size:16px;font-family:宋体;">供应商：{{detail.producer?detail.producer.producer_name:'未填写'}}</div>
+						<div style="font-size:16px;font-family:宋体;">采购日期：{{detail.createdTime?detail.createdTime.iso.split(" ")[0]:detail.createdAt}}</div>
 					</div>
-					<div class="kaidanmx" v-else-if="detail.extra_type == 2">
-						<div style="padding: 10rpx 30rpx;">入库明细</div>
-						<div class="display_flex" v-if="detail.createdTime">
-							<div class="left_content">入库时间</div>
-							<div>{{detail.createdTime.iso.split(" ")[0]}}</div>
-						</div>
+				</div>
+				<div v-if="detail.extra_type == 2">
+					<div style="font-size: 22px;padding-bottom:10px;font-weight:800;font-family:宋体; text-align:center">入库单</div>
+					<div class="display_flex_bet" style="margin-bottom: 10px;">
+						<div style="font-size:16px;font-family:宋体;"></div>
+						<div style="font-size:16px;font-family:宋体;">入库日期：{{detail.createdTime?detail.createdTime.iso.split(" ")[0]:detail.createdAt}}</div>
 					</div>
 				</div>
 			
-				<div v-else-if="detail.type == 2">
-					<div class="kaidanmx">
-						<div style="padding: 10rpx 30rpx;">退货明细</div>
-						<div v-if="detail.custom" class="display_flex">
-							<div class="left_content">客户姓名</div>
-							<div>{{detail.custom.custom_name}}</div>
+				<table>
+					<thead>
+						<th>产品名称</th>
+						<th>单位</th>
+						<th>数量</th>
+						<th>单价</th>
+						<th>合计</th>
+					</thead>
+					<tbody>
+						<tr v-for="item in detail.detail" :key="item.id">
+							<td>{{item.goodsName}}</td>
+							<td>{{item.packingUnit?item.packingUnit:'未记录'}}</td>
+							<td>{{item.num}}</td>
+							<td>{{item.modify_retailPrice}}</td>
+							<td>{{item.modify_retailPrice * item.num}}</td>
+						</tr>
+					</tbody>
+				</table>
+			
+			  <div v-if="detail.extra_type == 1">
+					<div class="display_flex_bet" style="margin-top: 10px;">
+						<div style="font-size:16px;font-family:宋体;">
+							实际付款：{{detail.real_money}}
+							<text v-if="detail.debt > 0" style="color: #f30;">（{{detail.debt}}）</text>
 						</div>
-						<div v-else class="display_flex">
-							<div class="left_content">未记录客户</div>
+						<div style="font-size:16px;font-family:宋体;" class="display_flex">
+							<div>操作者：</div>
+							<div style="width:100px">{{detail.opreater?detail.opreater.nickName:''}}</div>
+						</div>
+					</div>
+					<div class="display_flex_bet" style="margin-bottom: 40px;">
+						<div style="font-size:16px;font-family:宋体;">备注：{{detail.beizhu?detail.beizhu:'未填写'}}</div>
+						<div style="font-size:16px;font-family:宋体;" class="display_flex">
+							<div>经办人签字或盖章：</div>
+							<div style="width:100px"></div>
 						</div>
 					</div>
 				</div>
-			
-				<div style='margin-top:20px' class='detail_bottom'>
-					<div style='display:flex;border-bottom:1px solid#ddd;padding-bottom: 20upx;'>
-						<div v-if="detail.opreater">
-							<img :src='detail.opreater.avatarUrl' class='avatar'></img>
+				<div v-if="detail.extra_type == 2">
+					<div class="display_flex_bet" style="margin-top: 10px;">
+						<div style="font-size:16px;font-family:宋体;">
+							
 						</div>
-						<div class='common_style' v-if="detail.opreater">{{detail.opreater.nickName}}</div>
-						<div class='common_style'>（操作者）</div>
+						<div style="font-size:16px;font-family:宋体;" class="display_flex">
+							<div>操作者：</div>
+							<div style="width:100px">{{detail.opreater?detail.opreater.nickName:''}}</div>
+						</div>
 					</div>
-					<div style='padding:20rpx 0 0'>
-						<div v-if="detail.beizhu">备注：{{detail.beizhu}}</div>
-						<div v-else>备注：暂无</div>
-						<div>操作时间：{{detail.createdAt}}</div>
-			
-						<div v-if="detail.Images && detail.Images.length > 0">
-							<div class="notice_text">凭证图</div>
-			
-							<div style="width: 100%;padding: 20rpx 0;">
-								<div class="upload_image display_flex">
-									<div style="position: relative;" v-for="(url,index) in detail.Images" :key="index" @click="pridiv(url)">
-										<img :src="url" style="width: 180rpx;height: 180rpx;margin-right: 10rpx;"></img>
-									</div>
-								</div>
-							</div>
+					<div class="display_flex_bet" style="margin-bottom: 40px;">
+						<div style="font-size:16px;font-family:宋体;">备注：{{detail.beizhu?detail.beizhu:'未填写'}}</div>
+						<div style="font-size:16px;font-family:宋体;" class="display_flex">
+							<div>经办人签字或盖章：</div>
+							<div style="width:100px"></div>
 						</div>
 					</div>
 				</div>
+				
 			</div>
 		</Modal>
 
@@ -322,6 +229,7 @@
 <script>
 	import common from '@/serve/common.js';
 	import customs from '@/serve/customs.js';
+	import Print from 'vue-print-nb';
 
 	import expandRow from '@/components/component/expandRow.vue';
 	let that;
@@ -336,14 +244,12 @@
 					show: false,
 					attr: ''
 				},
-				detail:{},
-				detailShow:true,
-				products:'',
-				
+				detail: {}, //操作详情
+				detailShow: false,
 				select_custom: '',
 				start_time: '',
 				end_time: '',
-				type: 0, //操作类型
+				type: '', //操作类型
 				order_opreations: [],
 				order_bills: [],
 				padding_size: 30,
@@ -370,21 +276,36 @@
 					{
 						title: '数量',
 						key: 'real_num',
-					}, 
+					},
+					{
+						title: '客户或供应商',
+						key: 'goodsName',
+						sortable: true,
+						render: (h, params) => {
+							if (params.row.type == 1) {
+								return h('div', [params.row.producer?params.row.producer.producer_name:'']);
+							}
+							if (params.row.type == -1) {
+								return h('div', [params.row.custom?params.row.custom.custom_name:'']);
+							}
+							
+						}
+					},
+					
 					{
 						title: '操作类型',
 						key: 'type',
 						render: (h, params) => {
 							if (params.row.type == 1) {
-								if(params.row.extra_type == 2){
+								if (params.row.extra_type == 2) {
 									return h('div', ["入库"]);
-								}else if(params.row.extra_type == 1){
+								} else if (params.row.extra_type == 1) {
 									return h('div', ["采购"]);
 								}
 							} else if (params.row.type == -1) {
-								if(params.row.extra_type == 2){
+								if (params.row.extra_type == 2) {
 									return h('div', ["出库"]);
-								}else if(params.row.extra_type == 1){
+								} else if (params.row.extra_type == 1) {
 									return h('div', ["销售"]);
 								}
 							} else if (params.row.type == 2) {
@@ -469,15 +390,15 @@
 						title: '时间',
 						key: 'type',
 						render: (h, params) => {
-							return h('div', params.row.createdTime?params.row.createdTime.iso.split(" ")[0]:params.row.createdAt);
+							return h('div', params.row.createdTime ? params.row.createdTime.iso.split(" ")[0] : params.row.createdAt);
 						}
 					},
 					{
-					  width: 200,
-					  title: '操作',
-					  slot: 'action',
-					  align: 'center',
-					  fixed: 'right',
+						width: 200,
+						title: '操作',
+						slot: 'action',
+						align: 'center',
+						fixed: 'right',
 					}
 				],
 			};
@@ -488,7 +409,7 @@
 			window.onresize = () => {
 				return (() => {
 					that.screenHeight = window.innerHeight;
-					
+
 				})();
 			};
 
@@ -500,6 +421,12 @@
 		},
 
 		methods: {
+
+			showReserve(row) {
+				console.log(row)
+				that.detail = row;
+				that.detailShow = true
+			},
 
 			//选择起始时间
 			change_startdata(e) {
@@ -577,16 +504,29 @@
 				if (that.end_time) {
 					query.equalTo("createdAt", "<", that.end_time);
 				}
+				if(that.type){
+					if(that.type == 4){
+						query.equalTo('type', '==', -1);
+						query.equalTo('extra_type', '==', 1);
+					}else if(that.type == 5){
+						query.equalTo('type', '==', 1);
+						query.equalTo('extra_type', '==', 1);
+					}else if(that.type == 1){
+						query.equalTo('type', '==', 1);
+						query.equalTo('extra_type', '==', 2);
+					}else if(that.type == -1){
+						query.equalTo('type', '==', -1);
+						query.equalTo('extra_type', '==', 2);
+					}else{
+						query.equalTo('type', '==', that.type);
+					}
+				}
 				query.include("opreater", "custom", "producer");
 				query.limit(that.page_size);
 				query.skip(that.page_size * (that.pege_number - 1));
 				query.order("-createdAt"); //按照条件降序
 				query.find().then(res => {
-					
 					this.order_opreations = res;
-					that.detail = this.order_opreations[7];
-					that.products = res[7].detail;
-					
 					this.loading = false;
 				});
 			},
@@ -619,94 +559,30 @@
 	};
 </script>
 <style>
-	.page {
-		color: #4d4d4d;
-		height: 100vh;
-		overflow-y: scroll;
-		background: #FAFAFA;
-		font-size: 28rpx;
+	#printTest table {
+		font-family: "宋体";
+		border-collapse: collapse;
+		width: 99.5%;
 	}
 
-	.operater_status {
-		position: fixed;
-		bottom: 0;
-		left: 0;
-		width: 100%;
-		padding: 20rpx 0;
-		background: #b82626;
-		color: #fff;
-		z-index: 100;
+	#printTest table thead th {
+		height: 40px;
+		font-size: 13px;
+		/* width: 10px; */
+		text-align: center;
+		border: 1px solid black;
+	}
+
+	#printTest table tbody tr {
+		font-size: 13px;
+		border: 1px solid black;
+		height: 40px;
 		text-align: center;
 	}
 
-	.pro_list {
-		display: flex;
-		justify-content: space-between;
-	}
-
-	.pro_listitem {
-		background-color: #fff;
-		padding: 10rpx 20rpx;
-		border-bottom: 1rpx solid#ddd;
-	}
-
-	.pro_allmoney {
-		background-color: #fff;
-		padding: 10rpx 20rpx;
-		text-align: right;
-		font-size: 32rpx;
-		color: #f30;
-	}
-
-	.beizhu_style {
-		width: 100%;
-		background-color: #fff;
-		padding: 20rpx;
-		font-size: 32rpx;
-	}
-
-	.confrim_button {
-		width: 60%;
-		background: #426ab3;
-		color: #fff;
-		font-size: 32rpx;
-		margin: 10% 20%;
-	}
-
-	.detail_bottom {
-		width: calc(100% - 40rpx);
-		background-color: #fff;
-		padding: 20rpx;
-	}
-
-	.avatar {
-		width: 40px;
-		height: 40px;
-		border-radius: 50%;
-	}
-
-	.common_style {
-		line-height: 80rpx;
-		margin-left: 20rpx;
-		color: #000;
-	}
-
-	.real_color {
-		color: #f30 !important;
-	}
-
-	.kaidanmx {
-		margin-top: 30rpx;
-	}
-
-	.display_flex {
-		display: flex;
-		align-items: center;
-		background: #FFFFFF;
-		padding: 15rpx 30rpx;
-	}
-
-	.left_content {
-		width: 150rpx;
+	#printTest table tbody td {
+		font-size: 13px;
+		text-align: center;
+		border: 1px solid black;
 	}
 </style>
