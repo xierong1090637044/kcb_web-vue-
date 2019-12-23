@@ -87,9 +87,7 @@
 				<div style="padding: 0.625rem 0;">
 					<div class="display_flex_bet" v-for="(item,index) in formValidate.stockReserve">
 						<FormItem label="存放仓库">
-							<Select v-model="item.stocks" placeholder="请选择存放仓库" style="width: 11.625rem;">
-								<Option v-for="(value,index) in all_stocks" :value="value.objectId" :key="index">{{value.stock_name}}</Option>
-							</Select>
+							<Input v-model="item.stocks.stock_name" placeholder="对应的仓库"></Input>
 						</FormItem>
 						<FormItem label="库存">
 							<Input v-model="item.reserve" placeholder="对应的库存" type="number" v-if="formValidate.productMoreG" @on-focus="showModal(index)"></Input>
@@ -102,10 +100,10 @@
 						<FormItem label="最大库存">
 							<Input v-model="formValidate.max_num" placeholder="最大库存" type="number"></Input>
 						</FormItem>
-						<FormItem>
+						<!--<FormItem>
 							<Button type="success" shape="circle" icon="md-add" @click="addReserve"></Button>
 							<Button type="error" shape="circle" icon="md-close" @click="reduceReserve(index)"></Button>
-						</FormItem>
+						</FormItem>-->
 					</div>
 				</div>
 
@@ -225,32 +223,9 @@
 					regNumber: '',
 					producer: '', //生产厂家
 					productMoreG: false, //是否多规格
-					warning_num:0,//预警库存
-					max_num:0,//最大库存
-					stockReserve: [{
-						models: [{
-							id: 0,
-							custom1: {
-								"name": "颜色",
-								value: ""
-							},
-							custom2: {
-								"name": "尺寸",
-								value: ""
-							},
-							custom3: {
-								"name": "",
-								value: ""
-							},
-							custom4: {
-								"name": "",
-								value: ""
-							},
-							reserve: 0,
-						}],
-						stocks: "", // 存放仓库
-						reserve: '', //库存数量
-					}],
+					warning_num: 0, //预警库存
+					max_num: 0, //最大库存
+					stockReserve: [],
 				},
 				ruleValidate: {
 					goodsName: [{
@@ -259,13 +234,13 @@
 						trigger: 'blur'
 					}],
 				},
-				type:'',//操作类型
+				type: '', //操作类型
 			}
 		},
-		mounted() {
+		beforeCreate() {
 			that = this
 			that.type = that.getParameterByName("type")
-			
+
 			//获得一级分类
 			goods.get_fristclass().then(res => {
 				//console.log(res)
@@ -276,18 +251,47 @@
 			goods.getstock_list().then(res => {
 				console.log(res)
 				that.all_stocks = res
+				for (let item of res) {
+					console.log(item)
+					let stockReserveItem = {}
+					let models = {
+						id: 0,
+						custom1: {
+							"name": "颜色",
+							value: ""
+						},
+						custom2: {
+							"name": "尺寸",
+							value: ""
+						},
+						custom3: {
+							"name": "",
+							value: ""
+						},
+						custom4: {
+							"name": "",
+							value: ""
+						},
+						reserve: 0,
+					}
+					stockReserveItem.models = models
+					stockReserveItem.stocks = item
+					stockReserveItem.reserve = 0
+					that.formValidate.stockReserve.push(stockReserveItem)
+				}
+
 				//that.all_fristclass = res
 			});
-			
-			if(that.getParameterByName("type") == 'edit'){
-				let editGood =JSON.parse(localStorage.getItem("editGood"))
+
+			if (that.getParameterByName("type") == 'edit') {
+				let editGood = JSON.parse(localStorage.getItem("editGood"))
 				that.formValidate.goodsName = editGood.goodsName
 				that.formValidate.productCode = editGood.productCode
 				that.formValidate.costPrice = editGood.costPrice
 				that.formValidate.retailPrice = editGood.retailPrice
 				that.formValidate.position = editGood.position
-				that.formValidate.goodsClass = editGood.goodsClass?editGood.goodsClass.objectId:''
-				that.formValidate.second_class = editGood.second_class?editGood.second_class.objectId:''
+				that.formValidate.goodsClass = editGood.goodsClass ? editGood.goodsClass.objectId : ''
+				that.formValidate.second_class = editGood.second_class ? editGood.second_class.objectId : ''
 				that.formValidate.reserve = editGood.reserve
 				that.formValidate.packingUnit = editGood.packingUnit
 				that.formValidate.packageContent = editGood.packageContent
@@ -302,16 +306,16 @@
 		},
 
 		methods: {
-			
-			
+
+
 			getParameterByName(name, url) {
-			    if (!url) url = window.location.href;
-			    name = name.replace(/[\[\]]/g, '\\$&');
-			    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
-			        results = regex.exec(url);
-			    if (!results) return null;
-			    if (!results[2]) return '';
-			    return decodeURIComponent(results[2].replace(/\+/g, ' '));
+				if (!url) url = window.location.href;
+				name = name.replace(/[\[\]]/g, '\\$&');
+				var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+					results = regex.exec(url);
+				if (!results) return null;
+				if (!results[2]) return '';
+				return decodeURIComponent(results[2].replace(/\+/g, ' '));
 			},
 
 			showModal(index) {
@@ -328,11 +332,11 @@
 					thisStockReserve += Number(item.reserve)
 				}
 				that.formValidate.stockReserve[that.stockIndex].reserve = thisStockReserve
-				
-				for(let item of that.formValidate.stockReserve){
-					totalReserve+=Number(item.reserve)
+
+				for (let item of that.formValidate.stockReserve) {
+					totalReserve += Number(item.reserve)
 				}
-				
+
 				that.formValidate.reserve = totalReserve
 			},
 
@@ -419,10 +423,10 @@
 
 			//上传产品
 			handleSubmit(formValidate) {
-				
+
 				if (formValidate.goodsName) {
 					console.log(formValidate)
-					
+
 					goods.upload_good(formValidate).then(res => {
 						if (res[0]) {
 							this.$Message.success('上传成功');

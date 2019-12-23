@@ -7,7 +7,7 @@ export default {
 	//得到记录的总条数
 	querycount: function() {
 		return new Promise((resolve, reject) => {
-			const query = Bmob.Query("Goods");
+			const query = Bmob.Query("NGoods");
 			query.equalTo("userId", "==", uid);
 			query.equalTo("status", "!=", -1);
 			query.equalTo("order","!=",1);
@@ -47,7 +47,7 @@ export default {
 						}
 					}
 					
-					const query = Bmob.Query("Bills");
+					const query = Bmob.Query("NBills");
 					query.equalTo("userId", "==", uid);
 					query.equalTo("createdAt", ">=", start_date);
 					query.equalTo("createdAt", "<=", end_date);
@@ -131,7 +131,7 @@ export default {
 				params.total_products = count
 				for (var i = 0; i < Math.ceil(count/1000); i++) {
 					console.log(i)
-					const query = Bmob.Query("Goods");
+					const query = Bmob.Query("NGoods");
 					query.equalTo("userId", "==", uid);
 					query.equalTo("status", "!=", -1);
 					query.equalTo("order","!=",1);

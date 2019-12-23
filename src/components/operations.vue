@@ -598,7 +598,7 @@
 
 			//查询所有的单个操作列表
 			get_bills() {
-				const query = Bmob.Query('Bills');
+				const query = Bmob.Query('NBills');
 				query.equalTo('userId', '==', that.userid);
 				query.equalTo('type', '==', that.type);
 				if (that.start_time) {

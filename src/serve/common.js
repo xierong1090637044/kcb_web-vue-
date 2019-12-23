@@ -5,7 +5,7 @@ export default{
   	return new Promise((resolve, reject) => {
   		for (let i = 0; i < products.length; i++) {
   			let num = 0;
-  			const query = Bmob.Query('Goods');
+  			const query = Bmob.Query('NGoods');
   			query.get(products[i].objectId).then(res => {
   				console.log(products[i])
 
@@ -43,7 +43,7 @@ export default{
   	return new Promise((resolve, reject) => {
   		for (let i = 0; i < products.length; i++) {
   			let num = 0;
-  			const query = Bmob.Query('Goods');
+  			const query = Bmob.Query('NGoods');
   			query.get(products[i].objectId).then(res => {
   				//console.log(res)
 
@@ -116,7 +116,7 @@ export default{
 	//记录员工的出库数量
 	record_staffOut(have_out) {
 		console.log(have_out,uni.getStorageSync("user").have_out)
-		const query = Bmob.Query('staffs');
+		const query = Bmob.Query('_User');
 		query.set('id', uni.getStorageSync("user").objectId) //需要修改的objectId
 		query.set('have_out', have_out+uni.getStorageSync("user").have_out)
 		query.save().then(res => {
@@ -130,7 +130,7 @@ export default{
 	get_allCost() {
     let userid = localStorage.getItem('uid')
 		console.log(userid)
-		const query = Bmob.Query("Goods");
+		const query = Bmob.Query("NGoods");
 		query.equalTo("userId", "==", userid);
 		query.find().then(res => {
 			console.log(res)

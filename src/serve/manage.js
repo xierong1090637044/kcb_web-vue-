@@ -20,7 +20,7 @@ export default {
 		return new Promise((resolve, reject) => {
 			const query = Bmob.Query("stocks");
 			query.order("-num");
-			query.include("charge", "shop")
+			query.include("Ncharge", "shop")
 			query.equalTo("parent", "==", userid);
 			query.equalTo("disabled", "==", disabled);
 			if (search_text) {
@@ -43,7 +43,7 @@ export default {
 		const pointer = Bmob.Pointer('_User');
 		let poiID = pointer.set(userid);
 
-		const pointer1 = Bmob.Pointer('staffs');
+		const pointer1 = Bmob.Pointer('_User');
 		let chargeId = pointer1.set(params.charge);
 
 		//const pointer2 = Bmob.Pointer('shops');
@@ -100,7 +100,7 @@ export default {
 	get_chargeList(disabled, search_text) {
 		let userid = JSON.parse(localStorage.getItem('user')).objectId;
 		return new Promise((resolve, reject) => {
-			const query = Bmob.Query("staffs");
+			const query = Bmob.Query("_User");
 			query.order("-createdAt");
 			query.equalTo("masterId", "==", userid);
 			query.equalTo("disabled", "==", disabled);

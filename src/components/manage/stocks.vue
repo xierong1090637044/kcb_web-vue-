@@ -147,9 +147,9 @@
 					},
 					{
 						title: '仓库负责人',
-						key: 'charge',
+						key: 'Ncharge',
 						render: (h, params) => {
-							return h('div', [params.row.charge ? params.row.charge.nickName : ''])
+							return h('div', [params.row.Ncharge ? params.row.Ncharge.nickName : ''])
 						}
 					},
 					{

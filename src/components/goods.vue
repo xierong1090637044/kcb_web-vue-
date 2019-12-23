@@ -343,9 +343,9 @@
 					content: '<p>删除后数据不可恢复</p>',
 					onOk: () => {
 
-						const query = Bmob.Query('Goods');
+						const query = Bmob.Query('NGoods');
 						query.destroy(objectId).then(res => {
-							const query = Bmob.Query('Goods');
+							const query = Bmob.Query('NGoods');
 							// 单词最多删除50条
 							query.equalTo("header", "==", objectId);
 							query.equalTo("userId", "==", uid);
@@ -571,7 +571,7 @@
 					
 					if(_count<count){
 						for (let good of goods) {
-							let queryObj = Bmob.Query('Goods');
+							let queryObj = Bmob.Query('NGoods');
 							queryObj.set('goodsName', "" + good.商品名字);
 							queryObj.set('costPrice', "" + good.成本价);
 							queryObj.set('retailPrice', "" + good.零售价);
@@ -588,7 +588,7 @@
 							_count +=1
 						}
 						
-						Bmob.Query('Goods')
+						Bmob.Query('NGoods')
 							.saveAll(queryArray)
 							.then(result => {
 								console.log(result);
@@ -610,7 +610,7 @@
 			//查询产品列表
 			get_productList() {
 				//console.log(that.selected_stocks, that.selected_second_class)
-				const query = Bmob.Query('Goods');
+				const query = Bmob.Query('NGoods');
 				query.equalTo('userId', '==', that.userid);
 				query.include('second_class', 'goodsClass', 'stocks')
 				query.equalTo("status", "!=", -1);
@@ -650,7 +650,7 @@
 			},
 
 			getAllproducts() {
-				const query = Bmob.Query('Goods');
+				const query = Bmob.Query('NGoods');
 				query.equalTo("userId", "==", that.userid);
 				query.equalTo("status", "!=", -1);
 				query.equalTo("order", "!=", 1);

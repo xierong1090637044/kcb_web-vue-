@@ -226,7 +226,7 @@
 
       //查询产品列表
       get_productList(stockId) {
-        const query = Bmob.Query('Goods');
+        const query = Bmob.Query('NGoods');
         query.equalTo('userId', '==', that.userid);
 				query.equalTo("status", "!=", -1);
 				query.equalTo("order", "!=", 0);

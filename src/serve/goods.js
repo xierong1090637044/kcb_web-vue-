@@ -4,7 +4,7 @@ export default {
 		return new Promise((resolve, reject) => {
 			let count = 0;
 			for (let good of goods) {
-				const query = Bmob.Query('Goods');
+				const query = Bmob.Query('NGoods');
 				query.destroy(good.objectId).then(res => {
 
 					if (good.order == 0) {
@@ -49,7 +49,7 @@ export default {
 			if (good.objectId) {
 				let reserve = good.reserve
 
-				const query = Bmob.Query('Goods');
+				const query = Bmob.Query('NGoods');
 				query.set("goodsName", good.goodsName)
 				query.set("goodsIcon", good.goodsIcon)
 				query.set("costPrice", good.costPrice)
@@ -82,7 +82,7 @@ export default {
 					resolve([true, res])
 				})
 			} else {
-				const query = Bmob.Query("Goods");
+				const query = Bmob.Query("NGoods");
 				query.equalTo("userId", "==", uid);
 				query.equalTo("goodsName", "==", good.goodsName);
 				query.equalTo("position", "==", good.position);
@@ -93,7 +93,7 @@ export default {
 						} else {
 							let reserve = good.reserve
 
-							const query = Bmob.Query('Goods');
+							const query = Bmob.Query('NGoods');
 							query.set("goodsName", good.goodsName)
 							query.set("goodsIcon", good.goodsIcon)
 							query.set("costPrice", good.costPrice)
@@ -131,10 +131,10 @@ export default {
 									const pointer1 = Bmob.Pointer('stocks')
 									const p_stock_id = pointer1.set(good.stockReserve[i].stocks) //仓库的id关联
 
-									const pointer2 = Bmob.Pointer('Goods')
+									const pointer2 = Bmob.Pointer('NGoods')
 									const p_good_id = pointer2.set(this_result.objectId) //仓库的id关联
 
-									var queryObj = Bmob.Query('Goods');
+									var queryObj = Bmob.Query('NGoods');
 									queryObj.set("order", 1)
 									queryObj.set("goodsIcon", good.goodsIcon ? good.goodsIcon : '')
 									queryObj.set("goodsName", good.goodsName)
@@ -151,7 +151,7 @@ export default {
 								}
 
 								// 传入刚刚构造的数组
-								Bmob.Query('Goods').saveAll(queryArray).then(result => {
+								Bmob.Query('NGoods').saveAll(queryArray).then(result => {
 									console.log(result);
 									resolve([true, result])
 									/*common.log(uni.getStorageSync("user").nickName + "增加了产品'" + good.goodsName + "'", 5, this_result.objectId);*/

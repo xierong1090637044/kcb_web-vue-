@@ -100,7 +100,7 @@ export default {
 	get_chargeList(disabled, search_text) {
 		let userid = JSON.parse(localStorage.getItem('user')).objectId;
 		return new Promise((resolve, reject) => {
-			const query = Bmob.Query("staffs");
+			const query = Bmob.Query("_User");
 			query.order("-createdAt");
 			query.equalTo("masterId", "==", userid);
 			query.equalTo("disabled", "==", disabled);

@@ -153,17 +153,17 @@
 					title: '是否确认删除',
 					content: '<p>删除后数据不可恢复</p>',
 					onOk: () => {
-						const query = Bmob.Query('Goods');
+						const query = Bmob.Query('NGoods');
 						query.destroy(item.objectId).then(res => {
 							console.log(res)
-							const query1 = Bmob.Query("Goods");
+							const query1 = Bmob.Query("NGoods");
 							query1.equalTo("header", "==", item.header.objectId);
 							query1.equalTo("order", "==", 1);
 							query1.statTo("sum", "reserve");
 							query1.find().then(res => {
 								console.log("dasds", res)
 								let now_reserve = res[0]._sumReserve
-								const query = Bmob.Query('Goods');
+								const query = Bmob.Query('NGoods');
 								query.set('reserve', now_reserve)
 								query.set('stocktype', (now_reserve > item.header.warning_num) ? 1 : 0)
 								query.set('id', item.header.objectId)
@@ -186,7 +186,7 @@
 			//关联到新的仓库
 			linkNewStock() {
 				if (that.newStock.selectStock) {
-					const query = Bmob.Query("Goods");
+					const query = Bmob.Query("NGoods");
 					query.equalTo("userId", "==", uid);
 					query.equalTo("header", "==", that.select_good.objectId);
 					query.equalTo("stocks", "==", that.newStock.selectStock);
@@ -209,7 +209,7 @@
 
 			getSecondGoods() {
 				//获得产品的附属产品
-				const query = Bmob.Query('Goods');
+				const query = Bmob.Query('NGoods');
 				query.equalTo("userId", "==", uid);
 				query.equalTo("order", "==", 1);
 				query.equalTo("header", "==", that.select_good.objectId);
@@ -231,10 +231,10 @@
 					const pointer1 = Bmob.Pointer('stocks')
 					const p_stock_id = pointer1.set(stock) //仓库的id关联
 
-					const pointer2 = Bmob.Pointer('Goods')
+					const pointer2 = Bmob.Pointer('NGoods')
 					const p_good_id = pointer2.set(good.objectId) //仓库的id关联
 
-					const query = Bmob.Query('Goods');
+					const query = Bmob.Query('NGoods');
 					query.set("goodsName", good.goodsName)
 					query.set("costPrice", good.costPrice)
 					query.set("retailPrice", good.retailPrice)
