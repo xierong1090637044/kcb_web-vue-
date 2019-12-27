@@ -20,7 +20,7 @@ export default {
 		return new Promise((resolve, reject) => {
 			const query = Bmob.Query("stocks");
 			query.order("-num");
-			query.include("charge", "shop")
+			query.include("Ncharge", "shop")
 			query.equalTo("parent", "==", userid);
 			query.equalTo("disabled", "==", disabled);
 			if (search_text) {

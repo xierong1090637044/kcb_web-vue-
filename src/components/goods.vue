@@ -67,7 +67,7 @@
 		<Table :columns="columns" :data="goods" :loading="loading" ref="table" border size="small" :height="screenHeight - 240"
 		 @on-select="get_select" @on-select-cancel="cancle_select" @on-select-all-cancel="cancle_select" id="print_table">
 			<template slot-scope="{ row, index }" slot="action">
-				<Button type="primary" size="small" v-print="'#printMe'" @click="Print(row)">打印二维码</Button>
+				<div style="margin-right: 10px" @click="showReserve(row)"><Button type="primary" size="small">库存</Button></div>
 			</template>
 		</Table>
 
@@ -179,11 +179,15 @@
 		<Modal title="产品图片" v-model="GoodImg.show" class-name="vertical-center-modal">
 			<img :src="GoodImg.attr" style="height: 800px;margin: 0 auto;width: 100%;" />
 		</Modal>
+		
+		<!--库存详情-->
+		<selectGoods :select_good="reserveDet.select_good" :show="reserveDet.show" @cancle="reserveDet.show = false"></selectGoods>
 
 	</div>
 </template>
 <script>
 	//import barcode from '@xkeshi/vue-barcode'
+	import selectGoods from '@/components/component/selectGoods.vue';
 	import jrQrcode from "jr-qrcode";
 	import common from '@/serve/common.js';
 	import goods from '@/serve/goods.js';
@@ -193,12 +197,18 @@
 	//let userid = JSON.parse(localStorage.getItem('bmob')).objectId;
 	let that;
 	export default {
-		components: {},
+		components: {
+			selectGoods
+		},
 		data() {
 			return {
 				GoodImg: {
 					show: false,
 					attr: ''
+				},
+				reserveDet: {
+					show: false,
+					select_good: {},
 				},
 				modal2: {
 					all_money: 0,
@@ -422,6 +432,11 @@
 		},
 
 		methods: {
+			showReserve(row) {
+				that.reserveDet.show = true
+				that.reserveDet.select_good = row
+				console.log(row)
+			},
 
 			//添加产品
 			addProduct() {

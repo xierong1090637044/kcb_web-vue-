@@ -44,3 +44,10 @@
 		methods: {}
 	};
 </script>
+<style scoped>
+.display_flex_bet{
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+</style>
