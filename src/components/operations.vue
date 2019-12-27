@@ -259,7 +259,8 @@
 						<div style="font-size:16px;font-family:宋体;">备注：{{detail.beizhu?detail.beizhu:'未填写'}}</div>
 						<div style="font-size:16px;font-family:宋体;" class="display_flex">
 							<div>监盘人：</div>
-							<div style="width:100px"></div>
+							<div style="width:100px">{{detail.checker?detail.checker.nickName:''}}</div>
+							<!--<div style="width:100px"></div>-->
 						</div>
 					</div>
 				</div>
@@ -615,7 +616,7 @@
 				if (that.search.custom) {
 					query.equalTo("custom", "==", that.search.custom.objectId);
 				}
-				query.include("opreater", "custom", "producer", 'stock');
+				query.include("opreater", "custom", "producer", 'stock','checker');
 				query.limit(that.page_size);
 				query.skip(that.page_size * (that.pege_number - 1));
 				query.order("-createdAt"); //按照条件降序
