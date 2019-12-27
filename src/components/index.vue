@@ -118,7 +118,7 @@
 				let get_reserve_num = 0;
 				let out_reserve_num = 0;
 
-				const query = Bmob.Query('Bills');
+				const query = Bmob.Query('NBills');
 				query.equalTo('userId', '==', that.userid);
 				query.equalTo('createdAt', '>=', common.getDay(0, true));
 				query.equalTo('createdAt', '<=', common.getDay(1, true));
