@@ -46,9 +46,10 @@
 
 			</template>
 		</Table>
+
     <div style="margin: 10px;overflow: hidden">
     	<div style="float: right;">
-    		<Page :total="100" :current="pege_number" @on-change="changePage"></Page>
+    		<Page :total="1000" :current="pege_number" @on-change="changePage"></Page>
     	</div>
     </div>
 

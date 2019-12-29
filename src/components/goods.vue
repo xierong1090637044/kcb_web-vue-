@@ -48,6 +48,11 @@
         </div>
       </template>
     </Table>
+    <div style="margin: 10px;overflow: hidden">
+      <div style="float: right;">
+        <Page :total="1000" :current="pege_number" @on-change="changePage"></Page>
+      </div>
+    </div>
     <Table :columns="columns" :data="allGoods" ref="tableAll" border size="small" hidden>
       <template slot-scope="{ row, index }" slot="action">
         <div style="display: flex;justify-content: center;">
@@ -55,11 +60,7 @@
       </template>
     </Table>
 
-    <div style="margin: 10px;overflow: hidden">
-      <div style="float: right;">
-        <Page :total="100" :current="pege_number" @on-change="changePage"></Page>
-      </div>
-    </div>
+
 
     <div id="printMe" style="text-align: center;" v-if="now_product" class="print">
       <img :src="now_product.qrcodeImg" />
@@ -245,6 +246,12 @@
             align: 'center',
             title: '生产厂家',
             key: 'producer',
+          },
+          {
+            width: 100,
+            align: 'center',
+            title: '条码值',
+            key: 'productCode',
           },
           {
             title: '产品二维码',
@@ -658,13 +665,17 @@
         query.equalTo("status", "!=", -1);
         query.equalTo("order", "!=", 1);
         query.count().then(res => {
+          console.log(res)
           let count = res;
-          for (var i = 0; i < Math.ceil(count / 1000); i++) {
+          let index = 0;
+          for (var i = 0; i < Math.ceil(count / 500); i++) {
+            console.log(i)
             query.equalTo('userId', '==', that.userid);
             query.include('second_class', 'goodsClass', 'stocks');
             query.equalTo("status", "!=", -1);
             query.equalTo("order", "!=", 1);
-            query.limit(1000);
+            query.limit(500);
+            query.skip(500*i);
             query.order("-createdAt"); //按照条件降序
             query.find().then(res => {
               for (let item of res) {
@@ -679,6 +690,7 @@
                 }
               }
               that.allGoods = that.allGoods.concat(res);
+              index +=1;
             });
           }
         })
