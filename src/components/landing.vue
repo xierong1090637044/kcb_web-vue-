@@ -18,7 +18,7 @@
 						<p style="font-size: 18px;color:#333">库存表管理系统</p>
 					</div>
 					<Form ref="formInline" :model="formInline" :rules="ruleInline">
-						<Alert type="error" show-icon v-if='alter_type =="phone_landing_error"'>手机号或者验证码不正确</Alert>
+						<Alert type="error" show-icon v-if='alter_type =="phone_landing_error"'>账号或者密码不正确</Alert>
 						<FormItem prop="phone">
 							<Input type="text" v-model="formInline.phone" placeholder="请输入账号" autofocus>
 							<Icon type="md-phone-portrait" slot="prepend" size="18" />
@@ -85,12 +85,6 @@
 							required: true,
 							message: '请输入账号',
 							trigger: 'blur'
-						},
-						{
-							type: 'string',
-							min: 11,
-							message: '手机不能少于11位',
-							trigger: 'blur'
 						}
 					]
 				},
@@ -117,7 +111,7 @@
 							now_staff.is_vip = false
 							now_staff.vip_time = 0
 						}
-						
+
 						localStorage.setItem("user", JSON.stringify(now_staff))
 						localStorage.setItem("identity", 2) //1是老板，2是员工
 						localStorage.setItem("masterId", res.objectId)
@@ -128,18 +122,18 @@
 						localStorage.setItem("identity", 1); //1是老板，2是员工
 						localStorage.setItem("uid", res.objectId)
 					}
-					
+
 					that.button_login = false
 					this.$router.push({
 						path: '/home/index'
 					})
-				
+
 				}).catch(err => {
 					that.button_login = false
 					that.alter_type = "phone_landing_error"
 					console.log(err)
 				});
-				
+
 			},
 
 			//验证码点击

@@ -1,3 +1,6 @@
+import Bmob from "hydrogen-js-sdk";
+
+let uid = localStorage.getItem('uid');
 export default {
 	//批量删除功能
 	delete_goods(goods) {

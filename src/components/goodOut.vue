@@ -243,6 +243,13 @@
     methods: {
       //提交表单
       handleSubmit(type) {
+        that.$Message["error"]({
+          background: true,
+          content: '暂时无法操作，敬请期待！'
+        });
+        
+        return
+        
         that.$Loading.start();
         let selectGoods = []
         let uid = localStorage.getItem('uid')
