@@ -499,7 +499,6 @@
 
 			btnClick() {
 				console.log(that.user);
-				that.user.is_vip = true
 				if (that.user.is_vip) {
 					document.querySelector('.input-file').click();
 				} else {
@@ -577,6 +576,16 @@
 				query.equalTo("parent", "==", that.userid);
 				query.equalTo("disabled", "!=", true);
 				query.find().then(res => {
+					
+					if(res.length == 0){
+						this.$Message['error']({
+							background: true,
+							content: '请先去添加一个仓库'
+						});
+						
+						return
+					}
+					
 					let stock = res[0]
 					let count = 0;
 					for(let good of goods){
