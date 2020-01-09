@@ -594,13 +594,13 @@
 						queryObj.set('goodsName', "" + good.商品名字);
 						queryObj.set('costPrice', "" + good.成本价);
 						queryObj.set('retailPrice', "" + good.零售价);
-						queryObj.set('packageContent', '' + good.包装含量);
-						queryObj.set('packingUnit', '' + good.单位);
+						if(good.包装含量) queryObj.set('packageContent', '' + good.包装含量);
+						if(good.单位) queryObj.set('packingUnit', '' + good.单位);
 						queryObj.set('reserve', Number("" + good.库存));
-						queryObj.set('productCode', '' + good.条形码);
-						queryObj.set('position', '' + good.存放位置);
-						queryObj.set('product_info', '' + good.简介);
-						queryObj.set('producer', '' + good.生产厂家);
+						if(good.条形码) queryObj.set('productCode', '' + good.条形码);
+						if(good.存放位置) queryObj.set('position', '' + good.存放位置);
+						if(good.简介) queryObj.set('product_info', '' + good.简介);
+						if(good.生产厂家) queryObj.set('producer', '' + good.生产厂家);
 						queryObj.set("order", 0)
 						//queryObj.set('producttime', Number(new Date(good.有效期).getTime()));
 						queryObj.set('userId', poiID);
