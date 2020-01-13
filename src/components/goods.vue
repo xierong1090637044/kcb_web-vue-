@@ -63,21 +63,21 @@
 
 
 		<div id="printMe" style="text-align: center;" v-if="now_product" class="print">
-			<img :src="now_product.qrcodeImg" />
-			<div style="color: #333;margin-top: 20px;"><text style="font-size: 32px;">{{now_product.goodsName}}</text></div>
+			<img :src="now_product.qrcodeImg"  style="width: 80px;"/>
+			<div style="color: #333;margin-top: 10px;"><text style="font-size: 12px;">{{now_product.goodsName}}</text></div>
 		</div>
 
 		<div id="print_allqr" style="text-align: center;width: 100%;" class="print">
-			<div v-for="(item,index) in allGoods" :key="index" style="width: 33.33%; display: inline-block;">
-				<img :src="item.qrcodeImg" style="width: 160px;" />
-				<div style="color: #333;margin-top: 10px;"><text style="font-size: 10px;">{{item.goodsName}}</text></div>
+			<div v-for="(item,index) in allGoods" :key="index" style="width:25%; display: inline-block;">
+				<img :src="item.qrcodeImg" style="width: 50%;" />
+				<div style="color: #333;margin:5px 0;"><text style="font-size: 10px;">{{item.goodsName}}</text></div>
 			</div>
 
 		</div>
 
 		<div id="print_selectedqr" style="text-align: center;width: 100%;" class="print">
 			<div v-for="(item,index) in select_goods" :key="index" style="width: 25%; display: inline-block;">
-				<img :src="item.qrcodeImg" style="width: 80px;" />
+				<img :src="item.qrcodeImg" style="width: 50%;" />
 				<div style="color: #333;margin-top: 10px;"><text style="font-size: 10px;">{{item.goodsName}}</text></div>
 			</div>
 		</div>
