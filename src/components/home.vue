@@ -56,7 +56,7 @@
 						</div>
 						</MenuItem>
 						
-						<MenuItem name="2" to='/home/goodEnter'>
+						<!--<MenuItem name="2" to='/home/goodEnter'>
 						<div class="display_flex">
 							<Icon type="ios-exit" style="font-size: 20px;" />
 							<div style="margin-left: 10px;margin-top: 4px;">采购或入库</div>
@@ -68,7 +68,7 @@
 							<Icon type="md-cart" style="font-size: 20px;" />
 							<div style="margin-left: 10px;margin-top: 4px;">销售或出库</div>
 						</div>
-						</MenuItem>
+						</MenuItem>-->
 
 						<MenuItem name="4" to='/home/goods'>
 						<div class="display_flex">

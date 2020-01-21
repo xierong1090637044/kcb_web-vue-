@@ -49,14 +49,14 @@ export default {
 				}
 
 
-				params.get_reserve = get_reserve.toFixed(uni.getStorageSync("setting").show_float)
-				params.out_reserve = out_reserve.toFixed(uni.getStorageSync("setting").show_float)
-				params.get_reserve_real_money = get_reserve_real_money.toFixed(uni.getStorageSync("setting").show_float)
-				params.out_reserve_real_money = out_reserve_real_money.toFixed(uni.getStorageSync("setting").show_float)
-				params.get_reserve_num = get_reserve_num.toFixed(uni.getStorageSync("setting").show_float)
-				params.out_reserve_num = out_reserve_num.toFixed(uni.getStorageSync("setting").show_float)
-				params.get_reserve_get_num = (get_reserve_num - get_reserve_real_money).toFixed(uni.getStorageSync("setting").show_float)
-				params.out_reserve_get_num = (out_reserve_num - out_reserve_real_money).toFixed(uni.getStorageSync("setting").show_float)
+				params.get_reserve = get_reserve.toFixed(0)
+				params.out_reserve = out_reserve.toFixed(0)
+				params.get_reserve_real_money = get_reserve_real_money.toFixed(0)
+				params.out_reserve_real_money = out_reserve_real_money.toFixed(0)
+				params.get_reserve_num = get_reserve_num.toFixed(0)
+				params.out_reserve_num = out_reserve_num.toFixed(0)
+				params.get_reserve_get_num = (get_reserve_num - get_reserve_real_money).toFixed(0)
+				params.out_reserve_get_num = (out_reserve_num - out_reserve_real_money).toFixed(0)
 
 
 				console.log(get_reserve)
@@ -114,8 +114,8 @@ export default {
 						}
 						total_reserve += item.reserve;
 						total_money += item.reserve * item.costPrice;
-						params.total_money = total_money.toFixed(uni.getStorageSync("print_setting").show_float),
-							params.total_reserve = total_reserve.toFixed(uni.getStorageSync("print_setting").show_float),
+						params.total_money = total_money.toFixed(0),
+							params.total_reserve = total_reserve.toFixed(0),
 
 							params.warn_num = warn_num
 						resolve(params)
