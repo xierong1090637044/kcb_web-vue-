@@ -7,6 +7,10 @@
 						库存管理V 1.0.0
 					</div>
 					<div class="layout-nav">
+            <MenuItem name="5" to='/home/updateHistory'>
+            	<Icon type="md-color-palette"  size="24" />历史更新
+            </MenuItem>
+
 						<MenuItem name="3">
 						<Icon type="ios-log-out" size="24" />退出登录
 						</MenuItem>
@@ -69,6 +73,8 @@
 							<MenuItem name="2-5" to='/home/manage/customs'>客户管理</MenuItem>
 							<MenuItem name="2-6" to='/home/manage/producers'>供应商管理</MenuItem>
 						</Submenu>
+
+
 					</Menu>
 				</Sider>
 				<Layout :style="{height:screenHeight - 64+'px',background:'#fff'}">
