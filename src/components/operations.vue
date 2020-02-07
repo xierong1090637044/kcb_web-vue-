@@ -301,6 +301,13 @@
 						title: '操作类型',
             key:'typeDesc',
 					},
+          {
+          	title: '仓库',
+            key:'stock',
+            render: (h, params) => {
+            	return h('div', [params.row.stock?params.row.stock.stock_name:""])
+            }
+          },
 					{
 						title: '备注',
 						key: 'beizhu',
@@ -554,7 +561,7 @@
 				if(that.search.custom){
 					query.equalTo("custom","==", that.search.custom.objectId);
 				}
-				query.include("opreater", "custom", "producer");
+				query.include("opreater", "custom", "producer","stock");
 				query.limit(that.page_size);
 				query.skip(that.page_size * (that.pege_number - 1));
 				query.order("-createdAt"); //按照条件降序
@@ -566,6 +573,8 @@
                 item.typeDesc = "入库"
             	} else if (item.extra_type == 1) {
                 item.typeDesc = "采购"
+            	} else if (item.extra_type == 4) {
+                item.typeDesc = "销售退货"
             	}
               item.candpName = item.producer?item.producer.producer_name:'未填写'
             } else if (item.type == -1) {
@@ -573,6 +582,8 @@
                 item.typeDesc = "出库"
             	} else if (item.extra_type == 1) {
                 item.typeDesc = "销售"
+            	} else if (item.extra_type == 4) {
+                item.typeDesc = "采购退货"
             	}
               item.candpName = item.custom?item.custom.custom_name:'未填写'
             } else if (item.type == 2) {

@@ -18,7 +18,6 @@ import index from '@/components/index' //首页
 import thanks from '@/components/thanks' // 感谢页面
 import test from '@/components/test'  //样板页面
 import goods from '@/components/goods' //产品添加页面
-import add_good from '@/components/goods/addgood'//添加产品页面
 import operations from '@/components/operations' //操作记录页面
 import download from '@/components/download'; // app下载页面
 import category from '@/components/manage/category'; // 类别管理页面
@@ -89,11 +88,6 @@ export default new Router({
 				  path: 'download',
 				  name: 'download',
 				  component: download
-				},
-				{
-				  path: 'add_good',
-				  name: 'add_good',
-				  component: add_good
 				},
 				{
 				  path: 'manage/category',

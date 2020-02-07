@@ -44,12 +44,12 @@ export default {
 			const userid = pointer.set(uid)
 
 			let pointer2 = Bmob.Pointer('class_user')
-			let p_class_user_id = pointer2.set(good.goodsClass) //一级分类id关联
+			let p_class_user_id = pointer2.set(good.goodsClass.objectId) //一级分类id关联
 
 			let pointer3 = Bmob.Pointer('second_class')
 			let p_second_class_id = pointer3.set(good.second_class) //仓库的id关联
 
-			if (good.objectId) {
+			if (good.objectId) { // 编辑产品信息
 				let reserve = good.reserve
 
 				const query = Bmob.Query('Goods');
@@ -70,9 +70,28 @@ export default {
 				query.set("producer", good.producer)
 				query.set("packingUnit", good.packingUnit)
 				query.set("packageContent", good.packageContent)
-				query.set("warning_num", Number(good.warning_num))
-				query.set("max_num", Number(good.max_num))
-				query.set("stocktype", (Number(good.warning_num) >= Number(reserve)) ? 0 : 1) //库存数量类型 0代表库存不足 1代表库存充足
+        if(Number(good.warning_num) >= 0){
+          query.set("warning_num", Number(good.warning_num))
+        }
+
+        if(Number(good.max_num)){
+          query.set("max_num", Number(good.max_num))
+        }
+
+        if (good.warning_num == "" && good.max_num == "") {
+        	query.set("stocktype", 1) //库存数量类型 0代表库存不足 1代表库存充足
+        } else {
+        	if (good.warning_num != "") {
+        		query.set("warning_num", Number(good.warning_num))
+        		query.set("stocktype", (Number(good.warning_num) >= Number(that.reserve)) ? 0 : 1) //库存数量类型 0代表库存不足 1代表库存充足
+        	}
+
+        	if (good.max_num != "") {
+        		query.set("max_num", Number(good.max_num))
+        		query.set("stocktype", (Number(good.max_num) <= Number(that.reserve)) ? 2 : 1) //库存数量类型 2代表库存过足 1代表库存充足
+        	}
+        }
+
 				query.set("second_class", p_second_class_id)
 				query.set("goodsClass", p_class_user_id)
 
@@ -114,16 +133,19 @@ export default {
 							query.set("producer", good.producer)
 							query.set("packingUnit", good.packingUnit)
 							query.set("packageContent", good.packageContent)
-							query.set("warning_num", Number(good.warning_num))
-							query.set("max_num", Number(good.max_num))
-							query.set("stocktype", (Number(good.warning_num) >= Number(reserve)) ? 0 : 1) //库存数量类型 0代表库存不足 1代表库存充足
+							if (good.warning_num != "") {
+								query.set("warning_num", Number(good.warning_num))
+								query.set("stocktype", (Number(good.warning_num) >= Number(that.reserve)) ? 0 : 1) //库存数量类型 0代表库存不足 1代表库存充足
+							}
+							if (good.max_num != "") {
+								query.set("max_num", Number(good.max_num))
+								query.set("stocktype", (Number(good.max_num) > Number(that.reserve)) ? 2 : 1) //库存数量类型 0代表库存过足 1代表库存充足
+							}
 							query.set("second_class", p_second_class_id)
 							query.set("goodsClass", p_class_user_id)
 
 							query.set("userId", userid)
-							if (good.stockReserve.length > 0) {
-								query.set("order", 0)
-							}
+							query.set("order", 0)
 							query.save().then(res => {
 								console.log(res)
 								let this_result = res
@@ -132,7 +154,7 @@ export default {
 								// 构造含有50个对象的数组
 								for (var i = 0; i < good.stockReserve.length; i++) {
 									const pointer1 = Bmob.Pointer('stocks')
-									const p_stock_id = pointer1.set(good.stockReserve[i].stocks) //仓库的id关联
+									const p_stock_id = pointer1.set(good.stockReserve[i].stocks.objectId) //仓库的id关联
 
 									const pointer2 = Bmob.Pointer('Goods')
 									const p_good_id = pointer2.set(this_result.objectId) //仓库的id关联

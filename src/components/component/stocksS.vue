@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<Modal title="选择仓库" :closable="false" width="80%" :value="show" @on-cancel="outData">
+		<Modal title="选择仓库" :closable="false" width="80%" :value="true" @on-cancel="outData">
 
 			<Table :columns="columns" :data="data" stripe border :height="screenHeight - 350" :loading="loading" size="small">
 				<template slot-scope="{ row, index }" slot="action">
@@ -135,7 +135,7 @@
 
       //选择当前操作返回
       choose(row){
-        this.$emit('select',row)
+        this.$emit('confrim',row)
       },
 
     },

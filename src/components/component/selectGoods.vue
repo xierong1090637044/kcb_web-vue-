@@ -146,7 +146,7 @@
 			uid = JSON.parse(localStorage.getItem('user')).objectId;
 			//得到仓库列表
 			goods.getstock_list().then(res => {
-				console.log(res)
+				//console.log(res)
 				that.newStock.allStocks = res
 				//that.all_fristclass = res
 			});
