@@ -65,21 +65,21 @@
 
 
     <div id="printMe" style="text-align: center;" v-if="now_product" class="print">
-      <img :src="now_product.qrcodeImg" />
-      <div style="color: #333;margin-top: 20px;"><text style="font-size: 32px;">{{now_product.goodsName}}</text></div>
+      <img :src="now_product.qrcodeImg" style="width: 80px;" />
+      <div style="color: #333;margin-top: 10px;"><text style="font-size: 12px;">{{now_product.goodsName}}</text></div>
     </div>
 
     <div id="print_allqr" style="text-align: center;width: 100%;" class="print">
-      <div v-for="(item,index) in allGoods" :key="index" style="width: 33.33%; display: inline-block;">
-        <img :src="item.qrcodeImg" style="width: 160px;" />
-        <div style="color: #333;margin-top: 10px;"><text style="font-size: 10px;">{{item.goodsName}}</text></div>
+      <div v-for="(item,index) in allGoods" :key="index" style="width:25%; display: inline-block;">
+        <img :src="item.qrcodeImg" style="width: 50%;" />
+        <div style="color: #333;margin:5px 0;"><text style="font-size: 10px;">{{item.goodsName}}</text></div>
       </div>
 
     </div>
 
     <div id="print_selectedqr" style="text-align: center;width: 100%;" class="print">
       <div v-for="(item,index) in select_goods" :key="index" style="width: 25%; display: inline-block;">
-        <img :src="item.qrcodeImg" style="width: 80px;" />
+        <img :src="item.qrcodeImg" style="width: 50%;" />
         <div style="color: #333;margin-top: 10px;"><text style="font-size: 10px;">{{item.goodsName}}</text></div>
       </div>
     </div>
@@ -118,7 +118,7 @@
       return {
         downloadAllClick: false, //导出全部数据点击
         addGoodClick: false,
-        editGood:'',
+        editGood: '',
         GoodImg: {
           show: false,
           attr: ''
@@ -580,65 +580,65 @@
 
       //批量增加
       add_all(goods) {
-      
-      	const pointer = Bmob.Pointer('_User')
-      	const poiID = pointer.set(that.userid)
-      	if (goods.length > 2000) {
-      		this.$Message['error']({
-      			background: true,
-      			content: '不能超过2000条数据'
-      		});
-      
-      		return
-      	}
-      
-      	const query = Bmob.Query("stocks");
-      	query.order("-num");
-      	query.equalTo("parent", "==", that.userid);
-      	query.equalTo("disabled", "!=", true);
-      	query.find().then(res => {
-      		let stocks = res;
-      		if(res.length == 0){
-      			this.$Message['error']({
-      				background: true,
-      				content: '请先去添加一个仓库'
-      			});
-      
-      			return
-      		}
-      
-      		let count = 0;
-      		for(let good of goods){
+
+        const pointer = Bmob.Pointer('_User')
+        const poiID = pointer.set(that.userid)
+        if (goods.length > 2000) {
+          this.$Message['error']({
+            background: true,
+            content: '不能超过2000条数据'
+          });
+
+          return
+        }
+
+        const query = Bmob.Query("stocks");
+        query.order("-num");
+        query.equalTo("parent", "==", that.userid);
+        query.equalTo("disabled", "!=", true);
+        query.find().then(res => {
+          let stocks = res;
+          if (res.length == 0) {
+            this.$Message['error']({
+              background: true,
+              content: '请先去添加一个仓库'
+            });
+
+            return
+          }
+
+          let count = 0;
+          for (let good of goods) {
             let goodReserve = good.库存
             let reserves = goodReserve.split(",");
             let totalReserve = 0;
-            for(let reserve of reserves){
-              totalReserve +=Number(reserve)
+            for (let reserve of reserves) {
+              totalReserve += Number(reserve)
             }
-      
-      			let queryObj = Bmob.Query('Goods');
-      			queryObj.set('goodsName', "" + good.商品名字);
-      			queryObj.set('costPrice', "" + good.成本价);
-      			queryObj.set('retailPrice', "" + good.零售价);
-      			if(good.包装含量) queryObj.set('packageContent', '' + good.包装含量);
-      			if(good.单位) queryObj.set('packingUnit', '' + good.单位);
-      			queryObj.set('reserve', totalReserve);
-      			if(good.条形码) queryObj.set('productCode', '' + good.条形码);
-      			if(good.存放位置) queryObj.set('position', '' + good.存放位置);
-      			if(good.简介) queryObj.set('product_info', '' + good.简介);
-      			if(good.生产厂家) queryObj.set('producer', '' + good.生产厂家);
-      			queryObj.set("order", 0);
-      			queryObj.set('userId', poiID);
-      			queryObj.save().then(res => {
-      				let this_result = res;
-              
-              for(let stockIndex in stocks){
+
+            let queryObj = Bmob.Query('Goods');
+            queryObj.set('goodsName', "" + good.商品名字);
+            queryObj.set('costPrice', "" + good.成本价);
+            queryObj.set('retailPrice', "" + good.零售价);
+            if (good.包装含量) queryObj.set('packageContent', '' + good.包装含量);
+            if (good.单位) queryObj.set('packingUnit', '' + good.单位);
+            queryObj.set('reserve', totalReserve);
+            if (good.条形码) queryObj.set('productCode', '' + good.条形码);
+            if (good.存放位置) queryObj.set('position', '' + good.存放位置);
+            if (good.简介) queryObj.set('product_info', '' + good.简介);
+            if (good.生产厂家) queryObj.set('producer', '' + good.生产厂家);
+            queryObj.set("order", 0);
+            queryObj.set('userId', poiID);
+            queryObj.save().then(res => {
+              let this_result = res;
+
+              for (let stockIndex in stocks) {
                 const pointer1 = Bmob.Pointer('stocks')
                 const p_stock_id = pointer1.set(stocks[stockIndex].objectId) //仓库的id关联
-      
+
                 const pointer2 = Bmob.Pointer('Goods')
                 const p_good_id = pointer2.set(this_result.objectId) //仓库的id关联
-      
+
                 var queryObj1 = Bmob.Query('Goods');
                 queryObj1.set("order", 1)
                 queryObj1.set("goodsName", "" + good.商品名字);
@@ -647,25 +647,25 @@
                 queryObj1.set("header", p_good_id)
                 queryObj1.set("userId", poiID)
                 queryObj1.set("stocks", p_stock_id)
-                queryObj1.set("reserve", reserves[stockIndex]?Number(reserves[stockIndex]):0);
+                queryObj1.set("reserve", reserves[stockIndex] ? Number(reserves[stockIndex]) : 0);
                 queryObj1.save().then(res => {
-                  
-                  if(stockIndex == stocks.length - 1){
+
+                  if (stockIndex == stocks.length - 1) {
                     count += 1;
-                    
+
                     if (count == goods.length) {
-                    	this.$Message.success('导入成功');
-                    	that.get_productList()
+                      this.$Message.success('导入成功');
+                      that.get_productList()
                     }
                   }
                 })
               }
-      
-      			})
-      		}
-      	});
+
+            })
+          }
+        });
       },
-      
+
       //查询产品列表
       get_productList() {
         //console.log(that.selected_stocks, that.selected_second_class)
