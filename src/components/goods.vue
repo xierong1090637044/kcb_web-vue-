@@ -580,59 +580,92 @@
 
       //批量增加
       add_all(goods) {
-
-        const pointer = Bmob.Pointer('_User')
-        const poiID = pointer.set(that.userid)
-        if (goods.length > 2000) {
-          this.$Message['error']({
-            background: true,
-            content: '不能超过2000条数据'
-          });
-
-          return
-        }
-
-        let count = 50;
-        let maxNum = (goods.length % count == 0) ? parseInt(goods.length / count) : Math.ceil(goods.length / count)
-        console.log(maxNum)
-        for (let i = 0; i < maxNum; i++) {
-          console.log(goods)
-          const queryArray = new Array();
-          // 构造含有50个对象的数组
-          for (let good of goods.splice(0, count)) {
-            let queryObj = Bmob.Query('Goods');
-            queryObj.set('goodsName', "" + good.商品名字);
-            queryObj.set('costPrice', "" + good.成本价);
-            queryObj.set('retailPrice', "" + good.零售价);
-            queryObj.set('packageContent', '' + good.包装含量);
-            queryObj.set('packingUnit', '' + good.单位);
-            queryObj.set('reserve', Number("" + good.库存));
-            queryObj.set('productCode', '' + good.条形码);
-            queryObj.set('position', '' + good.存放位置);
-            queryObj.set('product_info', '' + good.简介);
-            queryObj.set('producer', '' + good.生产厂家);
-            //queryObj.set('producttime', Number(new Date(good.有效期).getTime()));
-            queryObj.set('userId', poiID);
-            queryArray.push(queryObj);
-          }
-
-          Bmob.Query('Goods')
-            .saveAll(queryArray)
-            .then(result => {
-              console.log(result);
-              if (i == maxNum - 1) {
-                this.$Message.success('导入成功');
-                that.get_productList()
+      
+      	const pointer = Bmob.Pointer('_User')
+      	const poiID = pointer.set(that.userid)
+      	if (goods.length > 2000) {
+      		this.$Message['error']({
+      			background: true,
+      			content: '不能超过2000条数据'
+      		});
+      
+      		return
+      	}
+      
+      	const query = Bmob.Query("stocks");
+      	query.order("-num");
+      	query.equalTo("parent", "==", that.userid);
+      	query.equalTo("disabled", "!=", true);
+      	query.find().then(res => {
+      		let stocks = res;
+      		if(res.length == 0){
+      			this.$Message['error']({
+      				background: true,
+      				content: '请先去添加一个仓库'
+      			});
+      
+      			return
+      		}
+      
+      		let count = 0;
+      		for(let good of goods){
+            let goodReserve = good.库存
+            let reserves = goodReserve.split(",");
+            let totalReserve = 0;
+            for(let reserve of reserves){
+              totalReserve +=Number(reserve)
+            }
+      
+      			let queryObj = Bmob.Query('Goods');
+      			queryObj.set('goodsName', "" + good.商品名字);
+      			queryObj.set('costPrice', "" + good.成本价);
+      			queryObj.set('retailPrice', "" + good.零售价);
+      			if(good.包装含量) queryObj.set('packageContent', '' + good.包装含量);
+      			if(good.单位) queryObj.set('packingUnit', '' + good.单位);
+      			queryObj.set('reserve', totalReserve);
+      			if(good.条形码) queryObj.set('productCode', '' + good.条形码);
+      			if(good.存放位置) queryObj.set('position', '' + good.存放位置);
+      			if(good.简介) queryObj.set('product_info', '' + good.简介);
+      			if(good.生产厂家) queryObj.set('producer', '' + good.生产厂家);
+      			queryObj.set("order", 0);
+      			queryObj.set('userId', poiID);
+      			queryObj.save().then(res => {
+      				let this_result = res;
+              
+              for(let stockIndex in stocks){
+                const pointer1 = Bmob.Pointer('stocks')
+                const p_stock_id = pointer1.set(stocks[stockIndex].objectId) //仓库的id关联
+      
+                const pointer2 = Bmob.Pointer('Goods')
+                const p_good_id = pointer2.set(this_result.objectId) //仓库的id关联
+      
+                var queryObj1 = Bmob.Query('Goods');
+                queryObj1.set("order", 1)
+                queryObj1.set("goodsName", "" + good.商品名字);
+                queryObj1.set("costPrice", "" + good.成本价);
+                queryObj1.set("retailPrice", "" + good.零售价);
+                queryObj1.set("header", p_good_id)
+                queryObj1.set("userId", poiID)
+                queryObj1.set("stocks", p_stock_id)
+                queryObj1.set("reserve", reserves[stockIndex]?Number(reserves[stockIndex]):0);
+                queryObj1.save().then(res => {
+                  
+                  if(stockIndex == stocks.length - 1){
+                    count += 1;
+                    
+                    if (count == goods.length) {
+                    	this.$Message.success('导入成功');
+                    	that.get_productList()
+                    }
+                  }
+                })
               }
-
-            })
-            .catch(err => {
-              console.log(err);
-            });
-        }
-
+      
+      			})
+      		}
+      	});
       },
-
+      
       //查询产品列表
       get_productList() {
         //console.log(that.selected_stocks, that.selected_second_class)
