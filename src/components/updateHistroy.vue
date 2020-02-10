@@ -10,6 +10,12 @@
     <div :style="{height:screenHeight - 164+'px'}" class="updateBody">
       <Timeline>
         <TimelineItem>
+          <p class="time">2020/02/10 15:52</p>
+          <p class="content">1.产品批量上传优化</p>
+          <p class="content">2.新增产品出库</p>
+          <p class="content">3.新增产品入库</p>
+        </TimelineItem>
+        <TimelineItem>
           <p class="time">2020/02/07 22:00</p>
           <p class="content">1.产品编辑，添加优化</p>
           <p class="content">2.员工权限优化</p>
@@ -54,7 +60,7 @@
   .updateBody{
     margin-top: 1.25rem;
   }
-  
+
   p{
     margin-bottom: 0.375rem;
   }

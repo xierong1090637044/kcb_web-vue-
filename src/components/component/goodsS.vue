@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Modal title="选择门店" :closable="false" width="80%" :value="show" @on-cancel="outData" @on-ok="confrimGoods">
+    <Modal title="选择产品" :closable="false" width="80%" :value="show" @on-cancel="outData" @on-ok="confrimGoods">
       <div class="display_flex" style="margin-bottom: 20px;">
         <div class="display_flex">
           <div>选择仓库：</div>
@@ -19,7 +19,7 @@
 
         <div style="margin: 10px;overflow: hidden">
           <div style="float: right;">
-            <Page :total="100" :current="pege_number" @on-change="changePage"></Page>
+            <Page :total="10000" :current="pege_number" @on-change="changePage"></Page>
           </div>
         </div>
       </div>
@@ -78,9 +78,7 @@
             sortable: true,
             align: 'center',
           },
-
           {
-
             align: 'center',
             title: '所属仓库',
             key: 'stocks',
@@ -199,7 +197,7 @@
             index += 1;
           }
         }
-        
+
       },
 
       //搜索产品
@@ -231,7 +229,7 @@
 				query.equalTo("status", "!=", -1);
 				query.equalTo("order", "!=", 0);
 				if(that.search.stockId)query.equalTo('stocks', '==', that.search.stockId);
-        query.include('second_class', 'goodsClass', 'stocks')
+        query.include('second_class', 'goodsClass', 'stocks','header')
 				const query1 = query.equalTo("goodsName", "==", {
 					"$regex": "" + that.search.searchGoodText + ".*"
 				});
@@ -239,16 +237,25 @@
 					"$regex": "" + that.search.searchGoodText + ".*"
 				});
 				query.or(query1, query2);
-				
+
         query.limit(that.page_size);
         query.skip(that.page_size * (that.pege_number - 1));
         query.order("-createdAt"); //按照条件降序
         query.find().then(res => {
           console.log(res);
           for (let item of res) {
-            if (item.reserve <= 0) {
-              item._disabled = true
+
+            if(that.type !="enter"){
+              if (item.reserve <= 0) {
+                item._disabled = true
+              }
             }
+
+            if(item.order == 1){
+              item.packingUnit = item.header.packingUnit || ''
+              item.packageContent = item.header.packageContent || ''
+            }
+
             item.class = (item.goodsClass ? (item.goodsClass.class_text || "") : "") + "    " + (item.second_class ?
               (item.second_class.class_text || "") : "")
             item.stocks = (item.stocks) ? item.stocks.stock_name : ""

@@ -24,9 +24,16 @@
               <Button type="primary" @click="download_demo()"> 数据样本</Button>
             </DropdownItem>
             <DropdownItem name="批量上传">
-              <input class="input-file" type="file" @change="importfile" accept=".csv,.excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-                style="display: none;" />
-              <Button type="primary" @click="btnClick()">上传Excel</Button>
+              <Tooltip content="在填写“库存”这一选项时，多个仓库的库存，可用英文“,”隔开，填写的顺序可参照仓库管理里面的仓库列表的顺序" placement="bottom-end">
+                <input class="input-file" type="file" @change="importfile" accept=".csv,.excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                  style="display: none;" />
+                <Button type="primary" @click="btnClick()">上传Excel</Button>
+                <div style="font-size: 0.75rem;color: #f30;font-weight: bold;margin-top: 0.625rem;justify-content: center;"
+                  class="display_flex">
+                  <Icon type="md-warning" />
+                  <span>特别注意</span>
+                </div>
+              </Tooltip>
             </DropdownItem>
           </DropdownMenu>
         </Dropdown>
@@ -50,7 +57,7 @@
     </Table>
     <div style="margin: 10px;overflow: hidden">
       <div style="float: right;">
-        <Page :total="1000" :current="pege_number" @on-change="changePage"></Page>
+        <Page :total="10000" :current="pege_number" @on-change="changePage"></Page>
       </div>
     </div>
 
@@ -583,10 +590,10 @@
 
         const pointer = Bmob.Pointer('_User')
         const poiID = pointer.set(that.userid)
-        if (goods.length > 2000) {
+        if (goods.length > 10000) {
           this.$Message['error']({
             background: true,
-            content: '不能超过2000条数据'
+            content: '不能超过10000条数据'
           });
 
           return
@@ -609,13 +616,22 @@
 
           let count = 0;
           for (let good of goods) {
-            let goodReserve = good.库存
-            let reserves = goodReserve.split(",");
+            let goodReserve = good.库存.toString()
             let totalReserve = 0;
-            for (let reserve of reserves) {
-              totalReserve += Number(reserve)
+            let reserves = [];
+            //console.log(good.库存)
+            if (goodReserve.indexOf(",") == -1) {
+              totalReserve = Number(goodReserve)
+              reserves.push(Number(goodReserve))
+            } else {
+              reserves = goodReserve.split(",");
+              //console.log(reserves)
+              for (let reserve of reserves) {
+                totalReserve += Number(reserve)
+              }
             }
 
+            //console.log(reserves)
             let queryObj = Bmob.Query('Goods');
             queryObj.set('goodsName', "" + good.商品名字);
             queryObj.set('costPrice', "" + good.成本价);
@@ -785,6 +801,10 @@
   .ivu-input-search {
     background-color: #426ab3 !important;
     border-color: #426ab3 !important;
+  }
+
+  .ivu-tooltip-inner{
+    max-width: unset !important;
   }
 
   @media only screen {

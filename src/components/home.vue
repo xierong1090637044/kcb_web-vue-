@@ -33,19 +33,21 @@
 						</div>
 						</MenuItem>
 
-						<MenuItem name="2" to='/home/goodEnter'>
-						<div class="display_flex">
-							<Icon type="ios-exit" style="font-size: 20px;" />
-							<div style="margin-left: 10px;margin-top: 4px;">采购或入库</div>
-						</div>
-						</MenuItem>
+            <Submenu name="2">
+            	<template slot="title">
+            		<Icon type="ios-keypad"></Icon>
+            		采购或入库
+            	</template>
+            	<MenuItem name="2-1" to='/home/goodEnter'>产品入库</MenuItem>
+            </Submenu>
 
-						<MenuItem name="3" to='/home/goodOut'>
-						<div class="display_flex">
-							<Icon type="md-cart" style="font-size: 20px;" />
-							<div style="margin-left: 10px;margin-top: 4px;">销售或出库</div>
-						</div>
-						</MenuItem>
+            <Submenu name="3">
+            	<template slot="title">
+            		<Icon type="md-cart"></Icon>
+            		销售或出库
+            	</template>
+            	<MenuItem name="3-1" to='/home/goodOut'>产品出库</MenuItem>
+            </Submenu>
 
 						<MenuItem name="4" to='/home/goods'>
 						<div class="display_flex">
