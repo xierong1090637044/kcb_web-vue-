@@ -82,6 +82,12 @@
             align: 'center',
             title: '所属仓库',
             key: 'stocks',
+            render: (h, params) => {
+              if(params.row.stocks && params.row.stocks.stock_name){
+                return h('div', [params.row.stocks.stock_name])
+              }
+
+            }
           },
           {
 
@@ -240,7 +246,7 @@
 
         query.limit(that.page_size);
         query.skip(that.page_size * (that.pege_number - 1));
-        query.order("-createdAt"); //按照条件降序
+        query.order("goodsName"); //按照条件降序
         query.find().then(res => {
           console.log(res);
           for (let item of res) {
@@ -258,7 +264,6 @@
 
             item.class = (item.goodsClass ? (item.goodsClass.class_text || "") : "") + "    " + (item.second_class ?
               (item.second_class.class_text || "") : "")
-            item.stocks = (item.stocks) ? item.stocks.stock_name : ""
 
             /*item.qrcodeImg = jrQrcode.getQrBase64((item.productCode) ? item.productCode : item.objectId + '-' +
               false)

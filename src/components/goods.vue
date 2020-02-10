@@ -590,10 +590,10 @@
 
         const pointer = Bmob.Pointer('_User')
         const poiID = pointer.set(that.userid)
-        if (goods.length > 10000) {
+        if (goods.length > 2000) {
           this.$Message['error']({
             background: true,
-            content: '不能超过10000条数据'
+            content: '不能超过2000条数据'
           });
 
           return

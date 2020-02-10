@@ -103,14 +103,16 @@
 						<th>产品名称</th>
 						<th>单位</th>
 						<th>数量</th>
+            <th>出库仓库</th>
 						<th>单价</th>
 						<th>合计</th>
 					</thead>
 					<tbody>
 						<tr v-for="item in detail.detail" :key="item.id">
 							<td>{{item.goodsName}}</td>
-							<td>{{item.packingUnit?item.packingUnit:'未记录'}}</td>
+							<td>{{item.packingUnit?item.packingUnit:''}}</td>
 							<td>{{item.num}}</td>
+              <td>{{item.stock}}</td>
 							<td>{{item.modify_retailPrice}}</td>
 							<td>{{item.modify_retailPrice * item.num}}</td>
 						</tr>
@@ -163,10 +165,6 @@
 				</div>
 				<div v-if="detail.extra_type == 2">
 					<div style="font-size: 22px;padding-bottom:10px;font-weight:800;font-family:宋体; text-align:center">入库单</div>
-					<div class="display_flex_bet" style="margin-bottom: 10px;">
-						<div style="font-size:16px;font-family:宋体;"></div>
-						<div style="font-size:16px;font-family:宋体;">入库日期：{{detail.createdTime}}</div>
-					</div>
 				</div>
 
 				<table>
@@ -174,14 +172,16 @@
 						<th>产品名称</th>
 						<th>单位</th>
 						<th>数量</th>
+            <th>入库仓库</th>
 						<th>单价</th>
 						<th>合计</th>
 					</thead>
 					<tbody>
 						<tr v-for="item in detail.detail" :key="item.id">
 							<td>{{item.goodsName}}</td>
-							<td>{{item.packingUnit?item.packingUnit:'未记录'}}</td>
+							<td>{{item.packingUnit?item.packingUnit:''}}</td>
 							<td>{{item.num}}</td>
+              <td>{{item.stock}}</td>
 							<td>{{item.modify_retailPrice}}</td>
 							<td>{{item.modify_retailPrice * item.num}}</td>
 						</tr>
@@ -209,9 +209,7 @@
 				</div>
 				<div v-if="detail.extra_type == 2">
 					<div class="display_flex_bet" style="margin-top: 10px;">
-						<div style="font-size:16px;font-family:宋体;">
-
-						</div>
+						<div style="font-size:16px;font-family:宋体;">入库日期：{{detail.createdTime}}</div>
 						<div style="font-size:16px;font-family:宋体;" class="display_flex">
 							<div>操作者：</div>
 							<div style="width:100px">{{detail.opreater?detail.opreater.nickName:''}}</div>
@@ -305,7 +303,12 @@
           	title: '仓库',
             key:'stock',
             render: (h, params) => {
-            	return h('div', [params.row.stock?params.row.stock.stock_name:""])
+              if(params.row.stockNames && params.row.stockNames.length >0){
+                return h('div', [params.row.stockNames.join("，")])
+              }else{
+                return h('div', [params.row.stock?params.row.stock.stock_name:""])
+              }
+
             }
           },
 					{

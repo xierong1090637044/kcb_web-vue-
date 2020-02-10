@@ -124,10 +124,15 @@
             align: 'center',
           },
           {
-
             align: 'center',
             title: '所属仓库',
             key: 'stocks',
+            render: (h, params) => {
+              if(params.row.stocks && params.row.stocks.stock_name){
+                return h('div', [params.row.stocks.stock_name])
+              }
+
+            }
           },
           {
 
@@ -189,7 +194,7 @@
           }
         }
 
-        console.log(that.formItem)
+        console.log(selectGoods)
         if (selectGoods.length == 0) {
           that.$Message["error"]({
             background: true,
@@ -202,6 +207,7 @@
         let billsObj = new Array();
         let detailObj = [];
         let stockIds = [];
+        let stockNames = []
         for (let i = 0; i < selectGoods.length; i++) {
           let num = Number(selectGoods[i].reserve) - selectGoods[i].num;
 
@@ -237,10 +243,13 @@
           let goodsId = {}
           if (selectGoods[i].stocks && selectGoods[i].stocks.objectId) {
             const pointer = Bmob.Pointer('stocks');
-            let stockId = pointer.set(selectGoods.stocks.objectId);
+            let stockId = pointer.set(selectGoods[i].stocks.objectId);
             tempBills.set("stock", stockId);
             detailBills.stock = selectGoods[i].stocks.stock_name
-            stockIds.push(selectGoods[i].stocks.objectId)
+            if(stockIds.indexOf(selectGoods[i].stocks.objectId) == -1){
+            	stockIds.push(selectGoods[i].stocks.objectId)
+            	stockNames.push(selectGoods[i].stocks.stock_name)
+            }
           }
 
           detailBills.goodsName = selectGoods[i].goodsName
@@ -290,6 +299,7 @@
             query.set("opreater", poiID1);
             query.set("master", poiID);
             query.set("stockIds", stockIds);
+            query.set("stockNames", stockNames);
             query.set('goodsName', selectGoods[0].goodsName);
             query.set('real_money', Number(that.formItem.real_money));
             query.set('debt', 0);
@@ -363,6 +373,7 @@
         that.goodsShow = false
         let count = 0
         for (let item of goods) {
+          that.formItem.real_num += Number(item.num)
           that.formItem.real_money += Number(item.retailPrice)
           that.selectGoods.splice((that.selectIndex + count), 1, item)
           count += 1
