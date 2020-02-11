@@ -76,12 +76,11 @@
       <div style="color: #333;margin-top: 10px;"><text style="font-size: 12px;">{{now_product.goodsName}}</text></div>
     </div>
 
-    <div id="print_allqr" style="text-align: center;width: 100%;" class="print">
+    <div id="print_allqr" style="text-align: center;width: 100%;" class="print" v-if="allGoods">
       <div v-for="(item,index) in allGoods" :key="index" style="width:25%; display: inline-block;">
         <img :src="item.qrcodeImg" style="width: 50%;" />
         <div style="color: #333;margin:5px 0;"><text style="font-size: 10px;">{{item.goodsName}}</text></div>
       </div>
-
     </div>
 
     <div id="print_selectedqr" style="text-align: center;width: 100%;" class="print">
@@ -322,16 +321,16 @@
           uid = JSON.parse(localStorage.getItem('user')).objectId;
         })();
       };
-      this.get_productList();
-
-      goods.getstock_list().then(res => {
+      that.get_productList();
+      that.getAllproducts()
+      /*goods.getstock_list().then(res => {
         //console.log(res)
         that.all_stocks = res
         goods.get_fristclass().then(res => {
           //console.log(res)
           that.all_fristclass = res
         });
-      });
+      });*/
     },
 
     methods: {
