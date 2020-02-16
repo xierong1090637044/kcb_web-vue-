@@ -41,7 +41,7 @@
 
   let that;
   export default {
-    props: ['show','type'],
+    props: ['show','type','thisSelectGoods'],
     components: {
       producerS,
       shopS
@@ -146,7 +146,6 @@
           searchGoodText: '',
           stockId: ''
         }, //搜索条件
-
       };
     },
 
@@ -161,8 +160,9 @@
 
     watch: {
       'show': function(newVal) {
-        console.log(newVal)
+
         if(newVal){
+          console.log(this.thisSelectGoods)
           this.get_productList();
         }else{
           that.goods = []
@@ -230,6 +230,8 @@
 
       //查询产品列表
       get_productList(stockId) {
+        that.select_goods = [];
+        
         const query = Bmob.Query('Goods');
         query.equalTo('userId', '==', that.userid);
 				query.equalTo("status", "!=", -1);
@@ -246,14 +248,21 @@
 
         query.limit(that.page_size);
         query.skip(that.page_size * (that.pege_number - 1));
-        query.order("goodsName"); //按照条件降序
+        query.order("goodsName","-createdAt"); //按照条件降序
         query.find().then(res => {
           console.log(res);
           for (let item of res) {
 
-            if(that.type !="enter"){
+            if(that.type =="out" || that.type == "allocation"){
               if (item.reserve <= 0) {
                 item._disabled = true
+              }
+            }
+
+            for(let selectgGood of that.thisSelectGoods){
+              if(selectgGood.objectId == item.objectId){
+                item._checked = true
+                that.select_goods.push(item)
               }
             }
 
@@ -265,9 +274,6 @@
             item.class = (item.goodsClass ? (item.goodsClass.class_text || "") : "") + "    " + (item.second_class ?
               (item.second_class.class_text || "") : "")
 
-            /*item.qrcodeImg = jrQrcode.getQrBase64((item.productCode) ? item.productCode : item.objectId + '-' +
-              false)
-            item.productCode = (item.productCode) ? item.productCode : item.objectId + '-' + false*/
 
             if (item.models) {
               let count = 0

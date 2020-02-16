@@ -26,8 +26,12 @@ import shops from '@/components/manage/shops'; // 门店管理页面
 import staffs from '@/components/manage/staffs'; // 员工管理页面
 import customs from '@/components/manage/customs'; // 客户管理页面
 import producers from '@/components/manage/producers'; // 客户管理页面
+
 import goodEnter from '@/components/goodEnter'; // 入库或采购页面
-import goodOut from '@/components/goodOut'; // 出库或销售页面
+import goodOut from '@/components/goodOut'; // 盘点页面
+import goodCount from '@/components/goodCount'; // 出库或销售页面
+import goodAllocation from '@/components/goodAllocation'; // 产品调拨
+
 import updateHistory from '@/components/updateHistroy'; // 出库或销售页面
 
 import admin from '@/components/admin/index'; // 管理员页面
@@ -52,6 +56,16 @@ export default new Router({
 		  name: 'home',
 		  component: home,
 			children: [
+        {
+          path: 'goodAllocation',
+          name: 'goodAllocation',
+          component: goodAllocation
+        },
+        {
+          path: 'goodCount',
+          name: 'goodCount',
+          component: goodCount
+        },
         {
           path: 'goodEnter',
           name: 'goodEnter',

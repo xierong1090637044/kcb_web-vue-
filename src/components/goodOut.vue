@@ -66,7 +66,7 @@
     </div>
 
     <!--选择产品模板-->
-    <goodsS :show="goodsShow" @cancle="goodsShow = false" @confrimGoods="confrimSelectGoods" type="out"></goodsS>
+    <goodsS :show="goodsShow" @cancle="goodsShow = false" @confrimGoods="confrimSelectGoods" type="out" :thisSelectGoods="selectGoods"></goodsS>
 
   </div>
 </template>
@@ -131,7 +131,6 @@
               if(params.row.stocks && params.row.stocks.stock_name){
                 return h('div', [params.row.stocks.stock_name])
               }
-
             }
           },
           {
@@ -370,15 +369,33 @@
       },
 
       confrimSelectGoods(goods) {
-        that.goodsShow = false
-        let count = 0
+        that.selectGoods = [];
+        that.goodsShow = false;
+        let count = 0;
+        
         for (let item of goods) {
           that.formItem.real_num += Number(item.num)
           that.formItem.real_money += Number(item.retailPrice)
-          that.selectGoods.splice((that.selectIndex + count), 1, item)
+          that.selectGoods.push(item)
           count += 1
+
+          if(count == goods.length){
+            for (let i = 0; i <= 4; i++) {
+              let good = {}
+              good.goodsName = ''
+              good.stocks = ''
+              good.class = ''
+              good.reserve = ''
+              good.costPrice = ''
+              good.modify_retailPrice = ''
+              good.retailPrice = ''
+              good.packageContent = ''
+              good.packingUnit = ''
+              good.createdAt = ''
+              that.selectGoods.push(good)
+            }
+          }
         }
-        console.log(goods, that.selectGoods)
       },
 
       //增加选择的产品数目

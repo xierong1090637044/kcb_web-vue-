@@ -33,7 +33,18 @@
 						</div>
 						</MenuItem>
 
-            <Submenu name="2">
+            <Submenu name="7">
+            	<template slot="title">
+                <i class="iconfont  icon-chanpinyuyue"></i>
+            		库存管理
+            	</template>
+              <MenuItem name="7-1" to='/home/goodEnter'>产品入库</MenuItem>
+            	<MenuItem name="7-2" to='/home/goodOut'>产品出库</MenuItem>
+              <MenuItem name="7-3" to='/home/goodAllocation'>产品调拨</MenuItem>
+              <MenuItem name="7-4" to='/home/goodCount'>产品盘点</MenuItem>
+            </Submenu>
+
+            <!--<Submenu name="2">
             	<template slot="title">
             		<Icon type="ios-keypad"></Icon>
             		采购或入库
@@ -47,7 +58,7 @@
             		销售或出库
             	</template>
             	<MenuItem name="3-1" to='/home/goodOut'>产品出库</MenuItem>
-            </Submenu>
+            </Submenu>-->
 
 						<MenuItem name="4" to='/home/goods'>
 						<div class="display_flex">
