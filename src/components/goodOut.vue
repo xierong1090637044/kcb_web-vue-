@@ -199,7 +199,7 @@
             background: true,
             content: '没有选择出库产品'
           });
-
+          that.button_disabled = false;
           return
         }
 

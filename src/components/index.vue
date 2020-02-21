@@ -140,7 +140,7 @@
 					that.get_reserve = get_reserve.toFixed(2);
 					that.out_reserve = out_reserve.toFixed(2);
 					this.loadallGoods()
-					
+
 				});
 			},
 
@@ -154,7 +154,7 @@
 					}
 					that.total_reserve = res.total_reserve
 					that.total_products = res.total_products
-					
+
 					that.loading = false
 				})
 			}

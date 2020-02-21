@@ -24,7 +24,7 @@
               <div v-for="(model,key) in row.selected_model" :key="key" class="display_flex" style="margin:0.25rem 0.375rem;">
                 <div>{{model.custom1.value + model.custom2.value + model.custom3.value + model.custom4.value}}：</div>
                 <InputNumber placeholder="请输入数量" size="small" @on-focus="selectIndex = index" v-if="row.goodsName"
-                  :value="model.num" :min="0" @on-change="handleModelNumChange($event, index,key,model)"></InputNumber>
+                  :value="key== 0?1:0" :min="1" @on-change="handleModelNumChange($event, index,key,model)"></InputNumber>
               </div>
             </div>
             <div v-else>
@@ -198,7 +198,7 @@
             background: true,
             content: '没有选择入库产品'
           });
-
+          that.button_disabled = false;
           return
         }
 
@@ -369,8 +369,8 @@
 
       confrimSelectGoods(goods) {
         that.selectGoods = [];
-        that.goodsShow = false
-        let count = 0
+        that.goodsShow = false;
+        let count = 0;
         for (let item of goods) {
           that.formItem.real_money += Number(item.retailPrice)
           that.formItem.real_num += Number(item.num)

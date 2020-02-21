@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<Modal title="选择供应商" :closable="false" width="80%" :value="show" @on-cancel="outData">
+		<Modal title="选择供应商" :closable="false" width="80%" :value="true" @on-cancel="outData" footer-hide>
 
 			<Table :columns="columns" :data="data" stripe border :height="screenHeight - 350" :loading="loading" size="small">
 				<template slot-scope="{ row, index }" slot="action">

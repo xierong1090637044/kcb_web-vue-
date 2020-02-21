@@ -28,6 +28,7 @@ import customs from '@/components/manage/customs'; // 客户管理页面
 import producers from '@/components/manage/producers'; // 客户管理页面
 
 import goodEnter from '@/components/goodEnter'; // 入库或采购页面
+import goodEnterPurchase from '@/components/goodEnterPurchase'; // 入库或采购页面
 import goodOut from '@/components/goodOut'; // 盘点页面
 import goodCount from '@/components/goodCount'; // 出库或销售页面
 import goodAllocation from '@/components/goodAllocation'; // 产品调拨
@@ -36,7 +37,7 @@ import updateHistory from '@/components/updateHistroy'; // 出库或销售页面
 
 import admin from '@/components/admin/index'; // 管理员页面
 
-import Bmob from 'hydrogen-js-sdk'
+import Bmob from 'hydrogen-js-sdk';
 Bmob.initialize("825b954fe97e9186", "109063","47f76baf4ee4d90630d7b2bc17f7505c");
 
 Vue.use(Bmob)
@@ -70,6 +71,11 @@ export default new Router({
           path: 'goodEnter',
           name: 'goodEnter',
           component: goodEnter
+        },
+        {
+          path: 'goodEnterPurchase',
+          name: 'goodEnterPurchase',
+          component: goodEnterPurchase
         },
         {
           path: 'goodOut',

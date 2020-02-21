@@ -6,7 +6,7 @@ export default {
 			for (let i = 0; i < products.length; i++) {
 				let num = 0;
 				const query = Bmob.Query('Goods');
-				if (products[i].selectd_model) {
+				if (products[i].selected_model) {
 					for (let model of products[i].selected_model) {
 						for (let item of products[i].models) {
 							if (item.id == model.id) {
@@ -64,7 +64,7 @@ export default {
 			for (let i = 0; i < products.length; i++) {
 				let num = 0;
 				const query = Bmob.Query('Goods');
-				if (products[i].selectd_model) {
+				if (products[i].selected_model) {
 					for (let model of products[i].selected_model) {
 						for (let item of products[i].models) {
 							num += Number(item.reserve)
@@ -137,7 +137,7 @@ export default {
 				const query = Bmob.Query('Goods');
 				query.get(products[i].objectId).then(res => {
 					//console.log(products[i])
-					if (products[i].selectd_model) {
+					if (products[i].selected_model) {
 						for (let model of products[i].selected_model) {
 							for (let item of products[i].models) {
 								if (item.id == model.id) {
@@ -182,12 +182,6 @@ export default {
 						}
 
 					})
-
-					/*if (products[i].max_num >= 0 && products[i].max_num <= num) {
-						this.log(products[i].goodsName + "入库了" + products[i].num + "件，已经超过设置的最大库存值" + products[i].max_num, -2,
-							products[i].objectId);
-					}*/
-
 				}).catch(err => {
 					console.log(err)
 				})
@@ -207,7 +201,7 @@ export default {
 				query.get(products[i].objectId).then(res => {
 					//console.log(products[i])
 
-					if (products[i].selectd_model) {
+					if (products[i].selected_model) {
 						for (let model of products[i].selected_model) {
 							for (let item of products[i].models) {
 								if (item.id == model.id) {
@@ -376,7 +370,7 @@ export default {
 	//日志功能
 	log(log, type, id) {
 		let pointer = Bmob.Pointer('_User')
-		let userid = pointer.set(uni.getStorageSync("uid"));
+		let userid = pointer.set(localStorage.getItem("uid"));
 
 		if (type == -2) {
 			let pointer1 = Bmob.Pointer('Goods')

@@ -10,6 +10,10 @@
     <div :style="{height:screenHeight - 164+'px'}" class="updateBody">
       <Timeline>
         <TimelineItem>
+          <p class="time">2020/02/21 21:42</p>
+          <p class="content">1.新增产品采购</p>
+        </TimelineItem>
+        <TimelineItem>
           <p class="time">2020/02/10 15:52</p>
           <p class="content">1.产品批量上传优化</p>
           <p class="content">2.新增产品出库</p>

@@ -44,15 +44,15 @@
               <MenuItem name="7-4" to='/home/goodCount'>产品盘点</MenuItem>
             </Submenu>
 
-            <!--<Submenu name="2">
+            <Submenu name="2">
             	<template slot="title">
             		<Icon type="ios-keypad"></Icon>
-            		采购或入库
+            		采购
             	</template>
-            	<MenuItem name="2-1" to='/home/goodEnter'>产品入库</MenuItem>
+            	<MenuItem name="2-1" to='/home/goodEnterPurchase'>采购入库</MenuItem>
             </Submenu>
 
-            <Submenu name="3">
+            <!--<Submenu name="3">
             	<template slot="title">
             		<Icon type="md-cart"></Icon>
             		销售或出库

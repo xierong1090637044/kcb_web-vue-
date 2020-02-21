@@ -38,10 +38,10 @@
                   </div>
 
                   <FormItem label="成本价" prop="costPrice" style="width: 25%;">
-                    <Input v-model="formValidate.costPrice" placeholder="请输入成本价"></Input>
+                    <Input v-model="formValidate.costPrice" placeholder="请输入成本价" type="number"></Input>
                   </FormItem>
                   <FormItem label="零售价格" prop="retailPrice" style="width: 25%;">
-                    <Input v-model="formValidate.retailPrice" placeholder="请输入零售价格"></Input>
+                    <Input v-model="formValidate.retailPrice" placeholder="请输入零售价格" type="number"></Input>
                   </FormItem>
                 </div>
 

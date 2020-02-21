@@ -323,14 +323,6 @@
       };
       that.get_productList();
       that.getAllproducts()
-      /*goods.getstock_list().then(res => {
-        //console.log(res)
-        that.all_stocks = res
-        goods.get_fristclass().then(res => {
-          //console.log(res)
-          that.all_fristclass = res
-        });
-      });*/
     },
 
     methods: {
@@ -444,26 +436,6 @@
         that.now_product = row
       },
 
-      //选择操作是触发
-      selected_options(name) {
-        console.log(that.select_goods)
-        if (that.select_goods.length == 0) {
-          this.$Message.error('当前没有选择产品');
-        } else {
-          that.option_title = name;
-          if (name == "入库" || name == "出库") {
-            that.value1 = true;
-            let index = 0;
-            for (let item of that.select_goods) {
-              that.select_goods[index].num = 1;
-              that.select_goods[index].total_money = 1 * that.select_goods[index].retailPrice;
-              that.select_goods[index].modify_retailPrice = that.select_goods[index].retailPrice;
-              index += 1;
-            }
-          }
-
-        }
-      },
 
       //点击下载导入模板
       download_demo() {

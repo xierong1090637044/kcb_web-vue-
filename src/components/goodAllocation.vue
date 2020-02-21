@@ -24,11 +24,11 @@
               <div v-for="(model,key) in row.selected_model" :key="key" class="display_flex" style="margin:0.25rem 0.375rem;">
                 <div>{{model.custom1.value + model.custom2.value + model.custom3.value + model.custom4.value}}：</div>
                 <InputNumber placeholder="请输入数量" size="small" @on-focus="selectIndex = index" v-if="row.goodsName"
-                  :value="model.num" :min="0" @on-change="handleModelNumChange($event, index,key,model)"></InputNumber>
+                  :value="key== 0?1:0" :min="1" @on-change="handleModelNumChange($event, index,key,model)"></InputNumber>
               </div>
             </div>
             <div v-else>
-              <InputNumber placeholder="请输入数量" size="small" @on-focus="selectIndex = index" v-if="row.goodsName" :min="0"
+              <InputNumber placeholder="请输入数量" size="small" @on-focus="selectIndex = index" v-if="row.goodsName" :min="1"
                 @on-change="modify_num($event, index)"></InputNumber>
             </div>
           </template>
@@ -355,7 +355,7 @@
             "__type": "Date",
             "iso": that.formItem.date
           }); // 操作单详情
-          
+
         	query.save().then(res => {
         		let operationId = res.objectId;
 
@@ -462,7 +462,7 @@
           that.formItem.real_num += Number(item.num)
           that.selectGoods.push(item)
           count += 1
-          
+
           if(count == goods.length){
             for (let i = 0; i <= 4; i++) {
               let good = {}

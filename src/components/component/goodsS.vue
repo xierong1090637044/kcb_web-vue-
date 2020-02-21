@@ -13,8 +13,7 @@
       </div>
 
       <div>
-        <Table :columns="columns" :data="goods" :loading="loading" ref="table" border :height="screenHeight - 440"
-          @on-select="selectGoods" size="small">
+        <Table :columns="columns" :data="goods" :loading="loading" ref="table" border :height="screenHeight - 440"  size="small" @on-selection-change="changeSelect">
         </Table>
 
         <div style="margin: 10px;overflow: hidden">
@@ -162,7 +161,6 @@
       'show': function(newVal) {
 
         if(newVal){
-          console.log(this.thisSelectGoods)
           this.get_productList();
         }else{
           that.goods = []
@@ -178,13 +176,23 @@
 
       //选择当前操作返回
       confrimGoods() {
-				console.log(that.select_goods)
+        for(let item of that.select_goods){
+          for(let selectgGood of that.thisSelectGoods){
+            if(selectgGood.objectId == item.objectId){
+              item.num = selectgGood.num
+              item.total_money = selectgGood.total_money
+              item.really_total_money = selectgGood.really_total_money
+              item.modify_retailPrice = selectgGood.modify_retailPrice
+            }
+          }
+        }
+
         this.$emit('confrimGoods', that.select_goods)
       },
 
       //选择产品
-      selectGoods(e) {
-        that.select_goods = e
+      changeSelect(e){
+        that.select_goods = e;
         let index = 0;
         if(that.type == "enter"){
           for (let item of that.select_goods) {
@@ -203,7 +211,6 @@
             index += 1;
           }
         }
-
       },
 
       //搜索产品
@@ -231,7 +238,7 @@
       //查询产品列表
       get_productList(stockId) {
         that.select_goods = [];
-        
+
         const query = Bmob.Query('Goods');
         query.equalTo('userId', '==', that.userid);
 				query.equalTo("status", "!=", -1);
@@ -248,11 +255,12 @@
 
         query.limit(that.page_size);
         query.skip(that.page_size * (that.pege_number - 1));
-        query.order("goodsName","-createdAt"); //按照条件降序
+        query.order("-createdAt","goodsName",); //按照条件降序
         query.find().then(res => {
           console.log(res);
           for (let item of res) {
 
+            //采购或者调拨时判断库存
             if(that.type =="out" || that.type == "allocation"){
               if (item.reserve <= 0) {
                 item._disabled = true
@@ -278,7 +286,7 @@
             if (item.models) {
               let count = 0
               for (let model of item.models) {
-                model.num = 0
+                model.num = count==0?1:0
                 count += 1
               }
               item.num = count
