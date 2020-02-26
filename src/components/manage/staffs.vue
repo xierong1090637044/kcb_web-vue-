@@ -50,11 +50,11 @@
 					<Input v-model="staff.password" placeholder="请输入员工的登陆密码"></Input>
 				</FormItem>
 
-				<FormItem label="负责门店">
+				<!--<FormItem label="负责门店">
 					<Select v-model="staff.shop" placeholder="请选择负责的门店" style="text-align: left;">
 						<Option v-for="(item,index) in shops" :value="item.objectId" :key="index">{{item.name}}</Option>
 					</Select>
-				</FormItem>
+				</FormItem>-->
 
 				<FormItem label="地址">
 					<Input v-model="staff.address" placeholder="请输入员工的联系地址"></Input>

@@ -2,16 +2,17 @@
 	<div class="layout" :style="{height:screenHeight+'px'}">
 		<Layout>
 			<Header>
-				<Menu mode="horizontal" theme="dark" active-name="1" @on-select="select_horizontal_item">
-					<div class="layout-logo" style="color: #fff;line-height: 30px;font-weight: bold;font-size: 16px;background: unset;width: auto;margin-top: 4px;">
-						库存管理V 1.0.0
+				<div class="display_flex_bet">
+					<div class="display_flex">
+            <img src="../assets/logo.png" class="headerIcon"/>
+						<div class="layout-logo">库存管理V 1.0.0</div>
 					</div>
-					<div class="layout-nav">
-            <MenuItem name="5" to='/home/updateHistory'>
+					<div class="display_flex" style="color: #fff;">
+            <MenuItem name="5" to='/home/updateHistory' style="margin-right: 1.875rem;">
             	<Icon type="md-color-palette"  size="24" />历史更新
             </MenuItem>
 
-						<MenuItem name="3">
+						<MenuItem name="3" style="margin-right: 1.875rem;">
 						<Icon type="ios-log-out" size="24" />退出登录
 						</MenuItem>
 
@@ -20,7 +21,7 @@
 						<span>{{user.nickName}}</span>
 						</MenuItem>
 					</div>
-				</Menu>
+				</div>
 			</Header>
 			<Layout>
 				<Sider hide-trigger :style="{height:screenHeight - 64+'px'}">
@@ -76,12 +77,12 @@
 
 						<Submenu name="6">
 							<template slot="title">
-								<Icon type="ios-keypad"></Icon>
+								<Icon type="ios-copy" style="font-size: 20px;"></Icon>
 								管理
 							</template>
 							<MenuItem name="2-1" to='/home/manage/category'>类别管理</MenuItem>
 							<MenuItem name="2-2" to='/home/manage/stocks'>仓库管理</MenuItem>
-							<MenuItem name="2-3" to='/home/manage/shops'>门店管理</MenuItem>
+							<!--<MenuItem name="2-3" to='/home/manage/shops'>门店管理</MenuItem>-->
 							<MenuItem name="2-4" to='/home/manage/staffs'>员工管理</MenuItem>
 							<MenuItem name="2-5" to='/home/manage/customs'>客户管理</MenuItem>
 							<MenuItem name="2-6" to='/home/manage/producers'>供应商管理</MenuItem>
@@ -169,15 +170,16 @@
 	}
 
 	.layout-logo {
-		width: 100px;
-		height: 30px;
-		background: #5b6270;
-		border-radius: 3px;
-		float: left;
-		position: relative;
-		top: 15px;
-		left: 20px;
+    color: #fff;
+    font-weight: bold;
+    font-size: 0.875rem;
 	}
+  .headerIcon{
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    margin-right: 1.25rem;
+  }
 
 	.layout-nav {
 		width: 420px;
