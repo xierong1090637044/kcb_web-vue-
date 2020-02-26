@@ -358,16 +358,6 @@
             query.set('goodsName', selectGoods[0].goodsName);
             query.set('real_money', Number(that.formItem.real_money));
             query.set('debt', that.formItem.all_money - Number(that.formItem.real_money));
-            /*if (that.account) {
-            	let pointer4 = Bmob.Pointer('accounts')
-            	let accountId = pointer4.set(that.account.objectId)
-            	query.set("account", accountId);
-            	const accountQuery = Bmob.Query('accounts');
-            	accountQuery.get(that.account.objectId).then(res => {
-            		res.set('money', res.money - Number(that.real_money));
-            		res.save().then(res => {})
-            	})
-            }*/
             query.set("createdTime", {
               "__type": "Date",
               "iso": that.formItem.date

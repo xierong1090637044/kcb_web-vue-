@@ -30,6 +30,7 @@ import producers from '@/components/manage/producers'; // 客户管理页面
 import goodEnter from '@/components/goodEnter'; // 入库或采购页面
 import goodEnterPurchase from '@/components/goodEnterPurchase'; // 入库或采购页面
 import goodOut from '@/components/goodOut'; // 盘点页面
+import goodOutBuy from '@/components/goodOutBuy'; // 盘点页面
 import goodCount from '@/components/goodCount'; // 出库或销售页面
 import goodAllocation from '@/components/goodAllocation'; // 产品调拨
 
@@ -81,6 +82,11 @@ export default new Router({
           path: 'goodOut',
           name: 'goodOut',
           component: goodOut
+        },
+        {
+          path: 'goodOutBuy',
+          name: 'goodOutBuy',
+          component: goodOutBuy
         },
 				{
 				  path: 'index',

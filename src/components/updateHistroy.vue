@@ -10,8 +10,11 @@
     <div :style="{height:screenHeight - 164+'px'}" class="updateBody">
       <Timeline>
         <TimelineItem>
-          <p class="time">2020/02/21 21:42</p>
+          <p class="time">2020/02/26 21:42</p>
           <p class="content">1.新增产品采购</p>
+          <p class="content">2.新增产品销售</p>
+          <p class="content">3.新增手机验证码登陆</p>
+          <p class="content">4.产品信息导出重复问题解决</p>
         </TimelineItem>
         <TimelineItem>
           <p class="time">2020/02/10 15:52</p>

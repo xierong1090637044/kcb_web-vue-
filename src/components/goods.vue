@@ -322,7 +322,6 @@
         })();
       };
       that.get_productList();
-      that.getAllproducts()
     },
 
     methods: {
@@ -540,8 +539,12 @@
       //导出数据表格点击
       exportData(type) {
         that.downloadAllClick = true;
+        this.$Message.loading({
+          content: '导出中',
+        });
         that.getAllproducts().then(res => {
           if (res) {
+            this.$Message.destroy()
             this.$refs.tableAll.exportCsv({
               filename: '产品数据',
             });
@@ -748,33 +751,29 @@
 </script>
 
 <style>
-  ::-webkit-scrollbar {
-    /*滚动条整体样式*/
+  /*::-webkit-scrollbar {
     width: 10px;
-    /*高宽分别对应横竖滚动条的尺寸*/
     height: 1px;
   }
 
   ::-webkit-scrollbar-thumb {
-    /*滚动条里面小方块*/
     border-radius: 10px;
     box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
     background: #535353;
   }
 
   ::-webkit-scrollbar-track {
-    /*滚动条里面轨道*/
     box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
     border-radius: 10px;
     background: #ededed;
-  }
+  }*/
 
   .ivu-input-search {
     background-color: #426ab3 !important;
     border-color: #426ab3 !important;
   }
 
-  .ivu-tooltip-inner{
+  .ivu-tooltip-inner {
     max-width: unset !important;
   }
 
