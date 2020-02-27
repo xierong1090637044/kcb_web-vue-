@@ -37,9 +37,9 @@
 	</div>
 </template>
 <script>
-	import common from '@/utils/common.js';
+	import common from '@/serve/common.js';
 	import record from '@/serve/record.js';
-	import mchart from '@/utils/chart.js';
+	import mchart from '@/serve/chart.js';
 	import G2 from '@antv/g2';
 
 	let that;

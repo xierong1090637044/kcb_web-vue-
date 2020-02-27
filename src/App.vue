@@ -53,4 +53,8 @@
 	justify-content: space-between;
 	align-items: center;
 }
+.ivu-input-search {
+    background-color: #426ab3 !important;
+    border-color: #426ab3 !important;
+}
 </style>

@@ -1,5 +1,5 @@
 import Bmob from "hydrogen-js-sdk";
-import common from "@/utils/common.js";
+import common from "@/serve/common.js";
 export default {
 	//得到出入库的线形图数据
 	getLineChart(year, month) {

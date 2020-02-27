@@ -1,28 +1,24 @@
-// table.vue
 <template>
 	<div style="position: relative;">
 		<Spin size="large" fix v-if="loading"></Spin>
-		
+
 		<div style="margin-bottom: 10px;">
 			<Breadcrumb  separator="<b style='color: #999;'>/</b>">
 				<BreadcrumbItem to="/">首页</BreadcrumbItem>
 				<BreadcrumbItem  to="/home/goods">客户管理</BreadcrumbItem>
 			</Breadcrumb>
 		</div>
-		
-		<div style="margin-bottom: 10px;display: flex;align-items: center;justify-content: space-between;">
 
+		<div style="margin-bottom: 10px;" class="display_flex_bet">
+      <Input search enter-button placeholder="请输入客户名字" style="width: 25%" @on-search='searchCustom'/>
 			<div style="display: flex;align-items: center;">
-				<Button type="warning" @click="modal3 = true" icon="md-add" style="margin-right: 10px;background: #ed4014;">添加客户</Button>
+				<Button type="primary" @click="modal3 = true" icon="md-add" style="margin-right: 10px;background: #ed4014;">添加客户</Button>
 			</div>
-
 		</div>
 		<Table :columns="columns" :data="data" stripe border :height="screenHeight - 250">
 			<template slot-scope="{ row, index }" slot="action">
-				<div  v-if="state == 'choose'">
-					<Button type="primary" size="small" style="margin-right: 5px" @click="choose(row)">选择</Button>
-				</div>
-				<div v-else>
+				<div>
+          <Button type="primary" size="small" style="margin-right: 5px" @click="selectCustomId = row.objectId">销售报表</Button>
 					<Button type="primary" size="small" style="margin-right: 5px" @click="edit(row)">修改</Button>
 					<Button type="error" size="small" @click="remove(row)">删除</Button>
 				</div>
@@ -54,12 +50,12 @@
 				<FormItem label="电话">
 					<Input v-model="custom.custom_phone" placeholder="请输入客户的电话"></Input>
 				</FormItem>
-				
-				
+
+
 				<FormItem label="欠款金额">
 					<Input v-model="custom.debt" placeholder="请输入备注"></Input>
 				</FormItem>
-				
+
 				<FormItem label="启用">
 					<i-switch v-model="custom.disabled" size="large">
 						<span slot="open">启</span>
@@ -69,21 +65,21 @@
 			</Form>
 		</Modal>
 
-
+    <sellHistory :customId="selectCustomId" v-if="selectCustomId" @cancle="selectCustomId = ''"></sellHistory>
 	</div>
 </template>
 <script>
 	import customs from '@/serve/customs.js';
-
+  import sellHistory from '@/components/component/custom/sellHistory.vue';
 	let that;
 	export default {
 		components: {
-
+      sellHistory:sellHistory
 		},
 		data() {
 			return {
 				screenHeight: window.innerHeight,
-				state:'normal',//当前客户的模式   choose 选择模式
+        selectCustomId:"",
 				custom: {
 					custom_name: "",
 					custom_address:"",
@@ -103,10 +99,6 @@
 						align: 'center'
 					},
 					{
-						title: '客户Id',
-						key: 'objectId',
-					},
-					{
 						title: '客户名字',
 						key: 'custom_name',
 					},
@@ -118,22 +110,31 @@
 						title: '客户电话',
 						key: 'custom_phone',
 					},
-					{
-						title: '是否已启用',
-						key: 'disabled',
-						render: (h, params) => {
-							return h('div', [(params.row.disabled) ? "未启用" : "已启用"])
-						}
-					},
+
 					{
 						title: '欠款金额',
 						key: 'debt',
+            render: (h, params) => {
+            	return h('div',{
+                style: {
+                  "color": "#f30"
+                },
+              }, ["￥"+(params.row.debt)])
+            }
 					},
 					{
 						title: '创建时间',
 						key: 'createdAt',
 						sortable: true
 					},
+          {
+          	title: '是否已启用',
+            width: 160,
+          	key: 'disabled',
+          	render: (h, params) => {
+          		return h('div', [(params.row.disabled) ? "未启用" : "已启用"])
+          	}
+          },
 					{
 						title: '操作',
 						slot: 'action',
@@ -146,28 +147,27 @@
 		mounted() {
 			//console.log(this.$route.query.type)
 			that = this;
-			that.state = this.$route.query.type?this.$route.query.type:'normal'
-			//console.log(that.state)
-			this.$Loading.start();
-			customs.get_customList().then(res=>{
-				console.log(res)
-				this.$Loading.finish();
-				that.data = res;
-			})
+			that.getCustomList();
 		},
 
 		methods: {
-			
-			//选择当前客户
-			choose(row){
-				console.log(row)
-				localStorage.setItem("select_custom",JSON.stringify(row))
-				this.$router.push({ path: '/home/operations' })
-			},
-			
+
+      //得到客户列表
+      getCustomList(disabled,search_text){
+        this.$Loading.start();
+        customs.get_customList(disabled,search_text).then(res=>{
+        	this.$Loading.finish();
+        	that.data = res;
+        })
+      },
+
+      //搜索客户
+      searchCustom(value){
+        that.getCustomList(null,value);
+      },
+
 			//添加客户点击确定
 			add_custom(){
-				
 				if(that.custom.custom_name){
 					this.$Loading.start();
 					customs.add_custom(that.custom).then(res=>{
@@ -180,9 +180,9 @@
 				}else{
 					this.$Message.error('请输入客户名字');
 				}
-				
+
 			},
-			
+
 			//修改客户
 			edit(row) {
 				that.modal3 = true;
@@ -217,3 +217,9 @@
 		},
 	}
 </script>
+<style>
+  .ivu-input-search {
+      background-color: #426ab3 !important;
+      border-color: #426ab3 !important;
+  }
+</style>

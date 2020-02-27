@@ -228,7 +228,7 @@
 		</Modal>
 
 		<!--生产商列表-->
-		<producerS @cancle="producerShow = false" :show="producerShow" @select="selectProducter"></producerS>
+		<producerS @cancle="producerShow = false" v-if="producerShow" @select="selectProducter"></producerS>
 		<customS @cancle="customShow = false" :show="customShow" @select="selectCustom"></customS>
 
 	</div>

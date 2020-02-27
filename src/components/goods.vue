@@ -453,7 +453,7 @@
 
       //modal 确定点击
       modal_confrim() {
-        that.loading = true,
+        that.loading = true;
           that.get_productList()
       },
 
