@@ -1,4 +1,4 @@
-let userid = JSON.parse(localStorage.getItem('user')).objectId;
+let userid = localStorage.getItem('user')?JSON.parse(localStorage.getItem('user')).objectId : "";
 let uid = localStorage.getItem('uid');
 export default {
 	//得到客户列表
