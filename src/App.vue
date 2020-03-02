@@ -4,9 +4,10 @@
 	</div>
 </template>
 <script>
+	import mine from '@/serve/mine.js';
 	import manage from '@/serve/manage.js';
 	import customs from '@/serve/customs.js';
-	
+
 	export default {
 		data() {
 			return {
@@ -24,20 +25,22 @@
 
 			let current = Bmob.User.current()
 			console.log(current)
-			if (localStorage.getItem('bmob')) {
+			if (localStorage.getItem('user')) {
 				let identity = localStorage.getItem('identity')
 				let current = Bmob.User.current()
 				current.user = ''
 				if (identity == 1) {
-					localStorage.setItem("bmob", JSON.stringify(current))
+					localStorage.setItem("user", JSON.stringify(current))
 				}
-				
-				manage.getstock_list(false,'').then(res=>{
+
+				manage.getstock_list(false, '').then(res => {
 					localStorage.setItem("stocks", JSON.stringify(res))
 				})
 				customs.get_customList(false, '').then(res => {
 					localStorage.setItem("customs", JSON.stringify(res))
 				})
+				
+				mine.query_setting()
 			}
 		},
 
@@ -49,5 +52,9 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+}
+.ivu-input-search {
+    background-color: #426ab3 !important;
+    border-color: #426ab3 !important;
 }
 </style>

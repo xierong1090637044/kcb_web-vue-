@@ -3,7 +3,7 @@ export default {
 	//得到员工列表
 	get_stafflist(disabled,search_text) {
 		return new Promise((resolve, reject) => {
-			let userid = JSON.parse(localStorage.getItem('bmob')).objectId;
+			let userid = JSON.parse(localStorage.getItem('user')).objectId;
 			const query = Bmob.Query("_User");
 			query.order("num");
 			query.equalTo("masterId", "==", userid);
@@ -13,7 +13,6 @@ export default {
 				query.equalTo("name", "==", {
 					"$regex": "" + search_text + ".*"
 				});
-			
 			}
 			query.find().then(res => {
 				localStorage.setItem("staffs",JSON.stringify(res))
@@ -26,7 +25,7 @@ export default {
 	
 	//增加数据操作
 	add_staff(params) {
-		let userid = JSON.parse(localStorage.getItem('bmob')).objectId;
+		let userid = JSON.parse(localStorage.getItem('user')).objectId;
 		
 		return new Promise((resolve, reject) => {
 			const pointer = Bmob.Pointer('_User');
@@ -40,16 +39,18 @@ export default {
 				let poiID = pointer.set(userid);
 				
 				const query = Bmob.Query('_User');
-				query.set("username", params.name);
+				query.set("username", params.mobilePhoneNumber);
 				query.set("nickName", params.name);
 				query.set("password", params.password);
+				query.set("pwd", params.password);
 				query.set("mobilePhoneNumber", params.mobilePhoneNumber);
 				query.set("rights", params.rights);
 				query.set("address", params.address);
-				query.set("avatarUrl", "http://bmob-cdn-23134.b0.upaiyun.com/2019/04/29/4705b31340bfff8080c068f52fd17e2c.png");
+				query.set("avatarUrl", "http://www.shoujixungeng.com/2019/12/12/7c908b5c406d1e7d80ba0253903681ae.jpg");
 				query.set("masterId", poiID);
 				query.set("disabled", !params.disabled);
 				query.set("shop",shopId);
+				query.set("stocks", params.selectStock);
 				query.set("id", params.objectId);
 				query.save().then(res => {
 					console.log(res)
@@ -68,15 +69,17 @@ export default {
 					if (res.length == 0) {
 				
 						const query = Bmob.Query('_User');
-						query.set("username", params.name);
+						query.set("username", params.mobilePhoneNumber);
 						query.set("shop",shopId);
 						query.set("nickName", params.name);
 						query.set("password", params.password);
+						query.set("pwd", params.password);
 						query.set("mobilePhoneNumber", params.mobilePhoneNumber);
 						query.set("rights", params.rights);
 						query.set("address", params.address);
-						query.set("avatarUrl", "http://bmob-cdn-23134.b0.upaiyun.com/2019/04/29/4705b31340bfff8080c068f52fd17e2c.png");
+						query.set("avatarUrl", "http://www.shoujixungeng.com/2019/12/12/7c908b5c406d1e7d80ba0253903681ae.jpg");
 						query.set("masterId", poiID);
+						query.set("stocks", params.selectStock);
 						query.set("have_out", 0);
 						query.set("disabled", !params.disabled);
 						query.save().then(res => {
@@ -84,6 +87,10 @@ export default {
 							resolve(res)
 						}).catch(err => {
 							console.log(err)
+							
+							if(err.code ==209){
+								resolve(false,"已存在此账号")
+							}
 				
 						})
 					} else {

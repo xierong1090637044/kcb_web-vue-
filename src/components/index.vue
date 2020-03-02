@@ -37,9 +37,9 @@
 	</div>
 </template>
 <script>
-	import common from '@/utils/common.js';
+	import common from '@/serve/common.js';
 	import record from '@/serve/record.js';
-	import mchart from '@/utils/chart.js';
+	import mchart from '@/serve/chart.js';
 	import G2 from '@antv/g2';
 
 	let that;
@@ -140,7 +140,7 @@
 					that.get_reserve = get_reserve.toFixed(2);
 					that.out_reserve = out_reserve.toFixed(2);
 					this.loadallGoods()
-					
+
 				});
 			},
 
@@ -154,7 +154,7 @@
 					}
 					that.total_reserve = res.total_reserve
 					that.total_products = res.total_products
-					
+
 					that.loading = false
 				})
 			}
@@ -163,7 +163,6 @@
 </script>
 
 <style>
-	
 	.custom-tooltip {
 		width: 100% !important;
 		height: 10% !important;

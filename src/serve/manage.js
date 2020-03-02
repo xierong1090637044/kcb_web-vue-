@@ -15,12 +15,12 @@ export default {
 
 	//得到仓库列表
 	getstock_list(disabled, search_text) {
-		let userid = JSON.parse(localStorage.getItem('bmob')).objectId;
+		let userid = JSON.parse(localStorage.getItem('user')).objectId;
 
 		return new Promise((resolve, reject) => {
 			const query = Bmob.Query("stocks");
 			query.order("-num");
-			query.include("Ncharge", "shop")
+			query.include("charge", "shop")
 			query.equalTo("parent", "==", userid);
 			query.equalTo("disabled", "==", disabled);
 			if (search_text) {
@@ -39,11 +39,11 @@ export default {
 
 	//添加仓库
 	add_stock(params) {
-		let userid = JSON.parse(localStorage.getItem('bmob')).objectId;
+		let userid = JSON.parse(localStorage.getItem('user')).objectId;
 		const pointer = Bmob.Pointer('_User');
 		let poiID = pointer.set(userid);
 
-		const pointer1 = Bmob.Pointer('_User');
+		const pointer1 = Bmob.Pointer('staffs');
 		let chargeId = pointer1.set(params.charge);
 
 		//const pointer2 = Bmob.Pointer('shops');
@@ -98,7 +98,7 @@ export default {
 
 	//得到员工列表
 	get_chargeList(disabled, search_text) {
-		let userid = JSON.parse(localStorage.getItem('bmob')).objectId;
+		let userid = JSON.parse(localStorage.getItem('user')).objectId;
 		return new Promise((resolve, reject) => {
 			const query = Bmob.Query("staffs");
 			query.order("-createdAt");
@@ -119,7 +119,7 @@ export default {
 
 	//添加一级分类
 	add_fristclass(class_text) {
-		let userid = JSON.parse(localStorage.getItem('bmob')).objectId;
+		let userid = JSON.parse(localStorage.getItem('user')).objectId;
 		return new Promise((resolve, reject) => {
 			const pointer = Bmob.Pointer('_User')
 			const poiID = pointer.set(userid);
@@ -138,7 +138,7 @@ export default {
 
 	//添加二级分类
 	add_secondclass(selected_id, class_text) {
-		let userid = JSON.parse(localStorage.getItem('bmob')).objectId;
+		let userid = JSON.parse(localStorage.getItem('user')).objectId;
 		return new Promise((resolve, reject) => {
 
 			const pointer = Bmob.Pointer('class_user')
@@ -183,7 +183,7 @@ export default {
 
 	//获得产品一级分类
 	edit_fristclass(id, class_text) {
-		let userid = JSON.parse(localStorage.getItem('bmob')).objectId;
+		let userid = JSON.parse(localStorage.getItem('user')).objectId;
 		return new Promise((resolve, reject) => {
 
 			const query = Bmob.Query("class_user");
@@ -214,7 +214,7 @@ export default {
 
 	//刷新产品一级分类
 	get_fristclass() {
-		let userid = JSON.parse(localStorage.getItem('bmob')).objectId;
+		let userid = JSON.parse(localStorage.getItem('user')).objectId;
 		return new Promise((resolve, reject) => {
 
 			const query = Bmob.Query("class_user");

@@ -114,10 +114,6 @@
 						align: 'center'
 					},
 					{
-						title: '类别Id',
-						key: 'objectId',
-					},
-					{
 						title: '仓库图片',
 						key: 'Image',
 						width: 140,
@@ -153,7 +149,7 @@
 						title: '仓库负责人',
 						key: 'charge',
 						render: (h, params) => {
-							return h('div', [params.row.Ncharge ? params.row.Ncharge.nickName : ''])
+							return h('div', [params.row.charge ? params.row.charge.nickName : ''])
 						}
 					},
 					{

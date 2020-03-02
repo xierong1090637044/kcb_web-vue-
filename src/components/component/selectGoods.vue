@@ -77,13 +77,7 @@
 						key: 'reserve',
 						sortable: true,
 					},
-					{
-						width: 160,
-						align: 'center',
-						title: '创建时间',
-						key: 'createdAt',
-						sortable: true,
-					},
+
 					{
 						title: '规格',
 						align: 'center',
@@ -108,6 +102,34 @@
 							}
 						}
 					},
+          {
+            title: '产品二维码',
+            width: 100,
+            key: 'qrcodeImg',
+            render: (h, params) => {
+              return h('div', {
+                style: {
+                  "text-align": "center"
+                },
+              }, [
+                h('img', {
+                  style: {
+                    width: "65px",
+                  },
+                  attrs: {
+                    src: params.row.qrcodeImg
+                  }
+                })
+              ]);
+            }
+          },
+          {
+          	width: 160,
+          	align: 'center',
+          	title: '创建时间',
+          	key: 'createdAt',
+          	sortable: true,
+          },
 					{
 						width: 100,
 						title: '操作',
@@ -124,7 +146,7 @@
 			uid = JSON.parse(localStorage.getItem('user')).objectId;
 			//得到仓库列表
 			goods.getstock_list().then(res => {
-				console.log(res)
+				//console.log(res)
 				that.newStock.allStocks = res
 				//that.all_fristclass = res
 			});
@@ -180,7 +202,7 @@
 
 			//关联新的仓库按钮点击
 			addNewStockProduct() {
-				
+
 			},
 
 			//关联到新的仓库
@@ -218,6 +240,7 @@
 					console.log(res)
 					for (let item of res) {
 						item.stocks = item.stocks.stock_name || ""
+            item.qrcodeImg = jrQrcode.getQrBase64(item.objectId + '-' + false)
 					}
 					that.goods = res;
 					that.loading = false;

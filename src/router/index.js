@@ -1,6 +1,10 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import ViewUI from 'view-design';
+import Element from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
+import '@/assets/all.css';
+Vue.use(Element);
 
 // import style
 import 'view-design/dist/styles/iview.css';
@@ -14,7 +18,6 @@ import index from '@/components/index' //首页
 import thanks from '@/components/thanks' // 感谢页面
 import test from '@/components/test'  //样板页面
 import goods from '@/components/goods' //产品添加页面
-import add_good from '@/components/goods/addgood'//添加产品页面
 import operations from '@/components/operations' //操作记录页面
 import download from '@/components/download'; // app下载页面
 import category from '@/components/manage/category'; // 类别管理页面
@@ -23,10 +26,19 @@ import shops from '@/components/manage/shops'; // 门店管理页面
 import staffs from '@/components/manage/staffs'; // 员工管理页面
 import customs from '@/components/manage/customs'; // 客户管理页面
 import producers from '@/components/manage/producers'; // 客户管理页面
-import goodEnter from '@/components/goodEnter'; // 入库或采购页面
-import goodOut from '@/components/goodOut'; // 出库或销售页面
-import Bmob from 'hydrogen-js-sdk'
 
+import goodEnter from '@/components/goodEnter'; // 入库或采购页面
+import goodEnterPurchase from '@/components/goodEnterPurchase'; // 入库或采购页面
+import goodOut from '@/components/goodOut'; // 盘点页面
+import goodOutBuy from '@/components/goodOutBuy'; // 盘点页面
+import goodCount from '@/components/goodCount'; // 出库或销售页面
+import goodAllocation from '@/components/goodAllocation'; // 产品调拨
+
+import updateHistory from '@/components/updateHistroy'; // 出库或销售页面
+
+import admin from '@/components/admin/index'; // 管理员页面
+
+import Bmob from 'hydrogen-js-sdk';
 Bmob.initialize("825b954fe97e9186", "109063","47f76baf4ee4d90630d7b2bc17f7505c");
 
 Vue.use(Bmob)
@@ -35,7 +47,9 @@ Vue.use(ViewUI)
 Vue.use(Print);
 
 export default new Router({
+  mode: 'history',  //去掉url中的#
   routes: [
+    
 		{
 		  path: '/',
 		  name: 'landing',
@@ -47,14 +61,34 @@ export default new Router({
 		  component: home,
 			children: [
         {
+          path: 'goodAllocation',
+          name: 'goodAllocation',
+          component: goodAllocation
+        },
+        {
+          path: 'goodCount',
+          name: 'goodCount',
+          component: goodCount
+        },
+        {
           path: 'goodEnter',
           name: 'goodEnter',
           component: goodEnter
         },
         {
+          path: 'goodEnterPurchase',
+          name: 'goodEnterPurchase',
+          component: goodEnterPurchase
+        },
+        {
           path: 'goodOut',
           name: 'goodOut',
           component: goodOut
+        },
+        {
+          path: 'goodOutBuy',
+          name: 'goodOutBuy',
+          component: goodOutBuy
         },
 				{
 				  path: 'index',
@@ -87,11 +121,6 @@ export default new Router({
 				  component: download
 				},
 				{
-				  path: 'add_good',
-				  name: 'add_good',
-				  component: add_good
-				},
-				{
 				  path: 'manage/category',
 				  name: 'category',
 				  component: category
@@ -120,9 +149,19 @@ export default new Router({
 				  path: 'manage/producers',
 				  name: 'producers',
 				  component: producers
-				}
+				},
+        {
+          path: 'updateHistory',
+          name: 'updateHistory',
+          component: updateHistory
+        },
+        {
+          path: 'admin',
+          name: 'admin',
+          component: admin
+        }
       ]
-		}
+		},
 
   ]
 })

@@ -1,825 +1,807 @@
 <template>
-	<div>
-		<div style="margin-bottom: 10px;">
-			<Breadcrumb separator="<b style='color: #999;'>/</b>">
-				<BreadcrumbItem to="/">首页</BreadcrumbItem>
-				<BreadcrumbItem to="/home/goods">产品管理</BreadcrumbItem>
-			</Breadcrumb>
-		</div>
+  <div>
+    <div style="margin-bottom: 10px;">
+      <Breadcrumb separator="<b style='color: #999;'>/</b>">
+        <BreadcrumbItem to="/">首页</BreadcrumbItem>
+        <BreadcrumbItem to="/home/goods">产品管理</BreadcrumbItem>
+      </Breadcrumb>
+    </div>
 
-		<div style="margin-bottom: 10px;display: flex;align-items: center;justify-content: space-between;">
+    <div style="margin-bottom: 10px;display: flex;align-items: center;justify-content: space-between;">
+      <Input search enter-button placeholder="请输入产品名称~规格" style="width: 25%" @on-search='searchGoods' />
+      <div>
+        <Button type="success" style="margin-right: 10px;" @click="addProduct" icon="md-add">添加产品</Button>
+        <Button type="error" @click="delete_good()" style="margin-right: 10px;">批量删除</Button>
+        <Button type="primary" @click="exportData()" style="margin-right: 10px;"> 导出</Button>
+        <Button type="primary" v-print="'#print_allqr'" style="margin-right: 10px;"> 批量打印二维码</Button>
+        <Dropdown style="margin-right: 10px" trigger="click">
+          <Button type="primary">
+            批量导入
+            <Icon type="ios-arrow-down"></Icon>
+          </Button>
+          <DropdownMenu slot="list">
+            <DropdownItem name="数据模板">
+              <Button type="primary" @click="download_demo()"> 数据样本</Button>
+            </DropdownItem>
+            <DropdownItem name="批量上传">
+              <Tooltip content="在填写“库存”这一选项时，多个仓库的库存，可用英文“,”隔开，填写的顺序可参照仓库管理里面的仓库列表的顺序" placement="bottom-end">
+                <input class="input-file" type="file" @change="importfile" accept=".csv,.excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                  style="display: none;" />
+                <Button type="primary" @click="btnClick()">上传Excel</Button>
+                <div style="font-size: 0.75rem;color: #f30;font-weight: bold;margin-top: 0.625rem;justify-content: center;"
+                  class="display_flex">
+                  <Icon type="md-warning" />
+                  <span>特别注意</span>
+                </div>
+              </Tooltip>
+            </DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
+      </div>
 
-			<div style="display: flex;align-items: center;">
-				<Dropdown style="margin-right: 10px" @on-click="selected_options" trigger="click">
-					<Button type="primary">
-						打印操作
-						<Icon type="ios-arrow-down"></Icon>
-					</Button>
-					<DropdownMenu slot="list">
-						<DropdownItem name="打印">
-							<Button type="primary" long v-print="'#print_selectedqr'"> 打印选中商品的二维码</Button>
-						</DropdownItem>
-						<DropdownItem name="批量打印当前页面二维码">
-							<Button type="primary" long v-print="'#print_allqr'"> 批量打印当前页面二维码</Button>
-						</DropdownItem>
-					</DropdownMenu>
-				</Dropdown>
+    </div>
 
-				<Dropdown style="margin-right: 10px" trigger="click">
-					<Button type="primary">
-						产品操作
-						<Icon type="ios-arrow-down"></Icon>
-					</Button>
-					<DropdownMenu slot="list">
-						<DropdownItem name="添加产品">
-							<Button type="primary" long style="margin-right: 10px;" @click="addProduct">添加产品</Button>
-						</DropdownItem>
-						<DropdownItem name="删除">
-							<Button type="primary" long @click="delete_good()" style="margin-right: 10px;">删除</Button>
-						</DropdownItem>
-					</DropdownMenu>
-				</Dropdown>
+    <Table :columns="columns" :data="goods" :loading="loading" ref="table" border size="small" :height="screenHeight - 240"
+      @on-select="get_select" @on-select-all="get_select" @on-select-cancel="cancle_select" @on-select-all-cancel="cancle_select"
+      id="print_table">
+      <template slot-scope="{ row, index }" slot="action">
+        <div style="display: flex;justify-content: center;">
+          <div style="margin-right: 10px" @click="showReserve(row)"><Button type="primary" size="small">库存</Button></div>
+          <div @click="edit(row)"><Button type="primary" size="small">编辑</Button></div>
+        </div>
+        <div style="display: flex;justify-content: center;margin-top: 6px;">
+          <div @click="deleteHeaderGood(row.objectId)" style="margin-right: 10px"><Button type="error" size="small">删除</Button></div>
+          <div><Button type="primary" size="small" v-print="'#printMe'" @click="Print(row)">打印</Button></div>
+        </div>
+      </template>
+    </Table>
+    <div style="margin: 10px;overflow: hidden">
+      <div style="float: right;">
+        <Page :total="10000" :current="pege_number" @on-change="changePage"></Page>
+      </div>
+    </div>
 
-				<Dropdown style="margin-right: 10px" trigger="click">
-					<Button type="primary">
-						导入导出操作
-						<Icon type="ios-arrow-down"></Icon>
-					</Button>
-					<DropdownMenu slot="list">
-						<DropdownItem name="下载导入产品数据样本">
-							<Button type="primary" @click="download_demo()" long> 下载导入产品数据样本</Button>
-						</DropdownItem>
-						<DropdownItem name="导出产品数据">
-							<Button type="primary" @click="exportData()" long> 导出产品数据</Button>
-						</DropdownItem>
-						<DropdownItem name="上传Excel表格数据">
-							<input class="input-file" type="file" @change="importfile" accept=".csv,.excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-							 style="display: none;" />
-							<Button type="primary" @click="btnClick" long>上传Excel表格数据(一次最多50条数据)</Button>
-						</DropdownItem>
-					</DropdownMenu>
-				</Dropdown>
-
-				<Button type="error" @click="modal1=true" icon="ios-funnel-outline">筛选</Button>
-			</div>
-		</div>
-
-		<Table :columns="columns" :data="goods" :loading="loading" ref="table" border size="small" :height="screenHeight - 240"
-		 @on-select="get_select" @on-select-cancel="cancle_select" @on-select-all-cancel="cancle_select" id="print_table">
-			<template slot-scope="{ row, index }" slot="action">
-				<div style="margin-right: 10px" @click="showReserve(row)"><Button type="primary" size="small">库存</Button></div>
-			</template>
-		</Table>
-
-		<Table :columns="columns" :data="allGoods" ref="tableAll" border size="small" hidden>
-			<template slot-scope="{ row, index }" slot="action">
-				<Button type="primary" size="small" v-print="'#printMe'" @click="Print(row)">打印二维码</Button>
-			</template>
-		</Table>
-
-		<div style="margin: 10px;overflow: hidden">
-			<div style="float: right;">
-				<Page :total="100" :current="pege_number" @on-change="changePage"></Page>
-			</div>
-		</div>
-
-		<Modal v-model="modal1" title="筛选" @on-ok="modal_confrim" @on-cancel="cancel" cancel-text="重置" :closable=false>
-			<Form :label-width="80">
-				<FormItem label="产品名字">
-					<Input v-model="search_goodMame" placeholder="请输入产品名字"></Input>
-				</FormItem>
-
-				<FormItem label="产品分类">
-					<Row>
-						<Col span="6">
-						<Select v-model="selected_goodsClass" placeholder="请选择一级分类" @on-change="get_secondclass">
-							<Option v-for="(value,index) in all_fristclass" :value="value.objectId" :key="index">{{value.class_text}}</Option>
-						</Select>
-						</Col>
-						<Col span="6" style="margin-left: 20px;">
-						<Select v-model="selected_second_class" placeholder="请选择二级分类">
-							<Option v-for="(value,index) in all_secondclass" :value="value.objectId" :key="index">{{value.class_text}}</Option>
-						</Select>
-						</Col>
-					</Row>
-				</FormItem>
-
-				<FormItem label="存放仓库">
-					<Row>
-						<Col span="6">
-						<Select v-model="selected_stocks" placeholder="请选择存放仓库">
-							<Option v-for="(value,index) in all_stocks" :value="value.objectId" :key="index">{{value.stock_name}}</Option>
-						</Select>
-						</Col>
-					</Row>
-				</FormItem>
-			</Form>
-		</Modal>
-
-		<!--出库、入库、退货时的弹窗-->
-		<Drawer :title="option_title" v-model="value1" width="720" :mask-closable="false" :styles="styles">
-			<Scroll :height="screenHeight - 160">
-				<Card bordered shadow v-for="(item,index) in select_goods" :key="index">
-					<div slot="title" class="display_flex_bet">
-						<div>{{item.goodsName}}</div>
-						<div>库存:{{item.reserve}}</div>
-					</div>
-					<div>产品规格：{{item.packageContent}}/{{item.packingUnit}}</div>
-					<div class="display_flex">实际入库价（可修改）：<Input placeholder="请输入实际入库价" clearable style="width: 200px" @on-change="modify_price($event,index)" /></div>
-					<div class="display_flex">数量：<InputNumber @on-change="modify_num($event,index)"></InputNumber>
-					</div>
-				</Card>
-			</Scroll>
-			<div class="demo-drawer-footer">
-				<Button style="margin-right: 8px" @click="value1 = false">取消</Button>
-				<Button type="primary" @click="value1 = false,value2=true">确定</Button>
-			</div>
-		</Drawer>
-
-		<!--出库、入库、退货时的弹窗-->
-		<Drawer :title="option_title" v-model="value2" width="720" :mask-closable="false" :styles="styles">
-			<div style='line-height:70rpx;padding: 20rpx 20rpx 0;'>已选产品</div>
-			<div style='max-height:25vh;overflow-x:scroll'>
-				<div v-for="(item,index) in select_goods" :key="index" class='pro_listitem'>
-					<div class='pro_list' style='color:#3D3D3D'>
-						<div>产品：{{item.goodsName}}</div>
-						<div>期初进货价：￥{{item.costPrice}}</div>
-					</div>
-					<div class='pro_list'>
-						<div>实际进货价：￥{{item.modify_retailPrice}}（X{{item.num}}）</div>
-						<div>合计：￥{{item.total_money}}</div>
-					</div>
-				</div>
-			</div>
-			<div class='pro_allmoney'>总计：￥{{modal2.all_money}}</div>
+    <!--批量导出需要-->
+    <Table :columns="columns" :data="allGoods" ref="tableAll" border size="small" hidden v-if="downloadAllClick">
+      <template slot-scope="{ row, index }" slot="action">
+        <div style="display: flex;justify-content: center;">
+        </div>
+      </template>
+    </Table>
 
 
-		</Drawer>
 
-		<div id="printMe" style="text-align: center;" v-if="now_product" class="print">
-			<img :src="now_product.qrcodeImg" />
-			<div style="color: #333;margin-top: 20px;"><text style="font-size: 32px;">{{now_product.goodsName}}</text></div>
-		</div>
+    <div id="printMe" style="text-align: center;" v-if="now_product" class="print">
+      <img :src="now_product.qrcodeImg" style="width: 80px;" />
+      <div style="color: #333;margin-top: 10px;"><text style="font-size: 12px;">{{now_product.goodsName}}</text></div>
+    </div>
 
-		<div id="print_allqr" style="text-align: center;width: 100%;" class="print">
-			<div v-for="(item,index) in goods" :key="index" style="width: 33.33%; display: inline-block;">
-				<img :src="item.qrcodeImg" style="width: 160px;" />
-				<div style="color: #333;margin-top: 10px;"><text style="font-size: 10px;">{{item.goodsName}}</text></div>
-			</div>
+    <div id="print_allqr" style="text-align: center;width: 100%;" class="print" v-if="allGoods">
+      <div v-for="(item,index) in allGoods" :key="index" style="width:25%; display: inline-block;">
+        <img :src="item.qrcodeImg" style="width: 50%;" />
+        <div style="color: #333;margin:5px 0;"><text style="font-size: 10px;">{{item.goodsName}}</text></div>
+      </div>
+    </div>
 
-		</div>
+    <div id="print_selectedqr" style="text-align: center;width: 100%;" class="print">
+      <div v-for="(item,index) in select_goods" :key="index" style="width: 25%; display: inline-block;">
+        <img :src="item.qrcodeImg" style="width: 50%;" />
+        <div style="color: #333;margin-top: 10px;"><text style="font-size: 10px;">{{item.goodsName}}</text></div>
+      </div>
+    </div>
 
-		<div id="print_selectedqr" style="text-align: center;width: 100%;" class="print">
-			<div v-for="(item,index) in select_goods" :key="index" style="width: 25%; display: inline-block;">
-				<img :src="item.qrcodeImg" style="width: 80px;" />
-				<div style="color: #333;margin-top: 10px;"><text style="font-size: 10px;">{{item.goodsName}}</text></div>
-			</div>
-		</div>
+    <Modal title="产品图片" v-model="GoodImg.show" :styles="{top: '4%'}">
+      <img :src="GoodImg.attr" style="margin: 0 auto;width: 50%;" />
+    </Modal>
 
-		<Modal title="产品图片" v-model="GoodImg.show" class-name="vertical-center-modal">
-			<img :src="GoodImg.attr" style="height: 800px;margin: 0 auto;width: 100%;" />
-		</Modal>
-		
-		<!--库存详情-->
-		<selectGoods :select_good="reserveDet.select_good" :show="reserveDet.show" @cancle="reserveDet.show = false"></selectGoods>
+    <!--库存详情-->
+    <selectGoods :select_good="reserveDet.select_good" :show="reserveDet.show" @cancle="reserveDet.show = false"></selectGoods>
 
-	</div>
+    <!--添加产品或者编辑产品-->
+    <addGoods :show="addGoodClick" :goodItem="editGood" @cancle="addGoodClick = false" @confrim="confrimAdd" v-if="addGoodClick"></addGoods>
+
+  </div>
 </template>
 <script>
-	//import barcode from '@xkeshi/vue-barcode'
-	import selectGoods from '@/components/component/selectGoods.vue';
-	import jrQrcode from "jr-qrcode";
-	import common from '@/serve/common.js';
-	import goods from '@/serve/goods.js';
-	import XLSX from 'xlsx';
-	import Print from 'vue-print-nb';
+  //import barcode from '@xkeshi/vue-barcode'
+  import selectGoods from '@/components/component/selectGoods.vue'; //产品详情组件
+  import addGoods from '@/components/component/goodAdd.vue';
 
-	//let userid = JSON.parse(localStorage.getItem('bmob')).objectId;
-	let that;
-	export default {
-		components: {
-			selectGoods
-		},
-		data() {
-			return {
-				GoodImg: {
-					show: false,
-					attr: ''
-				},
-				reserveDet: {
-					show: false,
-					select_good: {},
-				},
-				modal2: {
-					all_money: 0,
-					real_money: 0,
-				},
-				retailPrice: '',
-				now_product: '',
-				option_title: '',
-				value1: false,
-				value2: false,
-				styles: {
-					height: 'calc(100% - 55px)',
-					overflow: 'auto',
-					paddingBottom: '53px',
-					position: 'static',
-					background: '#eee'
-				},
-				allGoods: [],
-				search_goodMame: '',
-				selected_stocks: null,
-				selected_goodsClass: null,
-				selected_second_class: null,
-				all_fristclass: [], //所有的一级分类
-				all_secondclass: [], //所有的二级分类
-				padding_size: 30,
-				modal1: false,
-				userid: JSON.parse(localStorage.getItem('bmob')).objectId || '',
-				user: JSON.parse(localStorage.getItem('bmob')),
-				all_stocks: [],
-				page_size: 50,
-				pege_number: 1,
-				screenHeight: window.innerHeight,
-				loading: true,
-				columns: [{
-						width: 60,
-						type: 'selection',
-						align: 'center',
-					},
-					{
-						width: 180,
-						title: '产品名字',
-						key: 'goodsName',
-						sortable: true,
-						align: 'center',
-					},
-					{
-						title: '产品图片',
-						key: 'goodsIcon',
-						width: 100,
-						render: (h, params) => {
-							return h('div', {
-								style: {
-									"text-align": "center"
-								},
-							}, [
-								h('img', {
-									style: {
-										width: '60px',
-										padding: "4px 0",
-									},
-									attrs: {
-										src: params.row.goodsIcon
-									},
-									on: {
-										'click': function() {
-											that.GoodImg.show = true
-											that.GoodImg.attr = params.row.goodsIcon
-										}
-									}
-								})
-							]);
-						}
-					},
-					{
-						width: 100,
-						align: 'center',
-						sortable: true,
-						title: '成本价',
-						key: 'costPrice',
-					},
-					{
-						width: 100,
-						align: 'center',
-						title: '零售价',
-						key: 'retailPrice',
-						sortable: true,
-					},
-					{
-						width: 100,
-						align: 'center',
-						title: '所属分类',
-						key: 'class',
-					},
-					{
-						width: 100,
-						align: 'center',
-						title: '存放位置',
-						key: 'position',
-					},
-					{
-						width: 120,
-						align: 'center',
-						title: '库存',
-						key: 'reserve',
-						sortable: true,
-					},
-					{
-						width: 100,
-						align: 'center',
-						title: '规格',
-						key: 'packageContent',
-					},
-					{
-						width: 100,
-						align: 'center',
-						title: '单位',
-						key: 'packingUnit',
-					},
-					{
-						width: 120,
-						align: 'center',
-						title: '登记编号',
-						key: 'regNumber',
-					},
-					{
-						width: 160,
-						align: 'center',
-						title: '产品简介',
-						key: 'product_info',
-					},
-					{
-						width: 100,
-						align: 'center',
-						title: '生产厂家',
-						key: 'producer',
-					},
-					{
-						width: 160,
-						align: 'center',
-						title: '产品条码',
-						key: 'productCode',
-					},
-					{
-						title: '产品二维码',
-						width: 100,
-						key: 'qrcodeImg',
-						render: (h, params) => {
-							return h('div', {
-								style: {
-									"text-align": "center"
-								},
-							}, [
-								h('img', {
-									style: {
-										width: "65px",
-									},
-									attrs: {
-										src: params.row.qrcodeImg
-									}
-								})
-							]);
-						}
-					},
+  import jrQrcode from "jr-qrcode";
+  import common from '@/serve/common.js';
+  import goods from '@/serve/goods.js';
+  import XLSX from 'xlsx';
+  import Print from 'vue-print-nb';
 
-					/*{
-					  title: '产品条形码',
-					  width: 200,
-					  type: 'barcode',
-					  render: (h, params) => {
-					    return h(barcode, {
-					      style: {
-					        width: "170px",
-					        height: "80px",
-					        margin: "10px 0",
-					      },
-					      attrs: {
-					        value: (params.row.productCode) ? params.row.productCode : params.row.objectId + '-' + false
-					      }
-					    })
-					  }
-					},*/
-					{
-						width: 160,
-						align: 'center',
-						title: '创建时间',
-						key: 'createdAt',
-						sortable: true,
-					},
-					{
-						width: 160,
-						title: '操作',
-						slot: 'action',
-						align: 'center',
-						fixed: 'right',
-					}
-				],
-				goods: [],
-				select_goods: [] //选择模式下选择的产品数据
-			};
-		},
+  let uid;
+  let that;
+  export default {
+    components: {
+      selectGoods,
+      addGoods
+    },
+    data() {
+      return {
+        downloadAllClick: false, //导出全部数据点击
+        addGoodClick: false,
+        editGood: '',
+        GoodImg: {
+          show: false,
+          attr: ''
+        },
 
-		mounted() {
-			that = this;
-			window.onresize = () => {
-				return (() => {
-					that.screenHeight = window.innerHeight;
-				})();
-			};
-			this.get_productList();
+        reserveDet: {
+          show: false,
+          select_good: {},
+        },
+        retailPrice: '',
+        now_product: '',
+        option_title: '',
+        value1: false,
+        value2: false,
+        styles: {
+          height: 'calc(100% - 55px)',
+          overflow: 'auto',
+          paddingBottom: '53px',
+          position: 'static',
+          background: '#eee'
+        },
+        search_goodMame: '',
+        selected_stocks: null,
+        selected_goodsClass: null,
+        selected_second_class: null,
+        all_fristclass: [], //所有的一级分类
+        all_secondclass: [], //所有的二级分类
+        padding_size: 30,
+        modal1: false,
+        userid: JSON.parse(localStorage.getItem('user')).objectId || '',
+        user: JSON.parse(localStorage.getItem('user')),
+        all_stocks: [],
+        page_size: 50,
+        pege_number: 1,
+        screenHeight: window.innerHeight,
+        loading: true,
+        columns: [{
+            width: 60,
+            type: 'selection',
+            align: 'center',
+          },
+          {
+            width: 180,
+            title: '产品名字',
+            key: 'goodsName',
+            sortable: true,
+            align: 'center',
+          },
+          {
+            title: '产品图片',
+            key: 'goodsIcon',
+            width: 100,
+            render: (h, params) => {
+              return h('div', {
+                style: {
+                  "text-align": "center"
+                },
+              }, [
+                h('img', {
+                  style: {
+                    width: '60px',
+                    padding: "4px 0",
+                  },
+                  attrs: {
+                    src: params.row.goodsIcon
+                  },
+                  on: {
+                    'click': function() {
+                      that.GoodImg.show = true
+                      that.GoodImg.attr = params.row.goodsIcon
+                    }
+                  }
+                })
+              ]);
+            }
+          },
+          {
+            width: 100,
+            align: 'center',
+            sortable: true,
+            title: '成本价',
+            key: 'costPrice',
+          },
+          {
+            width: 100,
+            align: 'center',
+            title: '零售价',
+            key: 'retailPrice',
+            sortable: true,
+          },
+          {
+            width: 120,
+            align: 'center',
+            title: '库存',
+            key: 'reserve',
+            sortable: true,
+          },
+          {
+            width: 100,
+            align: 'center',
+            title: '所属分类',
+            key: 'class',
+          },
+          {
+            width: 100,
+            align: 'center',
+            title: '存放位置',
+            key: 'position',
+          },
+          {
+            width: 100,
+            align: 'center',
+            title: '规格',
+            key: 'packageContent',
+          },
+          {
+            width: 100,
+            align: 'center',
+            title: '单位',
+            key: 'packingUnit',
+          },
+          {
+            width: 120,
+            align: 'center',
+            title: '登记编号',
+            key: 'regNumber',
+          },
+          {
+            width: 160,
+            align: 'center',
+            title: '产品简介',
+            key: 'product_info',
+          },
+          {
+            width: 100,
+            align: 'center',
+            title: '生产厂家',
+            key: 'producer',
+          },
+          {
+            width: 100,
+            align: 'center',
+            title: '条码值',
+            key: 'productCode',
+          },
+          {
+            title: '产品二维码',
+            width: 100,
+            key: 'qrcodeImg',
+            render: (h, params) => {
+              return h('div', {
+                style: {
+                  "text-align": "center"
+                },
+              }, [
+                h('img', {
+                  style: {
+                    width: "65px",
+                  },
+                  attrs: {
+                    src: params.row.qrcodeImg
+                  }
+                })
+              ]);
+            }
+          },
+          {
+            width: 160,
+            align: 'center',
+            title: '创建时间',
+            key: 'createdAt',
+            sortable: true,
+          },
+          {
+            width: 200,
+            title: '操作',
+            slot: 'action',
+            align: 'center',
+            fixed: 'right',
+          }
+        ],
 
-			goods.getstock_list().then(res => {
-				console.log(res)
-				that.all_stocks = res
-			});
+        goods: [],
+        select_goods: [], //选择模式下选择的产品数据
+        allGoods: [],
+      };
+    },
 
+    mounted() {
+      that = this;
+      window.onresize = () => {
+        return (() => {
+          that.screenHeight = window.innerHeight;
+          uid = JSON.parse(localStorage.getItem('user')).objectId;
+        })();
+      };
+      that.get_productList();
+    },
 
-			goods.get_fristclass().then(res => {
-				console.log(res)
-				that.all_fristclass = res
-			});
-		},
+    methods: {
 
-		methods: {
-			showReserve(row) {
-				that.reserveDet.show = true
-				that.reserveDet.select_good = row
-				console.log(row)
-			},
+      //编辑产品
+      edit(row) {
+        localStorage.setItem("editGood", JSON.stringify(row));
+        that.addGoodClick = true
+        that.editGood = row
+      },
 
-			//添加产品
-			addProduct() {
-				if (that.user.is_vip) {
-					this.$router.push({
-						path: '/home/add_good'
-					})
-				} else {
-					if (that.goods.length >= 30) {
-						this.$Message['error']({
-							background: true,
-							content: '非会员只能上传30条'
-						});
-					} else {
-						this.$router.push({
-							path: 'goods/addgood'
-						})
-					}
-				}
-			},
+      confrimAdd(value) {
+        console.log(value)
+        if (value) { //添加成功的时触发
+          that.addGoodClick = false;
+          that.get_productList();
+        } else {
+          that.addGoodClick = false;
+        }
+      },
 
-			//输入实际的出入库的价格
-			modify_price($event, index) {
-				//console.log($event, index)
+      //搜索产品点击
+      searchGoods(e) {
+        console.log(e)
+        that.loading = true
+        that.search_goodMame = e
+        that.get_productList()
+      },
 
-				that.select_goods[index].modify_retailPrice = $event.target.value
-				that.select_goods[index].total_money = that.select_goods[index].num * Number($event.target.value)
-			},
+      showReserve(row) {
+        that.reserveDet.show = true
+        that.reserveDet.select_good = row
+        console.log(row)
+      },
 
-			//输入数量时触发
-			modify_num($event, index) {
-				//console.log($event, index)
+      //删除主产品
+      deleteHeaderGood(objectId) {
+        console.log(objectId)
+        this.$Modal.confirm({
+          title: '是否确认删除',
+          content: '<p>删除后数据不可恢复</p>',
+          onOk: () => {
 
-				that.select_goods[index].num = Number($event)
-				that.select_goods[index].total_money = Number($event) * Number(that.select_goods[index].modify_retailPrice)
-			},
+            const query = Bmob.Query('NGoods');
+            query.destroy(objectId).then(res => {
+              const query = Bmob.Query('NGoods');
+              // 单词最多删除50条
+              query.equalTo("header", "==", objectId);
+              query.equalTo("userId", "==", uid);
+              query.find().then(todos => {
+                if (todos.length > 0) {
+                  todos.destroyAll().then(res => {
+                    // 成功批量修改
+                    this.$Message.info('删除成功');
+                    that.get_productList()
+                  }).catch(err => {
 
-			//打印点击
-			Print(row) {
-				that.now_product = row
-			},
+                    console.log(err)
+                  });
+                } else {
+                  this.$Message.info('删除成功');
+                  that.get_productList()
+                }
 
-			//选择操作是触发
-			selected_options(name) {
-				console.log(that.select_goods)
-				if (that.select_goods.length == 0) {
-					this.$Message.error('当前没有选择产品');
-				} else {
-					that.option_title = name;
-					if (name == "入库" || name == "出库") {
-						that.value1 = true;
-						let index = 0;
-						for (let item of that.select_goods) {
-							that.select_goods[index].num = 1;
-							that.select_goods[index].total_money = 1 * that.select_goods[index].retailPrice;
-							that.select_goods[index].modify_retailPrice = that.select_goods[index].retailPrice;
-							index += 1;
-						}
-					}
+              })
 
-				}
-			},
+            }).catch(err => {
+              console.log(err)
+            })
 
-			//点击下载导入模板
-			download_demo() {
-				window.open("/static/demo.xlsx");
-			},
+          },
+        });
+      },
 
-			//重置点击
-			cancel() {
-				that.loading = true,
-					that.search_goodMame = '',
-					that.selected_stocks = null,
-					that.selected_goodsClass = null,
-					that.selected_second_class = null,
-					that.get_productList()
-			},
+      //添加产品
+      addProduct() {
+        if (that.user.is_vip) {
+          that.editGood = ""
+          that.addGoodClick = true
+        } else {
+          if (that.goods.length >= 30) {
+            this.$Message['error']({
+              background: true,
+              content: '非会员只能上传30条'
+            });
+          } else {
+            that.editGood = ""
+            that.addGoodClick = true
+          }
+        }
+      },
 
-			//modal 确定点击
-			modal_confrim() {
-				that.loading = true,
-					that.get_productList()
-			},
+      //输入实际的出入库的价格
+      modify_price($event, index) {
+        //console.log($event, index)
 
-			//获得二级分类
-			get_secondclass(value) {
-				console.log(value)
-				goods.get_secondclass(value).then(res => {
-					//console.log(res)
-					this.all_secondclass = res
-				})
-			},
+        that.select_goods[index].modify_retailPrice = $event.target.value
+        that.select_goods[index].total_money = that.select_goods[index].num * Number($event.target.value)
+      },
 
-			//选择某一项时事件
-			get_select(selection) {
-				console.log(selection)
-				that.select_goods = selection
-			},
+      //输入数量时触发
+      modify_num($event, index) {
+        //console.log($event, index)
 
-			//取消某一项时的事件
-			cancle_select(selection) {
-				that.select_goods = selection
-			},
+        that.select_goods[index].num = Number($event)
+        that.select_goods[index].total_money = Number($event) * Number(that.select_goods[index].modify_retailPrice)
+      },
 
-			delete_good() {
-
-				if (that.select_goods.length == 0) {
-					this.$Message.error('当前没有选择产品');
-				} else {
-					goods.delete_goods(that.select_goods).then(res => {
-						this.$Message.success('删除成功');
-						that.get_productList();
-					});
-
-				}
-			},
-
-			btnClick() {
-				console.log(that.user);
-				document.querySelector('.input-file').click();
-			},
-
-			importfile(event) {
-				if (!event.currentTarget.files.length) {
-					return;
-				}
-				const that = this;
-				// 拿取文件对象
-				var f = event.currentTarget.files[0];
-				// 用FileReader来读取
-				var reader = new FileReader();
-				// 重写FileReader上的readAsBinaryString方法
-				FileReader.prototype.readAsBinaryString = function(f) {
-					var binary = '';
-					var wb; // 读取完成的数据
-					var outdata; // 你需要的数据
-					var reader = new FileReader();
-					reader.onload = function(e) {
-						// 读取成Uint8Array，再转换为Unicode编码（Unicode占两个字节）
-						var bytes = new Uint8Array(reader.result);
-						var length = bytes.byteLength;
-						for (var i = 0; i < length; i++) {
-							binary += String.fromCharCode(bytes[i]);
-						}
-						// 接下来就是xlsx了，具体可看api
-						wb = XLSX.read(binary, {
-							type: 'binary'
-						});
-						outdata = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-						// 自定义方法向父组件传递数据
-						that.add_all(outdata)
-					};
-					reader.readAsArrayBuffer(f);
-				};
-				reader.readAsBinaryString(f);
-			},
-
-			//导出数据表格点击
-			exportData(type) {
-				this.$refs.tableAll.exportCsv({
-					filename: '产品数据',
-				});
-			},
-
-			//改变页数
-			changePage(pege_number) {
-				that.pege_number = pege_number;
-
-				that.get_productList();
-			},
-
-			//批量增加
-			add_all(goods) {
-				console.log(goods)
-
-				for (let item of goods) {
-					let stocks = ["852cbd9955","51366551c2","9d735b68f2","181e2febaa","c9822a49e4","199150f69c","9bf6255e8f","7fb3aeaedf","7271ff2cf0","503bcaa757",
-					"50b18f3028","fcce26d95f","4909267279","e32e9295fd","e98fa156bd","fea3b51f51","6c20af8fa7","94a14809a7","b102c0231a","54495e6b27","d18c2c9c52",
-					"e7cd064bf5","a9fb74fc3d","1fa673a4ca","586de4ec0b","ed2243fa51"]
-					let reserve_s = []
-					let stocksReserve = []
-					let stocksReserveItem = {}
-					let p_class_user_id;
-
-					let pointer2 = Bmob.Pointer('class_user')
-
-					switch (item.物资类型) {
-						case "工具设备":
-							p_class_user_id = pointer2.set("990b175abb") //一级分类id关联
-							break;
-						case "电子设备":
-							p_class_user_id = pointer2.set("ccac7e7abd") //一级分类id关联
-							break;
-						case "管钳":
-							p_class_user_id = pointer2.set("726741f6a2") //一级分类id关联
-							break;
-						case "活动扳手":
-							p_class_user_id = pointer2.set("d7b8801f26") //一级分类id关联
-							break;
-						case "计量设备":
-							p_class_user_id = pointer2.set("e05133bf33") //一级分类id关联
-							break;
-						case "开口扳手":
-							p_class_user_id = pointer2.set("9951708783") //一级分类id关联
-							break;
-						case "劳保物资":
-							p_class_user_id = pointer2.set("be50c10927") //一级分类id关联
-							break;
-						case "梅花扳手":
-							p_class_user_id = pointer2.set("097f3ff8ff") //一级分类id关联
-							break;
-						case "日常耗材":
-							p_class_user_id = pointer2.set("7abdf9710e") //一级分类id关联
-							break;
-						case "应急物资":
-							p_class_user_id = pointer2.set("e5f8e807bd") //一级分类id关联
-							break;
-					}
-					
-					reserve_s.push(item.a,item.b,item.c,item.d,item.e,item.f,item.g,item.h,item.i,item.j,item.k,item.l,item.m,item.n,item.o,item.p,item.q,item.r,item.s,item.t,item.u,item.v,item.w,item.x,item.y,item.z)
-					
-					console.log(p_class_user_id)
-					let goodname = item.产品目录
-
-					const pointer = Bmob.Pointer('_User')
-					const userid = pointer.set(that.userid)
-
-					const query = Bmob.Query('NGoods');
-					query.set("goodsName", goodname)
-					query.set("costPrice", 0)
-					query.set("retailPrice", 0)
-					query.set("reserve", Number(item.合计))
-					query.set("packingUnit", item.单位)
-					query.set("warning_num", 0)
-					query.set("stocktype", (0 >= Number(that.reserve)) ? 0 : 1) //库存数量类型 0代表库存不足 1代表库存充足
-					query.set("order", 0)
-					query.set("goodsClass", p_class_user_id)
-					query.set("userId", userid)
-					query.save().then(res => {
-
-						let this_result = res
-						const queryArray = new Array();
-						// 构造含有50个对象的数组
-						for (var i = 0; i < stocks.length; i++) {
-							const pointer1 = Bmob.Pointer('stocks')
-							const p_stock_id = pointer1.set(stocks[i]) //仓库的id关联
-
-							const pointer2 = Bmob.Pointer('NGoods')
-							const p_good_id = pointer2.set(this_result.objectId) //仓库的id关联
-
-							var queryObj = Bmob.Query('NGoods');
-							queryObj.set("order", 1)
-							queryObj.set("goodsName", goodname)
-							queryObj.set("costPrice", 0)
-							queryObj.set("retailPrice", 0)
-							queryObj.set("header", p_good_id)
-							queryObj.set("userId", userid)
-							queryObj.set("stocks", p_stock_id)
-							queryObj.set("reserve", Number(reserve_s[i]))
-							queryArray.push(queryObj);
-						}
-
-						// 传入刚刚构造的数组
-						Bmob.Query('NGoods').saveAll(queryArray).then(result => {
-							console.log(result);
-						}).catch(err => {
-							console.log(err);
-						});
-
-						//that.handledata()
-					}).catch(err => {
-						console.log(err)
-					})
-
-				}
-				/*const queryArray = new Array();
-				const pointer = Bmob.Pointer('_User')
-				const poiID = pointer.set(that.userid)
-				// 构造含有50个对象的数组
-				for (let good of goods) {
-					var queryObj = Bmob.Query('NGoods');
-					queryObj.set('goodsName', "" + good.商品名字);
-					queryObj.set('costPrice', "" + good.成本价);
-					queryObj.set('retailPrice', "" + good.零售价);
-					queryObj.set('packingUnit', good.单位);
-					queryObj.set('reserve', Number("" + good.库存));
-					queryObj.set('userId', poiID);
-					queryArray.push(queryObj);
-				}
-
-				// 传入刚刚构造的数组
-				Bmob.Query('NGoods')
-					.saveAll(queryArray)
-					.then(result => {
-						console.log(result);
-						this.$Message.success('导入成功');
-						that.get_productList()
-					})
-					.catch(err => {
-						console.log(err);
-					});*/
-			},
-
-			//查询产品列表
-			get_productList() {
-				console.log(that.selected_stocks, that.selected_second_class)
-				const query = Bmob.Query('NGoods');
-				query.equalTo('userId', '==', that.userid);
-				query.include('second_class', 'goodsClass', 'stocks')
-
-				if (that.selected_stocks) {
-					query.equalTo("stocks", "==", that.selected_stocks);
-				}
-				if (that.selected_second_class) {
-					query.equalTo("second_class", "==", that.selected_second_class);
-				}
-				query.equalTo("goodsName", "==", {
-					"$regex": "" + that.search_goodMame + ".*"
-				});
-				query.equalTo("order", "==", 0)
-				query.limit(that.page_size);
-				query.skip(that.page_size * (that.pege_number - 1));
-				query.order("-createdAt"); //按照条件降序
-				query.find().then(res => {
-					console.log(res);
-					for (let item of res) {
-						item.class = (item.goodsClass ? (item.goodsClass.class_text || "") : "") + "    " + (item.second_class ? (item.second_class
-							.class_text || "") : "")
-						item.stocks = (item.stocks) ? item.stocks.stock_name : ""
-
-						item.qrcodeImg = jrQrcode.getQrBase64((item.productCode) ? item.productCode : item.objectId + '-' + false)
-						item.productCode = (item.productCode) ? item.productCode : item.objectId + '-' + false
-					}
-					this.goods = res;
-					this.loading = false;
-					that.getAllproducts()
-				});
-			},
+      //打印点击
+      Print(row) {
+        that.now_product = row
+      },
 
 
-			getAllproducts() {
-				const query = Bmob.Query('NGoods');
-				query.equalTo('userId', '==', that.userid);
-				query.include('second_class', 'goodsClass', 'stocks')
-				query.equalTo("order", "==", 0)
-				query.limit(500);
-				query.order("-createdAt"); //按照条件降序
-				query.find().then(res => {
-					console.log(res);
-					this.allGoods = res;
-				});
-			},
+      //点击下载导入模板
+      download_demo() {
+        window.open("/static/demo.xlsx");
+      },
 
-		}
-	};
+      //重置点击
+      cancel() {
+        that.loading = true,
+          that.search_goodMame = '',
+          that.selected_stocks = null,
+          that.selected_goodsClass = null,
+          that.selected_second_class = null,
+          that.get_productList()
+      },
+
+      //modal 确定点击
+      modal_confrim() {
+        that.loading = true;
+          that.get_productList()
+      },
+
+      //获得二级分类
+      get_secondclass(value) {
+        console.log(value)
+        goods.get_secondclass(value).then(res => {
+          //console.log(res)
+          this.all_secondclass = res
+        })
+      },
+
+      //选择某一项时事件
+      get_select(selection) {
+        console.log(selection)
+        that.select_goods = selection
+      },
+
+      //取消某一项时的事件
+      cancle_select(selection) {
+        that.select_goods = selection
+      },
+
+      delete_good() {
+
+        if (that.select_goods.length == 0) {
+          this.$Message.error('当前没有选择产品');
+        } else {
+          goods.delete_goods(that.select_goods).then(res => {
+            this.$Message.success('删除成功');
+            that.get_productList();
+          });
+
+        }
+      },
+
+      btnClick() {
+        console.log(that.user);
+        if (that.user.is_vip) {
+          document.querySelector('.input-file').click();
+        } else {
+          this.$Message.error('只限VIP使用');
+          return
+        }
+
+      },
+
+      importfile(event) {
+        if (!event.currentTarget.files.length) {
+          return;
+        }
+        const that = this;
+        // 拿取文件对象
+        var f = event.currentTarget.files[0];
+        // 用FileReader来读取
+        var reader = new FileReader();
+        // 重写FileReader上的readAsBinaryString方法
+        FileReader.prototype.readAsBinaryString = function(f) {
+          var binary = '';
+          var wb; // 读取完成的数据
+          var outdata; // 你需要的数据
+          var reader = new FileReader();
+          reader.onload = function(e) {
+            // 读取成Uint8Array，再转换为Unicode编码（Unicode占两个字节）
+            var bytes = new Uint8Array(reader.result);
+            var length = bytes.byteLength;
+            for (var i = 0; i < length; i++) {
+              binary += String.fromCharCode(bytes[i]);
+            }
+            // 接下来就是xlsx了，具体可看api
+            wb = XLSX.read(binary, {
+              type: 'binary'
+            });
+            outdata = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+            // 自定义方法向父组件传递数据
+            that.add_all(outdata)
+          };
+          reader.readAsArrayBuffer(f);
+        };
+        reader.readAsBinaryString(f);
+      },
+
+      //导出数据表格点击
+      exportData(type) {
+        that.downloadAllClick = true;
+        this.$Message.loading({
+          content: '导出中',
+        });
+        that.getAllproducts().then(res => {
+          if (res) {
+            this.$Message.destroy()
+            this.$refs.tableAll.exportCsv({
+              filename: '产品数据',
+            });
+          }
+        });
+      },
+
+      //改变页数
+      changePage(pege_number) {
+        that.loading = true;
+        that.pege_number = pege_number;
+        that.get_productList();
+      },
+
+      //批量增加
+      add_all(goods) {
+
+        const pointer = Bmob.Pointer('_User')
+        const poiID = pointer.set(that.userid)
+        if (goods.length > 2000) {
+          this.$Message['error']({
+            background: true,
+            content: '不能超过2000条数据'
+          });
+
+          return
+        }
+
+        const query = Bmob.Query("stocks");
+        query.order("-num");
+        query.equalTo("parent", "==", that.userid);
+        query.equalTo("disabled", "!=", true);
+        query.find().then(res => {
+          let stocks = res;
+          if (res.length == 0) {
+            this.$Message['error']({
+              background: true,
+              content: '请先去添加一个仓库'
+            });
+
+            return
+          }
+
+          let count = 0;
+          for (let good of goods) {
+            let goodReserve = good.库存.toString()
+            let totalReserve = 0;
+            let reserves = [];
+            //console.log(good.库存)
+            if (goodReserve.indexOf(",") == -1) {
+              totalReserve = Number(goodReserve)
+              reserves.push(Number(goodReserve))
+            } else {
+              reserves = goodReserve.split(",");
+              //console.log(reserves)
+              for (let reserve of reserves) {
+                totalReserve += Number(reserve)
+              }
+            }
+
+            //console.log(reserves)
+            let queryObj = Bmob.Query('NGoods');
+            queryObj.set('goodsName', "" + good.商品名字);
+            queryObj.set('costPrice', "" + good.成本价);
+            queryObj.set('retailPrice', "" + good.零售价);
+            if (good.包装含量) queryObj.set('packageContent', '' + good.包装含量);
+            if (good.单位) queryObj.set('packingUnit', '' + good.单位);
+            queryObj.set('reserve', totalReserve);
+            if (good.条形码) queryObj.set('productCode', '' + good.条形码);
+            if (good.存放位置) queryObj.set('position', '' + good.存放位置);
+            if (good.简介) queryObj.set('product_info', '' + good.简介);
+            if (good.生产厂家) queryObj.set('producer', '' + good.生产厂家);
+            queryObj.set("order", 0);
+            queryObj.set('userId', poiID);
+            queryObj.save().then(res => {
+              let this_result = res;
+
+              for (let stockIndex in stocks) {
+                const pointer1 = Bmob.Pointer('stocks')
+                const p_stock_id = pointer1.set(stocks[stockIndex].objectId) //仓库的id关联
+
+                const pointer2 = Bmob.Pointer('NGoods')
+                const p_good_id = pointer2.set(this_result.objectId) //仓库的id关联
+
+                var queryObj1 = Bmob.Query('NGoods');
+                queryObj1.set("order", 1)
+                queryObj1.set("goodsName", "" + good.商品名字);
+                queryObj1.set("costPrice", "" + good.成本价);
+                queryObj1.set("retailPrice", "" + good.零售价);
+                queryObj1.set("header", p_good_id)
+                queryObj1.set("userId", poiID)
+                queryObj1.set("stocks", p_stock_id)
+                queryObj1.set("reserve", reserves[stockIndex] ? Number(reserves[stockIndex]) : 0);
+                queryObj1.save().then(res => {
+
+                  if (stockIndex == stocks.length - 1) {
+                    count += 1;
+
+                    if (count == goods.length) {
+                      this.$Message.success('导入成功');
+                      that.get_productList()
+                    }
+                  }
+                })
+              }
+
+            })
+          }
+        });
+      },
+
+      //查询产品列表
+      get_productList() {
+        //console.log(that.selected_stocks, that.selected_second_class)
+        const query = Bmob.Query('NGoods');
+        query.equalTo('userId', '==', that.userid);
+        query.include('second_class', 'goodsClass', 'stocks')
+        query.equalTo("status", "!=", -1);
+        query.equalTo("order", "!=", 1);
+
+        if (that.selected_second_class) {
+          query.equalTo("second_class", "==", that.selected_second_class);
+        }
+
+        const query1 = query.equalTo("goodsName", "==", {
+          "$regex": "" + that.search_goodMame + ".*"
+        });
+        const query2 = query.equalTo("packageContent", "==", {
+          "$regex": "" + that.search_goodMame + ".*"
+        });
+        query.or(query1, query2);
+
+        query.limit(that.page_size);
+        query.skip(that.page_size * (that.pege_number - 1));
+        query.order("-createdAt"); //按照条件降序
+        query.find().then(res => {
+          console.log(res);
+          for (let item of res) {
+            item.class = (item.goodsClass ? (item.goodsClass.class_text || "") : "") + "    " + (item.second_class ?
+              (item.second_class
+                .class_text || "") : "")
+            item.stocks = (item.stocks) ? item.stocks.stock_name : ""
+            if (item.order == 0) {
+              item.productCode = (item.productCode) ? item.productCode + '-' + true + '-new' : item.objectId + '-' +
+                false + '-new',
+                item.qrcodeImg = jrQrcode.getQrBase64(item.productCode)
+            } else {
+              item.productCode = (item.productCode) ? item.productCode + '-' + true + '-old' : item.objectId + '-' +
+                false + '-old',
+                item.qrcodeImg = jrQrcode.getQrBase64(item.productCode)
+            }
+          }
+          this.goods = res;
+          this.loading = false;
+
+        });
+      },
+
+      getAllproducts() {
+        return new Promise((resolve, reject) => {
+          const query = Bmob.Query('NGoods');
+          query.equalTo("userId", "==", that.userid);
+          query.equalTo("status", "!=", -1);
+          query.equalTo("order", "!=", 1);
+          query.count().then(res => {
+            let count = res;
+            let countIndex = 0;
+
+            for (var i = 0; i < Math.ceil(count / 500); i++) {
+              query.equalTo('userId', '==', that.userid);
+              query.include('second_class', 'goodsClass', 'stocks');
+              query.equalTo("status", "!=", -1);
+              query.equalTo("order", "!=", 1);
+              query.limit(500);
+              query.skip(500 * i);
+              query.order("-createdAt"); //按照条件降序
+              query.find().then(res => {
+                for (let item of res) {
+                  if (item.order == 0) {
+                    item.productCode = (item.productCode) ? item.productCode + '-' + true + '-new' : item.objectId +
+                      '-' +
+                      false + '-new',
+                      item.qrcodeImg = jrQrcode.getQrBase64(item.productCode)
+                  } else {
+                    item.productCode = (item.productCode) ? item.productCode + '-' + true + '-old' : item.objectId +
+                      '-' +
+                      false + '-old',
+                      item.qrcodeImg = jrQrcode.getQrBase64(item.productCode)
+                  }
+                  countIndex += 1;
+                }
+                that.allGoods = that.allGoods.concat(res);
+                if (countIndex == count) {
+                  resolve(true)
+                }
+              });
+            }
+          })
+        })
+      },
+
+    }
+  };
 </script>
 
 <style>
-	@media only screen {
-		.print {
-			display: none
-		}
-	}
+  /*::-webkit-scrollbar {
+    width: 10px;
+    height: 1px;
+  }
 
-	.display_flex {
-		display: flex;
-		align-items: center;
-	}
+  ::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+    background: #535353;
+  }
 
-	.display_flex_bet {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-	}
+  ::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    background: #ededed;
+  }*/
 
-	.vertical-center-modal {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		text-align: center;
+  .ivu-input-search {
+    background-color: #426ab3 !important;
+    border-color: #426ab3 !important;
+  }
 
-		.ivu-modal {
-			top: 0;
-		}
-	}
+  .ivu-tooltip-inner {
+    max-width: unset !important;
+  }
+
+  @media only screen {
+    .print {
+      display: none
+    }
+  }
+
+  .display_flex {
+    display: flex;
+    align-items: center;
+  }
+
+  .display_flex_bet {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .vertical-center-modal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+    .ivu-modal {
+      top: 0;
+    }
+  }
 </style>

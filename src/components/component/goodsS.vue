@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Modal title="选择门店" :closable="false" width="80%" :value="show" @on-cancel="outData" @on-ok="confrimGoods">
+    <Modal title="选择产品" :closable="false" width="80%" :value="show" @on-cancel="outData" @on-ok="confrimGoods">
       <div class="display_flex" style="margin-bottom: 20px;">
         <div class="display_flex">
           <div>选择仓库：</div>
@@ -13,13 +13,12 @@
       </div>
 
       <div>
-        <Table :columns="columns" :data="goods" :loading="loading" ref="table" border :height="screenHeight - 440"
-          @on-select="selectGoods" size="small">
+        <Table :columns="columns" :data="goods" :loading="loading" ref="table" border :height="screenHeight - 440"  size="small" @on-selection-change="changeSelect">
         </Table>
 
         <div style="margin: 10px;overflow: hidden">
           <div style="float: right;">
-            <Page :total="100" :current="pege_number" @on-change="changePage"></Page>
+            <Page :total="10000" :current="pege_number" @on-change="changePage"></Page>
           </div>
         </div>
       </div>
@@ -41,7 +40,7 @@
 
   let that;
   export default {
-    props: ['show','type'],
+    props: ['show','type','thisSelectGoods'],
     components: {
       producerS,
       shopS
@@ -60,8 +59,8 @@
           real_money: 0,
         },
 
-        userid: JSON.parse(localStorage.getItem('bmob')).objectId || '',
-        user: JSON.parse(localStorage.getItem('bmob')),
+        userid: JSON.parse(localStorage.getItem('user')).objectId || '',
+        user: JSON.parse(localStorage.getItem('user')),
         page_size: 50,
         pege_number: 1,
         screenHeight: window.innerHeight,
@@ -78,12 +77,16 @@
             sortable: true,
             align: 'center',
           },
-
           {
-
             align: 'center',
             title: '所属仓库',
             key: 'stocks',
+            render: (h, params) => {
+              if(params.row.stocks && params.row.stocks.stock_name){
+                return h('div', [params.row.stocks.stock_name])
+              }
+
+            }
           },
           {
 
@@ -142,7 +145,6 @@
           searchGoodText: '',
           stockId: ''
         }, //搜索条件
-
       };
     },
 
@@ -157,7 +159,7 @@
 
     watch: {
       'show': function(newVal) {
-        console.log(newVal)
+
         if(newVal){
           this.get_productList();
         }else{
@@ -174,12 +176,23 @@
 
       //选择当前操作返回
       confrimGoods() {
+        for(let item of that.select_goods){
+          for(let selectgGood of that.thisSelectGoods){
+            if(selectgGood.objectId == item.objectId){
+              item.num = selectgGood.num
+              item.total_money = selectgGood.total_money
+              item.really_total_money = selectgGood.really_total_money
+              item.modify_retailPrice = selectgGood.modify_retailPrice
+            }
+          }
+        }
+
         this.$emit('confrimGoods', that.select_goods)
       },
 
       //选择产品
-      selectGoods(e) {
-        that.select_goods = e
+      changeSelect(e){
+        that.select_goods = e;
         let index = 0;
         if(that.type == "enter"){
           for (let item of that.select_goods) {
@@ -198,7 +211,6 @@
             index += 1;
           }
         }
-        
       },
 
       //搜索产品
@@ -225,35 +237,56 @@
 
       //查询产品列表
       get_productList(stockId) {
+        that.select_goods = [];
+
         const query = Bmob.Query('NGoods');
         query.equalTo('userId', '==', that.userid);
-        query.equalTo('stocks', '==', that.search.stockId);
-        query.include('second_class', 'goodsClass', 'stocks')
-        query.equalTo("goodsName", "==", {
-          "$regex": "" + that.search.searchGoodText + ".*"
-        });
+				query.equalTo("status", "!=", -1);
+				query.equalTo("order", "!=", 0);
+				if(that.search.stockId)query.equalTo('stocks', '==', that.search.stockId);
+        query.include('second_class', 'goodsClass', 'stocks','header')
+				const query1 = query.equalTo("goodsName", "==", {
+					"$regex": "" + that.search.searchGoodText + ".*"
+				});
+				const query2 = query.equalTo("packageContent", "==", {
+					"$regex": "" + that.search.searchGoodText + ".*"
+				});
+				query.or(query1, query2);
+
         query.limit(that.page_size);
         query.skip(that.page_size * (that.pege_number - 1));
-        query.order("-createdAt"); //按照条件降序
+        query.order("-createdAt","goodsName",); //按照条件降序
         query.find().then(res => {
           console.log(res);
           for (let item of res) {
-            if (item.reserve <= 0) {
-              item._disabled = true
-            }
-            item.class = (item.goodsClass ? (item.goodsClass.class_text || "") : "") + "    " + (item.second_class ?
-              (item.second_class
-                .class_text || "") : "")
-            item.stocks = (item.stocks) ? item.stocks.stock_name : ""
 
-            item.qrcodeImg = jrQrcode.getQrBase64((item.productCode) ? item.productCode : item.objectId + '-' +
-              false)
-            item.productCode = (item.productCode) ? item.productCode : item.objectId + '-' + false
+            //采购或者调拨时判断库存
+            if(that.type =="out" || that.type == "allocation"){
+              if (item.reserve <= 0) {
+                item._disabled = true
+              }
+            }
+
+            for(let selectgGood of that.thisSelectGoods){
+              if(selectgGood.objectId == item.objectId){
+                item._checked = true
+                that.select_goods.push(item)
+              }
+            }
+
+            if(item.order == 1){
+              item.packingUnit = item.header.packingUnit || ''
+              item.packageContent = item.header.packageContent || ''
+            }
+
+            item.class = (item.goodsClass ? (item.goodsClass.class_text || "") : "") + "    " + (item.second_class ?
+              (item.second_class.class_text || "") : "")
+
 
             if (item.models) {
               let count = 0
               for (let model of item.models) {
-                model.num = 0
+                model.num = count==0?1:0
                 count += 1
               }
               item.num = count

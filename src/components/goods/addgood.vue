@@ -1,7 +1,16 @@
 <template>
 	<div>
-		<div class="form-group">
-			<label class="control-label">上传产品图</label>
+		<div style="margin-bottom: 10px;">
+			<Breadcrumb separator="<b style='color: #999;'>/</b>">
+				<BreadcrumbItem to="/">首页</BreadcrumbItem>
+				<BreadcrumbItem to="/home/goods">产品管理</BreadcrumbItem>
+				<BreadcrumbItem v-if="type =='edit'">修改产品</BreadcrumbItem>
+				<BreadcrumbItem v-else>添加产品</BreadcrumbItem>
+			</Breadcrumb>
+		</div>
+
+		<div>
+			<div style="font-size: 16px;color: #333333;font-weight: bold;">产品图</div>
 			<div class="control-form">
 				<ul class="upload-imgs">
 					<li v-if="imgLen>=1 ? false : true">
@@ -19,85 +28,172 @@
 		</div>
 
 		<Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
-			<FormItem label="产品名字" prop="goodsName">
-				<Input v-model="formValidate.goodsName" placeholder="请输入产品名字"></Input>
-			</FormItem>
-			<FormItem label="成本价" prop="costPrice">
-				<Input v-model="formValidate.costPrice" placeholder="请输入成本价"></Input>
-			</FormItem>
-			<FormItem label="零售价格" prop="retailPrice">
-				<Input v-model="formValidate.retailPrice" placeholder="请输入零售价格"></Input>
-			</FormItem>
-			<FormItem label="包装含量" prop="packageContent">
-				<Input v-model="formValidate.packageContent" placeholder="请输入包装含量"></Input>
-			</FormItem>
-			<FormItem label="包装单位" prop="packingUnit">
-				<Input v-model="formValidate.packingUnit" placeholder="请输入包装单位"></Input>
-			</FormItem>
-			<FormItem label="产品条码" prop="productCode">
-				<Input v-model="formValidate.productCode" placeholder="请输入与产品条码"></Input>
-			</FormItem>
-			<FormItem label="产品分类">
-				<Row>
-					<Col span="6">
-					<Select v-model="formValidate.goodsClass" placeholder="请选择一级分类" @on-change="get_secondclass">
-						<Option v-for="(value,index) in all_fristclass" :value="value.objectId" :key="index">{{value.class_text}}</Option>
-					</Select>
-					</Col>
-					<Col span="6" style="margin-left: 20px;">
-					<Select v-model="formValidate.second_class" placeholder="请选择二级分类">
-						<Option v-for="(value,index) in all_secondclass" :value="value.objectId" :key="index">{{value.class_text}}</Option>
-					</Select>
-					</Col>
-				</Row>
-			</FormItem>
-			<FormItem label="存放仓库">
-				<Row>
-					<Col span="6">
-					<Select v-model="formValidate.stocks" placeholder="请选择存放仓库">
-						<Option v-for="(value,index) in all_stocks" :value="value.objectId" :key="index">{{value.stock_name}}</Option>
-					</Select>
-					</Col>
-					<Col span="6" style="margin-left: 20px;">
-					<Input v-model="formValidate.reserve" placeholder="对应的库存" type="number"></Input>
-					</Col>
-					<Col span="6" style="margin-left: 20px;">
-					<Input v-model="formValidate.warning_num" placeholder="预警库存" type="number"></Input>
-					</Col>
-				</Row>
 
-			</FormItem>
-			<FormItem label="登记编号" prop="regNumber">
-				<Input v-model="formValidate.regNumber" placeholder="请输入登记编号"></Input>
-			</FormItem>
-			<FormItem label="生产厂家" prop="producer">
-				<Input v-model="formValidate.producer" placeholder="请输入生产厂家"></Input>
-			</FormItem>
-			<FormItem label="货架编号" prop="position">
-				<Input v-model="formValidate.position" placeholder="请输入货架编号"></Input>
-			</FormItem>
-			<!--<FormItem label="生产日期">
-				<FormItem prop="producttime">
-					<DatePicker type="date" placeholder="请选择生产日期" v-model="formValidate.producttime" format="yyyy-MM-dd HH:mm:ss"></DatePicker>
-				</FormItem>
-			</FormItem>
-			<FormItem label="失效日期">
-				<FormItem prop="nousetime">
-					<DatePicker type="date" placeholder="请选择失效日期" v-model="formValidate.nousetime" format="yyyy-MM-dd HH:mm:ss"></DatePicker>
-				</FormItem>
-			</FormItem>-->
-			<FormItem label="产品简介" prop="product_info">
-				<Input v-model="formValidate.product_info" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入产品简介"></Input>
-			</FormItem>
-			<FormItem>
-				<Button type="primary" @click="handleSubmit(formValidate)">确定</Button>
-				<Button @click="handleReset('formValidate')" style="margin-left: 8px">重置</Button>
-			</FormItem>
+			<div>
+				<div style="font-size: 16px;color: #333333;font-weight: bold;">基本信息</div>
+				<div style="padding: 0.625rem 0;">
+					<div class="display_flex_bet">
+						<FormItem label="产品名字" prop="goodsName">
+							<Input v-model="formValidate.goodsName" placeholder="请输入产品名字"></Input>
+						</FormItem>
+						<FormItem label="成本价" prop="costPrice">
+							<Input v-model="formValidate.costPrice" placeholder="请输入成本价"></Input>
+						</FormItem>
+						<FormItem label="零售价格" prop="retailPrice">
+							<Input v-model="formValidate.retailPrice" placeholder="请输入零售价格"></Input>
+						</FormItem>
+
+						<FormItem label="包装含量" prop="packageContent">
+							<Input v-model="formValidate.packageContent" placeholder="请输入包装含量"></Input>
+						</FormItem>
+					</div>
+
+					<div class="display_flex_bet">
+						<FormItem label="包装单位" prop="packingUnit">
+							<Input v-model="formValidate.packingUnit" placeholder="请输入包装单位"></Input>
+						</FormItem>
+
+						<FormItem label="产品条码" prop="productCode">
+							<Input v-model="formValidate.productCode" placeholder="请输入与产品条码"></Input>
+						</FormItem>
+						<FormItem label="一级分类">
+							<Select v-model="formValidate.goodsClass" placeholder="请选择一级分类" @on-change="get_secondclass" style="width: 11.625rem;">
+								<Option v-for="(value,index) in all_fristclass" :value="value.objectId" :key="index">{{value.class_text}}</Option>
+							</Select>
+						</FormItem>
+
+						<FormItem label="二级分类">
+							<Select v-model="formValidate.second_class" placeholder="请选择二级分类" style="width: 11.625rem;">
+								<Option v-for="(value,index) in all_secondclass" :value="value.objectId" :key="index">{{value.class_text}}</Option>
+							</Select>
+						</FormItem>
+					</div>
+
+					<div class="display_flex_bet">
+						<FormItem label="多规格" prop="packingUnit" style="width: 4.625rem;">
+							<el-switch v-model="formValidate.productMoreG"></el-switch>
+						</FormItem>
+
+						<FormItem></FormItem>
+						<FormItem></FormItem>
+					</div>
+				</div>
+
+			</div>
+
+
+			<div v-if="type !='edit'">
+				<div style="font-size: 16px;color: #333333;font-weight: bold;">库存信息</div>
+				<div style="padding: 0.625rem 0;">
+					<div class="display_flex_bet" v-for="(item,index) in formValidate.stockReserve">
+						<FormItem label="存放仓库">
+							<Select v-model="item.stocks" placeholder="请选择存放仓库" style="width: 11.625rem;">
+								<Option v-for="(value,index) in all_stocks" :value="value.objectId" :key="index">{{value.stock_name}}</Option>
+							</Select>
+						</FormItem>
+						<FormItem label="库存">
+							<Input v-model="item.reserve" placeholder="对应的库存" type="number" v-if="formValidate.productMoreG" @on-focus="showModal(index)"></Input>
+							<Input v-model="item.reserve" placeholder="对应的库存" type="number" v-else></Input>
+						</FormItem>
+
+						<FormItem label="预警库存">
+							<Input v-model="formValidate.warning_num" placeholder="预警库存" type="number"></Input>
+						</FormItem>
+						<FormItem label="最大库存">
+							<Input v-model="formValidate.max_num" placeholder="最大库存" type="number"></Input>
+						</FormItem>
+						<FormItem>
+							<Button type="success" shape="circle" icon="md-add" @click="addReserve"></Button>
+							<Button type="error" shape="circle" icon="md-close" @click="reduceReserve(index)"></Button>
+						</FormItem>
+					</div>
+				</div>
+
+			</div>
+
+			<div>
+				<div style="font-size: 16px;color: #333333;font-weight: bold;">更多信息</div>
+				<div style="padding: 0.625rem 0;">
+					<div class="display_flex_bet">
+						<FormItem label="生产日期">
+							<FormItem prop="producttime">
+								<DatePicker type="date" placeholder="请选择生产日期" v-model="formValidate.producttime" format="yyyy-MM-dd HH:mm:ss"></DatePicker>
+							</FormItem>
+						</FormItem>
+						<FormItem label="生产厂家" prop="producer">
+							<Input v-model="formValidate.producer" placeholder="请输入生产厂家"></Input>
+						</FormItem>
+						<FormItem label="货架位置" prop="position">
+							<Input v-model="formValidate.position" placeholder="请输入货架位置"></Input>
+						</FormItem>
+						<FormItem label="货号" prop="regNumber">
+							<Input v-model="formValidate.regNumber" placeholder="货号"></Input>
+						</FormItem>
+					</div>
+
+					<div>
+						<FormItem label="产品简介" prop="product_info">
+							<Input v-model="formValidate.product_info" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入产品简介"></Input>
+						</FormItem>
+
+					</div>
+				</div>
+
+			</div>
+
+			<div style="text-align: center;margin-top: 3%;">
+				<ButtonGroup shape="circle" size="large">
+					<Button type="primary" @click="handleSubmit(formValidate)" style="width: 160px;">确定</Button>
+					<Button @click="handleReset('formValidate')" style="width: 160px;">重置</Button>
+				</ButtonGroup>
+			</div>
+
 		</Form>
+
+		<!--规格设置-->
+		<Modal title="多规格设置" v-model="productMoreG.show" :styles="{top: '4%'}" width="70%" @on-ok="changeReserve" @on-cancel="changeReserve">
+			<Form :label-width="80">
+				<div v-for="(item,index) in formValidate.stockReserve[stockIndex].models" :key="index">
+
+					<div style="padding:0.625rem 0;font-size: 1rem;font-weight: bold;">规格{{index+1}}</div>
+					<div class="display_flex_bet">
+						<FormItem label="颜色" :prop="item.custom1.value">
+							<Input v-model="item.custom1.value" placeholder="请输入颜色"></Input>
+						</FormItem>
+						<FormItem label="尺寸" :prop="item.custom2.value">
+							<Input v-model="item.custom2.value" placeholder="请输入尺寸"></Input>
+						</FormItem>
+						<FormItem label="自定义1" :prop="item.custom3.value">
+							<Input v-model="item.custom3.value" placeholder="请输入自定义规格1的值"></Input>
+						</FormItem>
+						<FormItem label="自定义2" :prop="item.custom4.value">
+							<Input v-model="item.custom4.value" placeholder="请输入自定义规格2的值"></Input>
+						</FormItem>
+
+						<FormItem label="库存" :prop="item.custom4.value">
+							<Input v-model="item.reserve" placeholder="请输入库存数量" type="number"></Input>
+						</FormItem>
+
+						<Button type="error" shape="circle" icon="md-close" v-if="index >=1" style="margin-bottom: 24px;margin-left: 10px;"
+						 @click="reduceModel(index)"></Button>
+
+
+					</div>
+
+				</div>
+			</Form>
+
+			<Button style="height:2.5rem;color: #42b394;font-weight: bold;text-align: center;background: #CCCCCC;" long @click="addModel">
+				<Icon type="md-add" />
+				<span>增加规格</span>
+			</Button>
+		</Modal>
+
 	</div>
 
 </template>
 <script>
+	let that;
 	import goods from '@/serve/goods.js';
 	export default {
 		name: 'addgood',
@@ -109,6 +205,10 @@
 				formData: new FormData(),
 				imgs: {},
 				imgLen: 0,
+				productMoreG: {
+					show: false
+				},
+				stockIndex: 0,
 				formValidate: {
 					goodsName: '', //产品名字
 					productCode: '', //条形码
@@ -122,10 +222,35 @@
 					packageContent: '', //包装含量
 					goodsIcon: '', //产品图片
 					product_info: '', //产品简介
-					stocks: "", // 存放仓库
 					regNumber: '',
 					producer: '', //生产厂家
-					warning_num: '', //预警库存
+					productMoreG: false, //是否多规格
+					warning_num:0,//预警库存
+					max_num:0,//最大库存
+					stockReserve: [{
+						models: [{
+							id: 0,
+							custom1: {
+								"name": "颜色",
+								value: ""
+							},
+							custom2: {
+								"name": "尺寸",
+								value: ""
+							},
+							custom3: {
+								"name": "",
+								value: ""
+							},
+							custom4: {
+								"name": "",
+								value: ""
+							},
+							reserve: 0,
+						}],
+						stocks: "", // 存放仓库
+						reserve: '', //库存数量
+					}],
 				},
 				ruleValidate: {
 					goodsName: [{
@@ -133,11 +258,14 @@
 						message: '产品名字必填',
 						trigger: 'blur'
 					}],
-				}
+				},
+				type:'',//操作类型
 			}
 		},
 		mounted() {
-			let that = this
+			that = this
+			that.type = that.getParameterByName("type")
+			
 			//获得一级分类
 			goods.get_fristclass().then(res => {
 				//console.log(res)
@@ -150,9 +278,135 @@
 				that.all_stocks = res
 				//that.all_fristclass = res
 			});
+			
+			if(that.getParameterByName("type") == 'edit'){
+				let editGood =JSON.parse(localStorage.getItem("editGood"))
+				that.formValidate.goodsName = editGood.goodsName
+				that.formValidate.productCode = editGood.productCode
+				that.formValidate.costPrice = editGood.costPrice
+				that.formValidate.retailPrice = editGood.retailPrice
+				that.formValidate.position = editGood.position
+				that.formValidate.goodsClass = editGood.goodsClass?editGood.goodsClass.objectId:''
+				that.formValidate.second_class = editGood.second_class?editGood.second_class.objectId:''
+				that.formValidate.reserve = editGood.reserve
+				that.formValidate.packingUnit = editGood.packingUnit
+				that.formValidate.packageContent = editGood.packageContent
+				that.formValidate.goodsIcon = editGood.goodsIcon
+				that.formValidate.product_info = editGood.product_info
+				that.formValidate.regNumber = editGood.regNumber
+				that.formValidate.producer = editGood.producer
+				that.formValidate.warning_num = editGood.warning_num
+				that.formValidate.max_num = editGood.max_num
+				that.formValidate.objectId = editGood.objectId
+			}
 		},
 
 		methods: {
+			
+			
+			getParameterByName(name, url) {
+			    if (!url) url = window.location.href;
+			    name = name.replace(/[\[\]]/g, '\\$&');
+			    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+			        results = regex.exec(url);
+			    if (!results) return null;
+			    if (!results[2]) return '';
+			    return decodeURIComponent(results[2].replace(/\+/g, ' '));
+			},
+
+			showModal(index) {
+				that.productMoreG.show = true;
+				that.stockIndex = index
+			},
+
+			//多规格弹窗关闭或确定时的操作
+			changeReserve() {
+				console.log(that.stockIndex)
+				let thisStockReserve = 0
+				let totalReserve = 0
+				for (let item of that.formValidate.stockReserve[that.stockIndex].models) {
+					thisStockReserve += Number(item.reserve)
+				}
+				that.formValidate.stockReserve[that.stockIndex].reserve = thisStockReserve
+				
+				for(let item of that.formValidate.stockReserve){
+					totalReserve+=Number(item.reserve)
+				}
+				
+				that.formValidate.reserve = totalReserve
+			},
+
+			//增加规格数量
+			addModel() {
+				let model = {
+					custom1: {
+						"name": "颜色",
+						value: ""
+					},
+					custom2: {
+						"name": "尺寸",
+						value: ""
+					},
+					custom3: {
+						"name": "",
+						value: ""
+					},
+					custom4: {
+						"name": "",
+						value: ""
+					},
+					reserve: 0,
+				}
+				model.id = that.formValidate.stockReserve[that.stockIndex].models.length
+				that.formValidate.stockReserve[that.stockIndex].models.push(model)
+			},
+
+			//添加一行记录
+			addReserve() {
+				let item = {
+					stocks: "", // 存放仓库
+					warning_num: '', //预警库存
+					max_num: '', //最大库存
+					reserve: '', //库存数量
+					models: [{
+						id: 0,
+						custom1: {
+							"name": "颜色",
+							value: ""
+						},
+						custom2: {
+							"name": "尺寸",
+							value: ""
+						},
+						custom3: {
+							"name": "",
+							value: ""
+						},
+						custom4: {
+							"name": "",
+							value: ""
+						},
+						reserve: 0,
+					}],
+				}
+				that.formValidate.stockReserve.push(item)
+			},
+
+			reduceReserve(index) {
+				if (that.formValidate.stockReserve.length == 1) {
+					this.$Message['warning']({
+						background: 'warning',
+						content: '至少保留一个'
+					});
+
+					return
+				}
+				that.formValidate.stockReserve.splice(index, 1)
+			},
+
+			reduceModel(index) {
+				that.formValidate.stockReserve[that.stockIndex].models.splice(index, 1)
+			},
 
 			//获得二级分类
 			get_secondclass(value) {
@@ -165,8 +419,10 @@
 
 			//上传产品
 			handleSubmit(formValidate) {
-				console.log(formValidate)
+				
 				if (formValidate.goodsName) {
+					console.log(formValidate)
+					
 					goods.upload_good(formValidate).then(res => {
 						if (res[0]) {
 							this.$Message.success('上传成功');
@@ -263,7 +519,6 @@
 		font-size: 14px;
 		display: inline-block;
 		padding: 10px;
-		margin-left: 60px;
 		border: 2px dashed #ccc;
 		text-align: center;
 		vertical-align: middle;

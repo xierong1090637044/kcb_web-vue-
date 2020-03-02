@@ -2,6 +2,7 @@ import Bmob from "hydrogen-js-sdk";
 
 let uid = localStorage.getItem('uid');
 let setting = JSON.parse(localStorage.getItem('setting'));
+let show_float = setting?setting.show_float:0;
 export default {
 
 	//得到记录的总条数
@@ -75,16 +76,16 @@ export default {
 						}
 					
 					
-						params.get_reserve = get_reserve.toFixed(0)
-						params.out_reserve = out_reserve.toFixed(0)
-						params.get_reserve_real_money = get_reserve_real_money.toFixed(0)
-						params.out_reserve_real_money = out_reserve_real_money.toFixed(0)
-						params.get_reserve_num = get_reserve_num.toFixed(0)
-						params.out_reserve_num = out_reserve_num.toFixed(0)
-						params.get_reserve_get_num = (get_reserve_real_money - get_reserve_num).toFixed(0)
-						params.out_reserve_get_num = (out_reserve_num - out_reserve_real_money).toFixed(0)
-						params.purchaseNum = purchaseNum.toFixed(0)
-						params.sellNum = sellNum.toFixed(0)
+						params.get_reserve = get_reserve.toFixed(show_float)
+						params.out_reserve = out_reserve.toFixed(show_float)
+						params.get_reserve_real_money = get_reserve_real_money.toFixed(show_float)
+						params.out_reserve_real_money = out_reserve_real_money.toFixed(show_float)
+						params.get_reserve_num = get_reserve_num.toFixed(show_float)
+						params.out_reserve_num = out_reserve_num.toFixed(show_float)
+						params.get_reserve_get_num = (get_reserve_real_money - get_reserve_num).toFixed(show_float)
+						params.out_reserve_get_num = (out_reserve_num - out_reserve_real_money).toFixed(show_float)
+						params.purchaseNum = purchaseNum.toFixed(show_float)
+						params.sellNum = sellNum.toFixed(show_float)
 					
 					
 						console.log(get_reserve)
@@ -150,8 +151,8 @@ export default {
 						key +=1
 						
 						if(key == Math.ceil(count/1000)){
-							params.total_money = total_money.toFixed(0),
-							params.total_reserve = total_reserve.toFixed(0),
+							params.total_money = total_money.toFixed(show_float),
+							params.total_reserve = total_reserve.toFixed(show_float),
 							params.warn_num = warn_num
 							resolve(params)
 						}

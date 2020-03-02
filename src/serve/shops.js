@@ -3,7 +3,7 @@ export default {
 
 	get_shopList(disabled,search_text) {
 		return new Promise((resolve, reject) => {
-			let userid = JSON.parse(localStorage.getItem('bmob')).objectId;
+			let userid = JSON.parse(localStorage.getItem('user')).objectId;
 			const query = Bmob.Query("shops");
 			query.order("num");
 			query.equalTo("parent", "==", userid);
@@ -25,7 +25,7 @@ export default {
 	
 	//增加数据操作
 	add_shop(params) {
-		let userid = JSON.parse(localStorage.getItem('bmob')).objectId;
+		let userid = JSON.parse(localStorage.getItem('user')).objectId;
 		
 		return new Promise((resolve, reject) => {
 			const pointer = Bmob.Pointer('_User');
