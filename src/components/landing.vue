@@ -15,7 +15,7 @@
 				</div>-->
         <Card dis-hover :padding="padding_size">
           <div slot="title">
-            <p style="font-size: 18px;color:#333">库存表管理系统</p>
+            <p style="font-size: 18px;color:#333">佛山高明燃气物资库存管理系统</p>
           </div>
           <Tabs v-model="loginType" @on-click="handleData">
             <TabPane label="账号密码登陆" icon="logo-apple" name="way1">

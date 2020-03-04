@@ -90,40 +90,69 @@ export default {
 
 	//获得库存成本和总库存
 	loadallGoods: function() {
-		let uid = JSON.parse(localStorage.getItem('bmob')).objectId
-
+		let uid = localStorage.getItem("uid")
+		let user = JSON.parse(localStorage.getItem("user")) 
+		let setting = JSON.parse(localStorage.getItem("setting")) 
 		return new Promise((resolve, reject) => {
-			var total_reserve = 0;
-			var total_money = 0;
+			let total_reserve = 0;
+			let total_money = 0;
 			let length = 0;
 			let warn_num = 0;
-
+			let over_num = 0;
+			let key = 0; //计数器
 			let params = {}
 			this.querycount().then(count => {
 				params.total_products = count
-				const query = Bmob.Query("NGoods");
-				query.equalTo("userId", "==", uid);
-				query.equalTo("status", "!=", -1);
-				query.select("reserve", "costPrice", "stocktype");
-				query.limit(1000);
-				query.find().then(res => {
-
-					for (let item of res) {
-						if (item.stocktype == 0) {
-							warn_num += 1;
+				for (var i = 0; i < Math.ceil(count / 500); i++) {
+					console.log(i)
+					const query = Bmob.Query("Goods");
+					query.equalTo("userId", "==", uid);
+					query.equalTo("status", "!=", -1);
+					query.equalTo("order", "!=", 1);
+					query.select("reserve", "costPrice", "stocktype");
+					query.limit(500);
+					query.skip(500 * i);
+					query.find().then(res => {
+						for (let item of res) {
+							if (item.stocktype == 0) {
+								warn_num += 1;
+							} else if (item.stocktype == 2) {
+								over_num += 1;
+							}
+							total_reserve += item.reserve;
+							total_money += item.reserve * item.costPrice;
 						}
-						total_reserve += item.reserve;
-						total_money += item.reserve * item.costPrice;
-						params.total_money = total_money.toFixed(0),
-							params.total_reserve = total_reserve.toFixed(0),
-
-							params.warn_num = warn_num
-						resolve(params)
-					}
-				});
+	
+						key += 1
+						//返回数据
+						if (key == Math.ceil(count / 500)) {
+							if (user.identity != 1 && user.rights && user.rights.othercurrent[0] != '0') {
+								total_money = 0
+							}
+							if (Number(total_reserve) > 1000 && Number(total_reserve) < 10000) {
+								total_reserve = Number(total_reserve) / 1000 + "千"
+							} else if (Number(total_reserve) >= 10000 && Number(total_money) < 100000) {
+								total_reserve = Number(total_reserve) / 10000 + "万"
+							} else if (Number(total_reserve) >= 100000) {
+								total_reserve = Number(total_reserve) / 10000 + "十万"
+							}
+	
+							if (Number(total_money) > 1000 && Number(total_money) < 10000) {
+								total_money = (Number(total_money) / 1000).toFixed(2) + "千"
+							} else if (Number(total_money) >= 10000 && Number(total_money) < 100000) {
+								total_money = (Number(total_money) / 10000).toFixed(4) + "万"
+							} else if (Number(total_money) >= 100000) {
+								total_money = (Number(total_money) / 100000).toFixed(4) + "十万"
+							}
+							params.total_money = total_money,
+								params.total_reserve = total_reserve,
+								params.warn_num = warn_num
+							params.over_num = over_num
+							resolve(params)
+						}
+					});
+				}
 			})
-
 		})
-
 	},
 }
