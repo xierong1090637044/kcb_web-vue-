@@ -66,25 +66,27 @@
                   <FormItem label="最大库存" style="width: 25%;">
                     <Input v-model="formValidate.max_num" placeholder="最大库存" type="number"></Input>
                   </FormItem>
+
+                  <FormItem label="多规格" style="width: 25%;text-align: left;" v-if='type !="edit"'>
+                    <el-switch v-model="formValidate.productMoreG" @change="switchValue"></el-switch>
+                  </FormItem>
+
+                  <FormItem label="规格设置" style="width: 25%;" v-if="formValidate.productMoreG">
+                    <Input placeholder="请设置多规格" @on-focus="productMoreG.show = true;productMoreG.type=1"></Input>
+                  </FormItem>
                 </div>
 
               </div>
 
             </div>
           </TabPane>
-          <TabPane label="库存信息" name="name2" v-if="type =='add'">
+          <TabPane label="库存信息" name="name2">
             <div style="max-height: 37.5rem;overflow-y: scroll;height: 100%;">
               <div style="padding: 0.625rem 0;">
-                <FormItem label="多规格" style="width: 25%;text-align: left;" v-if='type !="edit"'>
-                  <el-switch v-model="formValidate.productMoreG"></el-switch>
-                </FormItem>
                 <div class="display_flex_bet" v-for="(item,index) in formValidate.stockReserve" style="margin-right: 0.625rem;">
 
                   <div class="display_flex" style="width: 80%;">
-                    <FormItem label="存放仓库" style="width: 25%;">
-                      <!--<Select v-model="item.stocks" placeholder="请选择存放仓库" style="width: 11.625rem;">
-                        <Option v-for="(value,index) in all_stocks" :value="value.objectId" :key="index">{{value.stock_name}}</Option>
-                      </Select>-->
+                    <FormItem label="存放仓库" style="width: %;">
                       <Input v-model="item.stocks.stock_name" placeholder="请选择存放仓库" @on-focus="StockClick(index)"></Input>
                     </FormItem>
                     <FormItem label="库存" style="width: 25%;">
@@ -94,10 +96,9 @@
                     </FormItem>
                   </div>
 
-
                   <FormItem>
                     <div style="display: flex;">
-                      <Button type="success" shape="circle" icon="md-add" @click="addReserve"></Button>
+                      <!--<Button type="success" shape="circle" icon="md-add" @click="addReserve"></Button>-->
                       <Button type="error" shape="circle" icon="md-close" @click="reduceReserve(index)" style="margin:0 0.625rem;"></Button>
                     </div>
                   </FormItem>
@@ -146,38 +147,35 @@
       <Modal title="多规格设置" v-model="productMoreG.show" :styles="{top: '4%'}" width="70%" @on-ok="changeReserve"
         @on-cancel="changeReserve">
         <Form :label-width="80">
-          <div v-for="(item,index) in formValidate.stockReserve[stockIndex].models" :key="index">
+          <div v-for="(item,index) in formValidate.models" :key="index">
+            <div class="display_flex_bet">
+              <div style="padding:0.625rem 0;font-size: 1rem;font-weight: bold;">规格{{index+1}}</div>
+              <div v-if="index >=1" style="margin-left: 10px;color:#FF3300;font-size: 1rem;font-weight: bold" @click="reduceModel(index)">删除</div>
+            </div>
 
-            <div style="padding:0.625rem 0;font-size: 1rem;font-weight: bold;">规格{{index+1}}</div>
             <div class="display_flex_bet">
               <FormItem label="颜色" :prop="item.custom1.value">
-                <Input v-model="item.custom1.value" placeholder="请输入颜色"></Input>
+                <Input v-model="item.custom1.value" placeholder="请输入颜色" :disabled="productMoreG.type==1?false:true"></Input>
               </FormItem>
               <FormItem label="尺寸" :prop="item.custom2.value">
-                <Input v-model="item.custom2.value" placeholder="请输入尺寸"></Input>
+                <Input v-model="item.custom2.value" placeholder="请输入尺寸" :disabled="productMoreG.type==1?false:true"></Input>
               </FormItem>
               <FormItem label="自定义1" :prop="item.custom3.value">
-                <Input v-model="item.custom3.value" placeholder="请输入自定义规格1的值"></Input>
+                <Input v-model="item.custom3.value" placeholder="请输入自定义规格1的值" :disabled="productMoreG.type==1?false:true"></Input>
               </FormItem>
               <FormItem label="自定义2" :prop="item.custom4.value">
-                <Input v-model="item.custom4.value" placeholder="请输入自定义规格2的值"></Input>
+                <Input v-model="item.custom4.value" placeholder="请输入自定义规格2的值" :disabled="productMoreG.type==1?false:true"></Input>
               </FormItem>
 
-              <FormItem label="库存" :prop="item.custom4.value">
-                <Input v-model="item.reserve" placeholder="请输入库存数量" type="number"></Input>
+              <FormItem label="库存" :prop="item.custom4.value" v-if="productMoreG.type ==2">
+                <Input placeholder="请输入库存数量" type="number" @input="inputReserve(stockIndex)"></Input>
               </FormItem>
-
-              <Button type="error" shape="circle" icon="md-close" v-if="index >=1" style="margin-bottom: 24px;margin-left: 10px;"
-                @click="reduceModel(index)"></Button>
-
-
             </div>
 
           </div>
         </Form>
 
-        <Button style="height:2.5rem;color: #42b394;font-weight: bold;text-align: center;background: #CCCCCC;" long
-          @click="addModel">
+        <Button style="height:2.5rem;color: #fff;font-weight: bold;text-align: center;background: #42b394;" long @click="addModel"  v-if="productMoreG.type ==1">
           <Icon type="md-add" />
           <span>增加规格</span>
         </Button>
@@ -216,7 +214,8 @@
         imgs: [],
         imgLen: 0,
         productMoreG: {
-          show: false
+          show: false,
+          type: 1, //1代表设置多规格
         },
         stockIndex: 0,
         formValidate: {
@@ -239,30 +238,26 @@
           productMoreG: false, //是否多规格
           warning_num: 0, //预警库存
           max_num: 0, //最大库存
-          stockReserve: [{
-            models: [{
-              id: 0,
-              custom1: {
-                "name": "颜色",
-                value: ""
-              },
-              custom2: {
-                "name": "尺寸",
-                value: ""
-              },
-              custom3: {
-                "name": "",
-                value: ""
-              },
-              custom4: {
-                "name": "",
-                value: ""
-              },
-              reserve: 0,
-            }],
-            stocks: "", // 存放仓库
-            reserve: '', //库存数量
+          models: [{
+            id: 0,
+            custom1: {
+              "name": "颜色",
+              value: ""
+            },
+            custom2: {
+              "name": "尺寸",
+              value: ""
+            },
+            custom3: {
+              "name": "",
+              value: ""
+            },
+            custom4: {
+              "name": "",
+              value: ""
+            },
           }],
+          stockReserve: [],//库存详情
         },
         ruleValidate: {
           goodsName: [{
@@ -341,7 +336,15 @@
         goods.getstock_list().then(res => {
           console.log("仓库列表", res)
           that.all_stocks = res
-          that.formValidate.stockReserve[that.chooseStockIndex].stocks = res[0]
+          for(let index in res){
+            let item = {}
+            console.log(index,that.formValidate.stockReserve[index],that.formValidate.models)
+            //item.models = that.formValidate.models;
+            item.stocks = res[index];
+            item.reserve = 0;
+            that.formValidate.stockReserve.push(item)
+          }
+
           //that.all_fristclass = res
         });
       }
@@ -358,6 +361,30 @@
         }
 
         that.chooseClassClick = false
+      },
+
+      switchValue(value){
+        if(value == false){
+           that.formValidate.models = [{
+            id: 0,
+            custom1: {
+              "name": "颜色",
+              value: ""
+            },
+            custom2: {
+              "name": "尺寸",
+              value: ""
+            },
+            custom3: {
+              "name": "",
+              value: ""
+            },
+            custom4: {
+              "name": "",
+              value: ""
+            },
+          }]
+        }
       },
 
       StockClick(index) {
@@ -386,8 +413,14 @@
       },
 
       showModal(index) {
+        that.productMoreG.type = 2;
         that.productMoreG.show = true;
         that.stockIndex = index
+      },
+
+      //输入多规格库存时触发
+      inputReserve(index){
+        console.log(index)
       },
 
       //多规格弹窗关闭或确定时的操作
@@ -395,7 +428,9 @@
         console.log(that.stockIndex)
         let thisStockReserve = 0
         let totalReserve = 0
-        for (let item of that.formValidate.stockReserve[that.stockIndex].models) {
+        let modles = that.formValidate.models
+        //that.formValidate.stockReserve[that.stockIndex].models= that.formValidate.models
+        for (let item of modles) {
           thisStockReserve += Number(item.reserve)
         }
         that.formValidate.stockReserve[that.stockIndex].reserve = thisStockReserve
@@ -428,8 +463,8 @@
           },
           reserve: 0,
         }
-        model.id = that.formValidate.stockReserve[that.stockIndex].models.length
-        that.formValidate.stockReserve[that.stockIndex].models.push(model)
+        model.id = that.formValidate.models.length
+        that.formValidate.models.push(model)
       },
 
       //添加一行记录

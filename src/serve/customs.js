@@ -51,7 +51,6 @@ export default {
       query.equalTo("master", "==", uid);
       query.equalTo("type", '==', -1);
       query.equalTo("extra_type", "==", 1);
-      query.equalTo("extra_type", "==", 1);
       query.equalTo("custom", "==", params.customId);
       query.equalTo("status", "==", true);
       query.equalTo("createdAt", ">=", params.startDate);
@@ -64,7 +63,6 @@ export default {
         for (var i = 0; i < Math.ceil(count / 500); i++) {
           query.equalTo("master", "==", uid);
           query.equalTo("type", '==', -1);
-          query.equalTo("extra_type", "==", 1);
           query.equalTo("extra_type", "==", 1);
           query.equalTo("custom", "==", params.customId);
           query.equalTo("status", "==", true);

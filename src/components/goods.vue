@@ -10,10 +10,10 @@
     <div style="margin-bottom: 10px;display: flex;align-items: center;justify-content: space-between;">
       <Input search enter-button placeholder="请输入产品名称~规格" style="width: 25%" @on-search='searchGoods' />
       <div>
-        <Button type="success" style="margin-right: 10px;" @click="addProduct" icon="md-add">添加产品</Button>
+        <!--<Button type="success" style="margin-right: 10px;" @click="addProduct" icon="md-add">添加产品</Button>-->
         <Button type="error" @click="delete_good()" style="margin-right: 10px;">批量删除</Button>
         <Button type="primary" @click="exportData()" style="margin-right: 10px;"> 导出</Button>
-        <Button type="primary" v-print="'#print_allqr'" style="margin-right: 10px;"> 批量打印二维码</Button>
+        <Button type="primary" v-print="'#print_allqr'" style="margin-right: 10px;"> 打印当前页面二维码</Button>
         <Dropdown style="margin-right: 10px" trigger="click">
           <Button type="primary">
             批量导入
@@ -76,10 +76,12 @@
       <div style="color: #333;margin-top: 10px;"><text style="font-size: 12px;">{{now_product.goodsName}}</text></div>
     </div>
 
-    <div id="print_allqr" style="text-align: center;width: 100%;" class="print" v-if="allGoods">
-      <div v-for="(item,index) in allGoods" :key="index" style="width:25%; display: inline-block;">
+    <div id="print_allqr" style="text-align: center;width: 100%;" class="print">
+      <div v-for="(item,index) in goods" :key="index" style="width:25%; display: inline-block;">
         <img :src="item.qrcodeImg" style="width: 50%;" />
-        <div style="color: #333;margin:5px 0;"><text style="font-size: 10px;">{{item.goodsName}}</text></div>
+        <div style="color: #333;margin:5px 0;">
+          <text style="font-size: 10px;">{{item.goodsName}}</text>
+        </div>
       </div>
     </div>
 
@@ -454,7 +456,7 @@
       //modal 确定点击
       modal_confrim() {
         that.loading = true;
-          that.get_productList()
+        that.get_productList()
       },
 
       //获得二级分类
