@@ -16,7 +16,7 @@ import landing from '@/components/landing'
 import home from '@/components/home'
 import index from '@/components/index' //首页
 import thanks from '@/components/thanks' // 感谢页面
-import test from '@/components/test'  //样板页面
+import test from '@/components/test' //样板页面
 import goods from '@/components/goods' //产品添加页面
 import operations from '@/components/operations' //操作记录页面
 import download from '@/components/download'; // app下载页面
@@ -39,7 +39,7 @@ import updateHistory from '@/components/updateHistroy'; // 出库或销售页面
 import admin from '@/components/admin/index'; // 管理员页面
 
 import Bmob from 'hydrogen-js-sdk';
-Bmob.initialize("825b954fe97e9186", "109063","47f76baf4ee4d90630d7b2bc17f7505c");
+Bmob.initialize("825b954fe97e9186", "109063", "47f76baf4ee4d90630d7b2bc17f7505c");
 
 Vue.use(Bmob)
 Vue.use(Router)
@@ -47,18 +47,25 @@ Vue.use(ViewUI)
 Vue.use(Print);
 
 export default new Router({
-  routes: [
-		{
-		  path: '/',
-		  name: 'landing',
-		  component: landing
-		},
-		{
-		  path: '/home/',
-		  name: 'home',
-		  component: home,
-			children: [
-        {
+  routes: [{
+      path: '/',
+      name: 'landing',
+      component: landing
+    },
+    {
+      path: '/404',
+      name: '404',
+      component: () => import('@/components/error'), // vue路由懒加载  异步加载
+      meta: {
+        title: '404',
+        requireAuth: false // 只要此字段为true，必须做鉴权处理
+      }
+    },
+    {
+      path: '/home/',
+      name: 'home',
+      component: home,
+      children: [{
           path: 'goodAllocation',
           name: 'goodAllocation',
           component: goodAllocation
@@ -88,17 +95,17 @@ export default new Router({
           name: 'goodOutBuy',
           component: goodOutBuy
         },
-				{
-				  path: 'index',
-				  name: 'index',
-				  component: index
-				},
-				{
-				  path: 'thanks',
-				  name: 'thanks',
-				  component: thanks
-				},
-         {
+        {
+          path: 'index',
+          name: 'index',
+          component: index
+        },
+        {
+          path: 'thanks',
+          name: 'thanks',
+          component: thanks
+        },
+        {
           path: 'test',
           name: 'test',
           component: test
@@ -108,46 +115,46 @@ export default new Router({
           name: 'goods',
           component: goods
         },
-				{
-				  path: 'operations',
-				  name: 'operations',
-				  component: operations
-				},
-				{
-				  path: 'download',
-				  name: 'download',
-				  component: download
-				},
-				{
-				  path: 'manage/category',
-				  name: 'category',
-				  component: category
-				},
-				{
-				  path: 'manage/stocks',
-				  name: 'stocks',
-				  component: stocks
-				},
-				{
-				  path: 'manage/shops',
-				  name: 'shops',
-				  component: shops
-				},
-				{
-				  path: 'manage/staffs',
-				  name: 'staffs',
-				  component: staffs
-				},
-				{
-				  path: 'manage/customs',
-				  name: 'customs',
-				  component: customs
-				},
-				{
-				  path: 'manage/producers',
-				  name: 'producers',
-				  component: producers
-				},
+        {
+          path: 'operations',
+          name: 'operations',
+          component: operations
+        },
+        {
+          path: 'download',
+          name: 'download',
+          component: download
+        },
+        {
+          path: 'manage/category',
+          name: 'category',
+          component: category
+        },
+        {
+          path: 'manage/stocks',
+          name: 'stocks',
+          component: stocks
+        },
+        {
+          path: 'manage/shops',
+          name: 'shops',
+          component: shops
+        },
+        {
+          path: 'manage/staffs',
+          name: 'staffs',
+          component: staffs
+        },
+        {
+          path: 'manage/customs',
+          name: 'customs',
+          component: customs
+        },
+        {
+          path: 'manage/producers',
+          name: 'producers',
+          component: producers
+        },
         {
           path: 'updateHistory',
           name: 'updateHistory',
@@ -159,7 +166,7 @@ export default new Router({
           component: admin
         }
       ]
-		},
+    },
 
   ]
 })

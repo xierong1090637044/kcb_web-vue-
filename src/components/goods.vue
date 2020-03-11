@@ -10,7 +10,7 @@
     <div style="margin-bottom: 10px;display: flex;align-items: center;justify-content: space-between;">
       <Input search enter-button placeholder="请输入产品名称~规格" style="width: 25%" @on-search='searchGoods' />
       <div>
-        <!--<Button type="success" style="margin-right: 10px;" @click="addProduct" icon="md-add">添加产品</Button>-->
+        <Button type="success" style="margin-right: 10px;" @click="addProduct" icon="md-add">添加产品</Button>
         <Button type="error" @click="delete_good()" style="margin-right: 10px;">批量删除</Button>
         <Button type="primary" @click="exportData()" style="margin-right: 10px;"> 导出</Button>
         <Button type="primary" v-print="'#print_allqr'" style="margin-right: 10px;"> 打印当前页面二维码</Button>
@@ -331,8 +331,19 @@
       //编辑产品
       edit(row) {
         localStorage.setItem("editGood", JSON.stringify(row));
-        that.addGoodClick = true
-        that.editGood = row
+
+        if (row.models) {
+          this.$Message.error('多规格产品暂不支持修改');
+          return
+        }
+
+        if (row.order ==0) {
+          that.addGoodClick = true
+          that.editGood = row
+        } else {
+          this.$Message.error('旧产品暂不支持修改');
+          return
+        }
       },
 
       confrimAdd(value) {

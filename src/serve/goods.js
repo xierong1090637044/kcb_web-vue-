@@ -83,12 +83,12 @@ export default {
         } else {
         	if (good.warning_num != "") {
         		query.set("warning_num", Number(good.warning_num))
-        		query.set("stocktype", (Number(good.warning_num) >= Number(that.reserve)) ? 0 : 1) //库存数量类型 0代表库存不足 1代表库存充足
+        		query.set("stocktype", (Number(good.warning_num) >= Number(good.reserve)) ? 0 : 1) //库存数量类型 0代表库存不足 1代表库存充足
         	}
 
         	if (good.max_num != "") {
         		query.set("max_num", Number(good.max_num))
-        		query.set("stocktype", (Number(good.max_num) <= Number(that.reserve)) ? 2 : 1) //库存数量类型 2代表库存过足 1代表库存充足
+        		query.set("stocktype", (Number(good.max_num) <= Number(good.reserve)) ? 2 : 1) //库存数量类型 2代表库存过足 1代表库存充足
         	}
         }
 
@@ -97,11 +97,19 @@ export default {
 
 				query.set("userId", userid)
 				query.set("id", good.objectId)
-				if (good.stockReserve.length > 0) {
-					query.set("order", 0)
-				}
+				query.set("order", 0)
 				query.save().then(res => {
-					resolve([true, res])
+          query.equalTo("header", "==", good.objectId);
+          query.find().then(todos => {
+            todos.set("second_class", p_second_class_id)
+            todos.set("goodsClass", p_class_user_id)
+            todos.saveAll().then(res => {
+              resolve([true, res])
+            }).catch(err => {
+              console.log(err)
+            });
+          })
+					
 				})
 			} else {
 				const query = Bmob.Query("Goods");
@@ -135,11 +143,11 @@ export default {
 							query.set("packageContent", good.packageContent)
 							if (good.warning_num != "") {
 								query.set("warning_num", Number(good.warning_num))
-								query.set("stocktype", (Number(good.warning_num) >= Number(that.reserve)) ? 0 : 1) //库存数量类型 0代表库存不足 1代表库存充足
+								query.set("stocktype", (Number(good.warning_num) >= Number(good.reserve)) ? 0 : 1) //库存数量类型 0代表库存不足 1代表库存充足
 							}
 							if (good.max_num != "") {
 								query.set("max_num", Number(good.max_num))
-								query.set("stocktype", (Number(good.max_num) > Number(that.reserve)) ? 2 : 1) //库存数量类型 0代表库存过足 1代表库存充足
+								query.set("stocktype", (Number(good.max_num) > Number(good.reserve)) ? 2 : 1) //库存数量类型 0代表库存过足 1代表库存充足
 							}
 							query.set("second_class", p_second_class_id)
 							query.set("goodsClass", p_class_user_id)
@@ -162,6 +170,8 @@ export default {
 									var queryObj = Bmob.Query('Goods');
 									queryObj.set("order", 1)
 									queryObj.set("goodsIcon", good.goodsIcon ? good.goodsIcon : '')
+                  queryObj.set("second_class", p_second_class_id)
+                  queryObj.set("goodsClass", p_class_user_id)
 									queryObj.set("goodsName", good.goodsName)
 									queryObj.set("costPrice", good.costPrice ? good.costPrice.toString() : '0')
 									queryObj.set("retailPrice", good.retailPrice ? good.retailPrice.toString() : '0')
