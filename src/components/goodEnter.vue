@@ -49,6 +49,12 @@
         <Form :model="formItem" :label-width="100" style="margin-top: 1.875rem;">
 
           <div class="display_flex">
+            <FormItem label="入库仓库">
+              <FormItem prop="producttime">
+                <Input v-model="formItem.stock.stock_name" placeholder="请选择入库仓库" @on-focus="stockShow = true"></Input>
+              </FormItem>
+            </FormItem>
+
             <FormItem label="入库日期">
               <FormItem prop="producttime">
                 <DatePicker type="date" placeholder="请选择入库日期" v-model="formItem.date" format="yyyy-MM-dd"></DatePicker>
@@ -66,14 +72,14 @@
     </div>
 
     <!--选择产品模板-->
-    <goodsS :show="goodsShow" @cancle="goodsShow = false" @confrimGoods="confrimSelectGoods" type="enter" :thisSelectGoods="selectGoods"></goodsS>
+    <goodsS :show="goodsShow" @cancle="goodsShow = false" @confrimGoods="confrimSelectGoods" type="enter"
+      :thisSelectGoods="selectGoods"></goodsS>
+    <stocksS v-if="stockShow" @confrim="chooseStock" @cancle="stockShow = false"></stocksS>
 
   </div>
 </template>
 <script>
   import goodsS from '@/components/component/goodsS.vue';
-  import producerS from '@/components/component/producerS.vue';
-  import shopS from '@/components/component/shopS.vue';
   import stocksS from '@/components/component/stocksS.vue';
 
   import send_temp from '@/serve/send_temp.js';
@@ -84,9 +90,7 @@
   export default {
     components: {
       goodsS,
-      producerS,
-      stocksS,
-      shopS
+      stocksS
     },
     data() {
       return {
@@ -96,15 +100,13 @@
         producerShow: false,
         goodsShow: false,
         formItem: {
-          shop: '',
-          producer: '',
           stock: '',
           all_money: 0,
           real_money: 0,
           real_num: 0, //数量
           beizhu: '', //备注
           Images: [],
-          date: common.getDay(0),//入库日期
+          date: common.getDay(0), //入库日期
         },
         selectIndex: 0,
         selectGoods: [],
@@ -124,16 +126,6 @@
             align: 'center',
           },
           {
-            align: 'center',
-            title: '所属仓库',
-            key: 'stocks',
-            render: (h, params) => {
-              if(params.row.stocks && params.row.stocks.stock_name){
-                return h('div', [params.row.stocks.stock_name])
-              }
-            }
-          },
-          {
 
             align: 'center',
             title: '所属分类',
@@ -142,7 +134,7 @@
           {
             width: 200,
             align: 'center',
-            title: '库存',
+            title: '数量',
             key: 'reserve',
             slot: 'reserve',
           },
@@ -194,11 +186,13 @@
         }
 
         if (selectGoods.length == 0) {
-          that.$Message["error"]({
-            background: true,
-            content: '没有选择入库产品'
-          });
+          this.$Message.error('"没有选择入库产品');
           that.button_disabled = false;
+          return
+        }
+
+        if (that.formItem.stock == null || that.formItem.stock == "" || that.formItem.stock == undefined) {
+          this.$Message.error('"请选择入库仓库');
           return
         }
 
@@ -232,23 +226,20 @@
           tempBills.set("opreater", poiID2);
           tempBills.set('type', 1);
           tempBills.set('extra_type', 2);
-          tempBills.set("status", true); // 操作单详情
           tempBills.set("createdTime", {
-          	"__type": "Date",
-          	"iso": that.formItem.date
+            "__type": "Date",
+            "iso": that.formItem.date
           }); // 操作单详情
+          tempBills.set("status", true); // 操作单详情
 
           let goodsId = {}
-          if (selectGoods[i].stocks && selectGoods[i].stocks.objectId) {
-            const pointer = Bmob.Pointer('stocks');
-            let stockId = pointer.set(selectGoods[i].stocks.objectId);
-            tempBills.set("stock", stockId);
-            detailBills.stock = selectGoods[i].stocks.stock_name
-            if(stockIds.indexOf(selectGoods[i].stocks.objectId) == -1){
-            	stockIds.push(selectGoods[i].stocks.objectId)
-            	stockNames.push(selectGoods[i].stocks.stock_name)
-            }
-          }
+
+          const pointer3 = Bmob.Pointer('stocks');
+          let stockId = pointer3.set(that.formItem.stock.objectId);
+          tempBills.set("stock", stockId);
+          detailBills.stock = that.formItem.stock.stock_name
+          stockIds.push(that.formItem.stock.objectId)
+          stockNames.push(that.formItem.stock.stock_name)
 
           detailBills.goodsName = selectGoods[i].goodsName
           detailBills.modify_retailPrice = (selectGoods[i].modify_retailPrice).toString()
@@ -259,7 +250,7 @@
           goodsId.retailPrice = selectGoods[i].retailPrice
           goodsId.objectId = selectGoods[i].objectId
           goodsId.reserve = num
-          if (selectGoods[i].selected_model) {
+          if (selectGoods[i].selectd_model) {
             goodsId.selected_model = selectGoods[i].selected_model
             goodsId.models = selectGoods[i].models
           }
@@ -278,7 +269,6 @@
             for (let i = 0; i < res.length; i++) {
               bills.push(res[i].success.objectId)
             }
-
             let pointer = Bmob.Pointer('_User')
             let poiID = pointer.set(uid);
 
@@ -305,25 +295,34 @@
             query.set("Images", that.formItem.Images);
             query.set("status", true); // 操作单详情
             query.set("createdTime", {
-            	"__type": "Date",
-            	"iso": that.formItem.date
+              "__type": "Date",
+              "iso": that.formItem.date
             }); // 操作单详情
+
             query.save().then(res => {
               let operationId = res.objectId
-              common.enterAddGoodNum(selectGoods).then(result => { //添加产品数量
+              let createdAt = res.createdAt;
+
+              common.enterAddGoodNumNew(selectGoods,that.formItem.stock).then(result => { //添加产品数量
+
                 that.button_disabled = false;
                 that.$Loading.finish();
                 that.$Message.success('入库成功');
                 that.handleData();
               })
             })
-
           },
           function(error) {
             // 批量新增异常处理
             console.log("异常处理");
           });
 
+      },
+
+      //选择仓库
+      chooseStock(value) {
+        that.formItem.stock = value
+        that.stockShow = false
       },
 
       //输入数量时触发
@@ -376,7 +375,7 @@
           that.formItem.real_num += Number(item.num)
           that.selectGoods.push(item)
           count += 1
-          if(count == goods.length){
+          if (count == goods.length) {
             for (let i = 0; i <= 4; i++) {
               let good = {}
               good.goodsName = ''
@@ -412,7 +411,7 @@
         that.selectGoods.push(good)
       },
 
-      handleData(){
+      handleData() {
         that.selectGoods = []
         for (let i = 0; i <= 8; i++) {
           let good = {}

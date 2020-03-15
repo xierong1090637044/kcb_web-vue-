@@ -337,7 +337,7 @@
           return
         }
 
-        if (row.order ==0) {
+        if (row.order == 0) {
           that.addGoodClick = true
           that.editGood = row
         } else {
@@ -671,31 +671,19 @@
 
       //查询产品列表
       get_productList() {
-        //console.log(that.selected_stocks, that.selected_second_class)
-        const query = Bmob.Query('Goods');
-        query.equalTo('userId', '==', that.userid);
-        query.include('second_class', 'goodsClass', 'stocks')
-        query.equalTo("status", "!=", -1);
-        query.equalTo("order", "!=", 1);
-
-        if (that.selected_second_class) {
-          query.equalTo("second_class", "==", that.selected_second_class);
+        let params = {
+          funcName: 'Goods',
+          data: {
+            uid: that.userid,
+            content: that.search_goodMame,
+            pageSize: 200,
+            pageNum: that.pege_number,
+            order: "-createdAt"
+          }
         }
-
-        const query1 = query.equalTo("goodsName", "==", {
-          "$regex": "" + that.search_goodMame + ".*"
-        });
-        const query2 = query.equalTo("packageContent", "==", {
-          "$regex": "" + that.search_goodMame + ".*"
-        });
-        query.or(query1, query2);
-
-        query.limit(that.page_size);
-        query.skip(that.page_size * (that.pege_number - 1));
-        query.order("-createdAt"); //按照条件降序
-        query.find().then(res => {
-          console.log(res);
-          for (let item of res) {
+        Bmob.functions(params.funcName, params.data).then(function(res) {
+          console.log(res)
+          for (let item of res.data) {
             item.class = (item.goodsClass ? (item.goodsClass.class_text || "") : "") + "    " + (item.second_class ?
               (item.second_class
                 .class_text || "") : "")
@@ -710,10 +698,10 @@
                 item.qrcodeImg = jrQrcode.getQrBase64(item.productCode)
             }
           }
-          this.goods = res;
-          this.loading = false;
+          that.goods = res.data;
+          that.loading = false;
 
-        });
+        })
       },
 
       getAllproducts() {
@@ -737,12 +725,14 @@
               query.find().then(res => {
                 for (let item of res) {
                   if (item.order == 0) {
-                    item.productCode = (item.productCode) ? item.productCode + '-' + true + '-new' : item.objectId +
+                    item.productCode = (item.productCode) ? item.productCode + '-' + true + '-new' :
+                      item.objectId +
                       '-' +
                       false + '-new',
                       item.qrcodeImg = jrQrcode.getQrBase64(item.productCode)
                   } else {
-                    item.productCode = (item.productCode) ? item.productCode + '-' + true + '-old' : item.objectId +
+                    item.productCode = (item.productCode) ? item.productCode + '-' + true + '-old' :
+                      item.objectId +
                       '-' +
                       false + '-old',
                       item.qrcodeImg = jrQrcode.getQrBase64(item.productCode)

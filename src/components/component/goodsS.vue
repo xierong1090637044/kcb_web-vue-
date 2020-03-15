@@ -2,12 +2,12 @@
   <div>
     <Modal title="选择产品" :closable="false" width="80%" :value="show" @on-cancel="outData" @on-ok="confrimGoods">
       <div class="display_flex" style="margin-bottom: 20px;">
-        <div class="display_flex">
+        <!--<div class="display_flex">
           <div>选择仓库：</div>
           <Select style="width:300px" @on-change='selectStock'>
             <Option v-for="item in stockList" :value="item.objectId" :key="item.objectId">{{ item.stock_name }}</Option>
           </Select>
-        </div>
+        </div>-->
 
         <Input search enter-button placeholder="请输入产品名字" style="width: 300px;margin-left: 20px;" @on-search="searchGood" />
       </div>
@@ -239,44 +239,25 @@
       get_productList(stockId) {
         that.select_goods = [];
 
-        const query = Bmob.Query('Goods');
-        query.equalTo('userId', '==', that.userid);
-				query.equalTo("status", "!=", -1);
-				query.equalTo("order", "!=", 0);
-				if(that.search.stockId)query.equalTo('stocks', '==', that.search.stockId);
-        query.include('second_class', 'goodsClass', 'stocks','header')
-				const query1 = query.equalTo("goodsName", "==", {
-					"$regex": "" + that.search.searchGoodText + ".*"
-				});
-				const query2 = query.equalTo("packageContent", "==", {
-					"$regex": "" + that.search.searchGoodText + ".*"
-				});
-				query.or(query1, query2);
-
-        query.limit(that.page_size);
-        query.skip(that.page_size * (that.pege_number - 1));
-        query.order("-createdAt","goodsName",); //按照条件降序
-        query.find().then(res => {
-          console.log(res);
-          for (let item of res) {
-
-            //采购或者调拨时判断库存
-            if(that.type =="out" || that.type == "allocation"){
-              if (item.reserve <= 0) {
-                item._disabled = true
-              }
-            }
+        let params = {
+          funcName: 'Goods',
+          data: {
+            uid: that.userid,
+            content: that.search.searchGoodText,
+            pageSize: 200,
+            pageNum: that.pege_number,
+            order: "-createdAt"
+          }
+        }
+        Bmob.functions(params.funcName, params.data).then(function(res) {
+          console.log(res.data)
+          for (let item of res.data) {
 
             for(let selectgGood of that.thisSelectGoods){
               if(selectgGood.objectId == item.objectId){
                 item._checked = true
                 that.select_goods.push(item)
               }
-            }
-
-            if(item.order == 1){
-              item.packingUnit = item.header.packingUnit || ''
-              item.packageContent = item.header.packageContent || ''
             }
 
             item.class = (item.goodsClass ? (item.goodsClass.class_text || "") : "") + "    " + (item.second_class ?
@@ -293,9 +274,10 @@
               item.selected_model = item.models
             }
           }
-          this.goods = res;
-          this.loading = false;
-        });
+          that.goods = res.data;
+          that.loading = false;
+
+        })
       },
 
     }
