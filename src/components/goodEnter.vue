@@ -52,6 +52,7 @@
             <FormItem label="入库仓库">
               <FormItem prop="producttime">
                 <Input v-model="formItem.stock.stock_name" placeholder="请选择入库仓库" @on-focus="stockShow = true"></Input>
+								<Icon type="ios-arrow-down" slot="suffix" />
               </FormItem>
             </FormItem>
 

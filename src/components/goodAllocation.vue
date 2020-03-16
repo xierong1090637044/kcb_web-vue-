@@ -51,10 +51,12 @@
           <div style="display: flex;">
             <FormItem label="调入仓库" style="width: 25%;">
               <Input v-model="formItem.inStock.stock_name" placeholder="请选择调入仓库" @on-focus="chooseStockClick = true;stockType='in'"></Input>
+							<Icon type="ios-arrow-down" slot="suffix" />
             </FormItem>
 
             <FormItem label="调出仓库" style="width: 25%;">
               <Input v-model="formItem.outStock.stock_name" placeholder="请选择调出仓库" @on-focus="chooseStockClick = true;stockType='out'"></Input>
+							<Icon type="ios-arrow-down" slot="suffix" />
             </FormItem>
 
             <FormItem label="调拨日期">
