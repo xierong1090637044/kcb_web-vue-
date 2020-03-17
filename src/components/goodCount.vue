@@ -49,7 +49,7 @@
         <Form :model="formItem" :label-width="100" style="margin-top: 1.875rem;">
 
           <div class="display_flex">
-            <FormItem label="盘点仓库" style="width: 25%;">
+            <FormItem label="盘点仓库">
               <Input v-model="formItem.stock.stock_name" placeholder="请选择盘点仓库" @on-focus="chooseStockClick = true;"></Input>
 							<Icon type="ios-arrow-down" slot="suffix" />
             </FormItem>

@@ -10,21 +10,7 @@
 		<div style="background: #FFFFFF;padding-bottom: 1.25rem;">
 			<div>
 				<div class="display_flex_bet">
-					<Form :model="formItem" :label-width="100" style="display: flex;">
-						<FormItem label="入库仓库">
-							<Input v-model="formItem.stock.stock_name" placeholder="请选择入库仓库" @on-focus="stockShow = true"></Input>
-							<Icon type="ios-arrow-down" slot="suffix" />
-						</FormItem>
-
-						<FormItem label="供货商">
-							<Input placeholder="选择供货商" :readonly="true" @on-focus="producerShow = true" :value="formItem.producer.producer_name">
-							<Icon type="ios-arrow-down" slot="suffix" />
-							</Input>
-						</FormItem>
-						<FormItem label="本次付款">
-							<Input placeholder="请输入本次实际付款金额" v-model="formItem.real_money"></Input>
-						</FormItem>
-					</Form>
+					<div></div>
 					<div style="text-align: right;margin-bottom: 1.5rem;">
 						<Button type="primary" @click="handleSubmit(2)" :disabled="button_disabled">确定采购</Button>
 					</div>
@@ -66,19 +52,36 @@
 
 			<div style="padding: 0 0.625rem;">
 				<Form :model="formItem" :label-width="100" style="margin-top: 1.875rem;">
-
+					
 					<div style="display: flex;">
-						<FormItem label="采购日期" style="width: 15.625rem;">
+						<FormItem label="入库仓库">
+							<Input v-model="formItem.stock.stock_name" placeholder="请选择入库仓库" @on-focus="stockShow = true"></Input>
+							<Icon type="ios-arrow-down" slot="suffix" />
+						</FormItem>
+						
+						<FormItem label="采购日期">
 							<FormItem prop="producttime">
 								<DatePicker type="date" placeholder="请选择采购日期" v-model="formItem.date" format="yyyy-MM-dd"></DatePicker>
 							</FormItem>
 						</FormItem>
+					
+						<FormItem label="供货商">
+							<Input placeholder="选择供货商" :readonly="true" @on-focus="producerShow = true" :value="formItem.producer.producer_name">
+							<Icon type="ios-arrow-down" slot="suffix" />
+							</Input>
+						</FormItem>
+						<FormItem label="本次付款">
+							<Input placeholder="请输入本次实际付款金额" v-model="formItem.real_money"></Input>
+						</FormItem>
+					</div>
 
-						<FormItem label="备注" style="width: 25rem;margin-left: 1.875rem;">
+					<div style="display: flex;">
+						
+						<FormItem label="备注">
 							<Input v-model="formItem.beizhu" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入备注"></Input>
 						</FormItem>
 
-						<FormItem label="凭证图" style="width: 25rem;">
+						<FormItem label="凭证图" >
 							<uploadImg @selectImg="selectImg"></uploadImg>
 						</FormItem>
 					</div>

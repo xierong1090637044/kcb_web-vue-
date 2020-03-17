@@ -4,6 +4,9 @@ import ViewUI from 'view-design';
 import Element from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import '@/assets/all.css';
+import VCharts from 'v-charts'
+
+Vue.use(VCharts)
 Vue.use(Element);
 
 // import style

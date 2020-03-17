@@ -5,6 +5,7 @@ import App from './App'
 import router from './router'
 import common from '@/serve/common.js';
 import expandRow from '@/components/component/expandRow.vue';
+import store from './store/index.js'
 
 Vue.config.productionTip = false
 
@@ -12,6 +13,7 @@ Vue.config.productionTip = false
 new Vue({
   el: '#app',
   router,
+	store,
   components: { App },
   template: '<App/>'
 })
