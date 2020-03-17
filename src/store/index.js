@@ -5,7 +5,7 @@ Vue.use(Vuex);
 
 const state = {
 	user: JSON.parse(localStorage.getItem('user')),
-	userid: JSON.parse(localStorage.getItem('user')).objectId || '',
+	userid: JSON.parse(localStorage.getItem('user'))?JSON.parse(localStorage.getItem('user')).objectId : '',
 }
 const mutations = {
 	increment(state) {

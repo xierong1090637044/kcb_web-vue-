@@ -73,7 +73,9 @@
 
 		mounted() {
 			that = this;
+			that.$store.state.userid = JSON.parse(localStorage.getItem('user')).objectId;
 			this.gettoday_detail();
+			
 		},
 
 		methods: {
