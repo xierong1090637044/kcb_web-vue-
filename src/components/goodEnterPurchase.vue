@@ -305,8 +305,10 @@
 					let stockId = pointer3.set(that.formItem.stock.objectId);
 					tempBills.set("stock", stockId);
 					detailBills.stock = that.formItem.stock.stock_name
-					stockIds.push(that.formItem.stock.objectId)
-					stockNames.push(that.formItem.stock.stock_name)
+					if (stockIds.indexOf(that.formItem.stock.objectId) == -1) {
+						stockIds.push(that.formItem.stock.objectId)
+						stockNames.push(that.formItem.stock.stock_name)
+					}
 
 					detailBills.goodsName = selectGoods[i].goodsName
 					detailBills.modify_retailPrice = (selectGoods[i].modify_retailPrice).toString()
