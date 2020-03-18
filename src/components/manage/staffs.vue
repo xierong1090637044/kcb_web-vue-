@@ -37,7 +37,7 @@
 		</Modal>
 
 		<!--添加员工-->
-		<Modal v-model="modal3" title="添加员工" @on-ok="add_staff" @on-cancel="handleData"  width="60%">
+		<Modal v-model="modal3" title="添加员工" @on-ok="add_staff" @on-cancel="handleData" width="60%">
 			<Form :label-width="80">
 				<FormItem label="名字">
 					<Input v-model="staff.name" placeholder="请输入员工的名字"></Input>
@@ -70,32 +70,32 @@
 				<FormItem label="库存模块权限" :label-width="120">
 					<CheckboxGroup v-model="staff.rights.current" style="text-align: left;">
 						<span v-for="(item,index) in manage" @click="getThisIndex(index)">
-							<Checkbox  :label="''+index" :key="index">
+							<Checkbox :label="''+index" :key="index">
 								<span>{{item.name}}</span>
 							</Checkbox>
 						</span>
 					</CheckboxGroup>
 				</FormItem>
 
-        <FormItem label="财务模块权限" :label-width="120">
-        	<CheckboxGroup v-model="staff.rights.moneyCurrent" style="text-align: left;">
-        		<span v-for="(item,index) in moneyAuth">
-        			<Checkbox  :label="''+index" :key="index">
-        				<span>{{item.name}}</span>
-        			</Checkbox>
-        		</span>
-        	</CheckboxGroup>
-        </FormItem>
+				<FormItem label="财务模块权限" :label-width="120">
+					<CheckboxGroup v-model="staff.rights.moneyCurrent" style="text-align: left;">
+						<span v-for="(item,index) in moneyAuth">
+							<Checkbox :label="''+index" :key="index">
+								<span>{{item.name}}</span>
+							</Checkbox>
+						</span>
+					</CheckboxGroup>
+				</FormItem>
 
-        <FormItem label="分析模块权限" :label-width="120">
-        	<CheckboxGroup v-model="staff.rights.analysisCurrent" style="text-align: left;">
-        		<span v-for="(item,index) in analysisAuth">
-        			<Checkbox  :label="''+index" :key="index">
-        				<span>{{item.name}}</span>
-        			</Checkbox>
-        		</span>
-        	</CheckboxGroup>
-        </FormItem>
+				<FormItem label="分析模块权限" :label-width="120">
+					<CheckboxGroup v-model="staff.rights.analysisCurrent" style="text-align: left;">
+						<span v-for="(item,index) in analysisAuth">
+							<Checkbox :label="''+index" :key="index">
+								<span>{{item.name}}</span>
+							</Checkbox>
+						</span>
+					</CheckboxGroup>
+				</FormItem>
 
 				<FormItem label="记录模块权限" :label-width="120">
 					<CheckboxGroup v-model="staff.rights.recodecurrent" style="text-align: left;">
@@ -187,19 +187,17 @@
 					}
 				],
 
-        //财务权限模块
-        moneyAuth:[{
-        		id: 1,
-        		name: '财务管理模块查看'
-        	}
-        ],
+				//财务权限模块
+				moneyAuth: [{
+					id: 1,
+					name: '财务管理模块查看'
+				}],
 
-        //分析模块权限
-        analysisAuth:[{
-        		id: 1,
-        		name: '分析模块查看'
-        	}
-        ],
+				//分析模块权限
+				analysisAuth: [{
+					id: 1,
+					name: '分析模块查看'
+				}],
 				recode: [{
 						id: 1,
 						name: '入库记录'
@@ -220,10 +218,10 @@
 				others: [{
 					id: 1,
 					name: '进价隐藏'
-				},{
+				}, {
 					id: 2,
 					name: '审核'
-				},{
+				}, {
 					id: 3,
 					name: '看板查看'
 				}],
@@ -236,8 +234,8 @@
 					disabled: true,
 					rights: {
 						current: [],
-            analysisCurrent:[],
-            moneyCurrent:[],
+						analysisCurrent: [],
+						moneyCurrent: [],
 						recodecurrent: [],
 						othercurrent: [], //其他权限
 					},
@@ -339,13 +337,13 @@
 
 			//选择第一个权限是触发
 			getThisIndex(index) {
-				console.log(index,that.staff.rights.current,that.staff.rights.current.indexOf('2'))
+				console.log(index, that.staff.rights.current, that.staff.rights.current.indexOf('2'))
 				if (index == 2) {
-					setTimeout(function(){
-						if(that.staff.rights.current.indexOf('2') !=-1){
+					setTimeout(function() {
+						if (that.staff.rights.current.indexOf('2') != -1) {
 							that.newStock.show = true;
 						}
-					},100)
+					}, 100)
 				}
 			},
 
@@ -355,16 +353,21 @@
 				if (that.staff.name) {
 					this.$Loading.start();
 					staffs.add_staff(that.staff).then(res => {
-						staffs.get_stafflist().then(res => {
-							this.$Message.success('成功');
+						if (res) {
+							staffs.get_stafflist().then(res => {
+								this.$Message.success('成功');
+								this.$Loading.finish();
+								that.data = res;
+							})
+						} else {
+							this.$Message.error('已存在此账号');
 							this.$Loading.finish();
-							that.data = res;
-						})
+						}
 					});
 				} else {
 					this.$Message.error('请输入员工名字');
+					this.$Loading.finish();
 				}
-
 			},
 
 			//修改员工
@@ -381,8 +384,8 @@
 				that.staff.rights.current = row.rights.current || []
 				that.staff.rights.recodecurrent = row.rights.recodecurrent || []
 				that.staff.rights.othercurrent = row.rights.othercurrent || []
-        that.staff.rights.analysisCurrent = row.rights.analysisCurrent || []
-        that.staff.rights.moneyCurrent = row.rights.moneyCurrent || []
+				that.staff.rights.analysisCurrent = row.rights.analysisCurrent || []
+				that.staff.rights.moneyCurrent = row.rights.moneyCurrent || []
 			},
 
 			//删除分类点击
@@ -393,11 +396,11 @@
 
 			//确定删除
 			del() {
-				that.modal2 = false,
-					this.$Loading.start();
+				this.$Loading.start();
 				staffs.delete_staff(that.staff.objectId).then(res => {
 					staffs.get_stafflist().then(res => {
-						this.$Message.success('删除成功');
+						that.modal2 = false,
+							this.$Message.success('删除成功');
 						this.$Loading.finish();
 						that.data = res;
 					})
@@ -417,8 +420,8 @@
 						current: [],
 						recodecurrent: [],
 						othercurrent: [],
-            analysisCurrent:[],
-            moneyCurrent:[],
+						analysisCurrent: [],
+						moneyCurrent: [],
 					},
 					objectId: "",
 					selectStock: [], //选择的仓库

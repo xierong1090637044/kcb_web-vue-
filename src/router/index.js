@@ -73,6 +73,22 @@ export default new Router({
           name: 'goodAllocation',
           component: goodAllocation
         },
+				{
+				  path: 'goodEnterPurchaseReturn',
+				  name: 'goodEnterPurchaseReturn',
+				  component: () => import('@/components/goodEnterPurchaseReturn'), // vue路由懒加载  异步加载
+				  meta: {
+				    title: '采购退货',
+				  }
+				},
+				{
+				  path: 'goodOutBuyReturn',
+				  name: 'goodOutBuyReturn',
+				  component: () => import('@/components/goodOutBuyReturn'), // vue路由懒加载  异步加载
+				  meta: {
+				    title: '销售退货',
+				  }
+				},
         {
           path: 'goodCount',
           name: 'goodCount',

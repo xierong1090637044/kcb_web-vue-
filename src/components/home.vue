@@ -54,6 +54,7 @@
                 采购
               </template>
               <MenuItem name="2-1" to='/home/goodEnterPurchase'>采购入库</MenuItem>
+							<!--<MenuItem name="2-2" to='/home/goodEnterPurchaseReturn'>采购退货</MenuItem>-->
             </Submenu>
 
             <Submenu name="3">
@@ -62,6 +63,7 @@
                 销售
               </template>
               <MenuItem name="3-1" to='/home/goodOutBuy'>销售出库</MenuItem>
+							<!--<MenuItem name="3-2" to='/home/goodOutBuyReturn'>销售退货</MenuItem>-->
             </Submenu>
 
             <MenuItem name="4" to='/home/goods'>
@@ -83,7 +85,7 @@
                 <Icon type="ios-copy" style="font-size: 20px;"></Icon>
                 管理
               </template>
-              <MenuItem name="2-1" to='/home/manage/category'>类别管理</MenuItem>
+              <MenuItem name="2-1" to='/home/manage/category'>产品类别管理</MenuItem>
               <MenuItem name="2-2" to='/home/manage/stocks'>仓库管理</MenuItem>
               <!--<MenuItem name="2-3" to='/home/manage/shops'>门店管理</MenuItem>-->
               <MenuItem name="2-4" to='/home/manage/staffs'>员工管理</MenuItem>

@@ -31,9 +31,6 @@ export default {
 			const pointer = Bmob.Pointer('_User');
 			let poiID = pointer.set(userid);
 			
-			const pointer1 = Bmob.Pointer('shops');
-			let shopId = pointer1.set(params.shop);
-			
 			if (params.objectId) {//修改操作				
 				const pointer = Bmob.Pointer('_User');
 				let poiID = pointer.set(userid);
@@ -62,7 +59,6 @@ export default {
 			} else {
 				
 				const query = Bmob.Query("_User");
-				query.equalTo("masterId", "==", userid);
 				query.equalTo("mobilePhoneNumber", "==", params.mobilePhoneNumber);
 				query.find().then(res => {
 					console.log(res)
@@ -70,7 +66,6 @@ export default {
 				
 						const query = Bmob.Query('_User');
 						query.set("username", params.mobilePhoneNumber);
-						query.set("shop",shopId);
 						query.set("nickName", params.name);
 						query.set("password", params.password);
 						query.set("pwd", params.password);
