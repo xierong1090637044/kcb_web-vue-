@@ -71,7 +71,7 @@
 							</Input>
 						</FormItem>
 						<FormItem label="本次付款">
-							<Input placeholder="请输入本次实际付款金额" v-model="formItem.real_money"></Input>
+							<Input placeholder="请输入本次实际退货金额" v-model="formItem.real_money"></Input>
 						</FormItem>
 					</div>
 
@@ -261,6 +261,9 @@
 				let detailObj = [];
 				let stockIds = [];
 				let stockNames = [];
+				
+				const pointer3 = Bmob.Pointer('stocks');
+				let stockId = pointer3.set(that.formItem.stock.objectId);
 
 				for (let i = 0; i < selectGoods.length; i++) {
 					let num = Number(selectGoods[i].reserve) + selectGoods[i].num;
@@ -301,8 +304,7 @@
 
 					let goodsId = {}
 
-					const pointer3 = Bmob.Pointer('stocks');
-					let stockId = pointer3.set(that.formItem.stock.objectId);
+					
 					tempBills.set("stock", stockId);
 					detailBills.stock = that.formItem.stock.stock_name
 					if (stockIds.indexOf(that.formItem.stock.objectId) == -1) {
@@ -390,6 +392,7 @@
 
 						query.set("all_money", that.formItem.all_money);
 						query.set("Images", that.formItem.Images);
+						query.set("stock", stockId);
 						query.set("status", true); // 操作单详情
 						query.set("recordType", "new"); //"new"代表新版的销售记录
 						query.save().then(res => {

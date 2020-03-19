@@ -91,7 +91,7 @@
 		<!--选择产品模板-->
 		<goodsS :show="goodsShow" @cancle="goodsShow = false" @confrimGoods="confrimSelectGoods" type="out" :thisSelectGoods="selectGoods"></goodsS>
 		<!--生产商列表-->
-		<customS @cancle="customShow = false" :show="customShow" @select="selectProducter"></customS>
+		<customS @cancle="customShow = false" @select="selectProducter" v-if="customShow"></customS>
 		<stocksS v-if="stockShow" @confrim="chooseStock" @cancle="stockShow = false"></stocksS>
 
 	</div>

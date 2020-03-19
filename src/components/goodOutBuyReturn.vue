@@ -69,7 +69,7 @@
 							</Input>
 						</FormItem>
 						<FormItem label="本次实付">
-							<Input placeholder="请输入本次实际收款金额" v-model="formItem.real_money"></Input>
+							<Input placeholder="请输入本次实际退货金额" v-model="formItem.real_money"></Input>
 						</FormItem>
 					</div>
 					<div style="display: flex;">
@@ -91,7 +91,7 @@
 		<!--选择产品模板-->
 		<goodsS :show="goodsShow" @cancle="goodsShow = false" @confrimGoods="confrimSelectGoods" type="out" :thisSelectGoods="selectGoods"></goodsS>
 		<!--生产商列表-->
-		<customS @cancle="customShow = false" :show="customShow" @select="selectProducter"></customS>
+		<customS @cancle="customShow = false" @select="selectProducter" v-if="customShow"></customS>
 		<stocksS v-if="stockShow" @confrim="chooseStock" @cancle="stockShow = false"></stocksS>
 
 	</div>
@@ -259,6 +259,9 @@
 				let detailObj = [];
 				let stockIds = [];
 				let stockNames = [];
+				
+				let pointer3 = Bmob.Pointer('stocks');
+				let stockId = pointer3.set(that.formItem.stock.objectId);
 
 				for (let i = 0; i < selectGoods.length; i++) {
 					let num = Number(selectGoods[i].reserve) + selectGoods[i].num;
@@ -299,8 +302,6 @@
 
 					let goodsId = {}
 
-					const pointer3 = Bmob.Pointer('stocks');
-					let stockId = pointer3.set(that.formItem.stock.objectId);
 					tempBills.set("stock", stockId);
 					detailBills.stock = that.formItem.stock.stock_name
 					if (stockIds.indexOf(that.formItem.stock.objectId) == -1) {
@@ -366,6 +367,7 @@
 							"iso": that.formItem.date
 						});
 						query.set("recordType", "new"); //"new"代表新版的销售记录
+						query.set("stock", stockId);
 
 						if (that.formItem.custom) {
 							let custom = Bmob.Pointer('customs');

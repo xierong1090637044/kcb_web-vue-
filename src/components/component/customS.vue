@@ -1,7 +1,6 @@
 <template>
 	<div>
-		<Modal title="选择客户" :value="show" :closable="false" width="80%" @on-cancle="outData">
-
+		<Modal title="选择客户" :closable="false" width="80%" :value="true" @on-cancel="outData">
 			<Table :columns="columns" :data="data" stripe border :height="screenHeight - 350" :loading="loading">
 				<template slot-scope="{ row, index }" slot="action">
 					<Button type="primary" size="small" style="margin-right: 5px" @click="choose(row)">选择</Button>

@@ -48,8 +48,6 @@
 					path: '/404'
 				})
 			}
-
-			console.log(this.getUserAgent())
 		},
 
 		methods: {

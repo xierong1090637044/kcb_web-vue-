@@ -1,8 +1,10 @@
-let userid = localStorage.getItem('user')?JSON.parse(localStorage.getItem('user')).objectId : "";
-let uid = localStorage.getItem('uid');
+
 export default {
 	//得到客户列表
 	get_customList(disabled,search_text) {
+		let userid = localStorage.getItem('user')?JSON.parse(localStorage.getItem('user')).objectId : "";
+		let uid = localStorage.getItem('uid');
+		
 		return new Promise((resolve, reject) => {
 
 			const query = Bmob.Query("customs");
@@ -24,6 +26,9 @@ export default {
 
   //得到客户的销售记录
   getCustomSellList(params){
+		let userid = localStorage.getItem('user')?JSON.parse(localStorage.getItem('user')).objectId : "";
+		let uid = localStorage.getItem('uid');
+		
     return new Promise((resolve, reject) => {
       const query = Bmob.Query("order_opreations");
       query.equalTo("master", "==", uid);
@@ -46,6 +51,9 @@ export default {
 
   //得到所有的客户销售列表
   getAllCustomSellList(params) {
+		let userid = localStorage.getItem('user')?JSON.parse(localStorage.getItem('user')).objectId : "";
+		let uid = localStorage.getItem('uid');
+		
     return new Promise((resolve, reject) => {
       const query = Bmob.Query("order_opreations");
       query.equalTo("master", "==", uid);
