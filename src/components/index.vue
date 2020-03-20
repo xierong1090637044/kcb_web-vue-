@@ -1,43 +1,66 @@
 <template>
-	<div style="position: relative;">
+	<div style="position: relative;width: 100%;height: 100%;" class="display_flex_bet">
 		<Spin size="large" fix v-if="loading"></Spin>
 
-		<div style="padding:20px 0;background: #FFFFFF;">
-			<div style="padding:0 0 20px 0;font-size: 16px;font-weight: bold;">库存概况：</div>
-			<Row>
-				<Col span="5">
-				<Card shadow style="background: #2db7f5;color: #fff;">
-					<p slot="title" style="color:#fff">今日详情</p>
-					<p v-if="todayDet.reserveIn">今日入库：{{todayDet.reserveIn.num}}</p>
-					<p v-if="todayDet.reserveOut">今日出库：{{todayDet.reserveOut.num}}</p>
+		<div style="width: 65%;height: 100%;">
+			<div style="padding:20px 0;background: #FFFFFF;">
+				<div style="padding:0 0 20px 0;font-size: 16px;font-weight: bold;">库存概况：</div>
+				<Row>
+					<Col span="5">
+					<Card shadow style="background: #2db7f5;color: #fff;">
+						<p slot="title" style="color:#fff">今日详情</p>
+						<p v-if="todayDet.reserveIn">今日入库：{{todayDet.reserveIn.num}}</p>
+						<p v-if="todayDet.reserveOut">今日出库：{{todayDet.reserveOut.num}}</p>
+					</Card>
+					</Col>
+					<Col span="5" offset="2">
+					<Card shadow style="background: #ed4014;color: #fff;">
+						<p slot="title" style="color:#fff">库存详情</p>
+						<p>库存总量：{{total_reserve}}</p>
+						<p>库存成本：{{total_money}}</p>
+						<p>库存种类：{{total_products}}</p>
+					</Card>
+					</Col>
+				</Row>
+			</div>
+			<Row type="flex" justify="start">
+				<Col span="12">
+				<Card dis-hover>
+					<p slot="title">当月出入库</p>
+					<ve-line :data="chartData" :settings="chartSettings" :judge-width="true"></ve-line>
 				</Card>
 				</Col>
-				<Col span="5" offset="2">
-				<Card shadow style="background: #ed4014;color: #fff;">
-					<p slot="title" style="color:#fff">库存详情</p>
-					<p>库存总量：{{total_reserve}}</p>
-					<p>库存成本：{{total_money}}</p>
-					<p>库存种类：{{total_products}}</p>
+
+
+				<Col span="11" offset="1">
+				<Card dis-hover>
+					<p slot="title">当月出入库金额</p>
+					<ve-line :data="chartData1" :settings="chartSettings" :judge-width="true"></ve-line>
 				</Card>
 				</Col>
 			</Row>
 		</div>
-		<Row type="flex" justify="start">
-			<Col span="12">
-			<Card dis-hover>
-				<p slot="title">当月出入库</p>
-				<ve-line :data="chartData" :settings="chartSettings" :judge-width="true"></ve-line>
+		
+		<!--右边部分-->
+		<div style="width: 30%;height: 100%;">
+			<!--公告部分-->
+			<Card>
+				<p slot="title">
+					<Icon type="ios-film-outline"></Icon>
+					Classic film
+				</p>
+				<a href="#" slot="extra" @click.prevent="changeLimit">
+					<Icon type="ios-loop-strong"></Icon>
+					Change
+				</a>
+				<ul>
+					<li v-for="item in randomMovieList">
+						
+					</li>
+				</ul>
 			</Card>
-			</Col>
+		</div>
 
-
-			<Col span="11" offset="1">
-			<Card dis-hover>
-				<p slot="title">当月出入库金额</p>
-				<ve-line :data="chartData1" :settings="chartSettings" :judge-width="true"></ve-line>
-			</Card>
-			</Col>
-		</Row>
 
 	</div>
 </template>
@@ -75,7 +98,7 @@
 			that = this;
 			that.$store.state.userid = JSON.parse(localStorage.getItem('user')).objectId;
 			this.gettoday_detail();
-			
+
 		},
 
 		methods: {
@@ -101,7 +124,7 @@
 				let params = {
 					funcName: 'stockAll',
 					data: {
-						uid:  that.$store.state.userid,
+						uid: that.$store.state.userid,
 					}
 				}
 				Bmob.functions(params.funcName, params.data).then(function(res) {
@@ -126,7 +149,7 @@
 				let params = {
 					funcName: 'chartOutIn',
 					data: {
-						uid:  that.$store.state.userid,
+						uid: that.$store.state.userid,
 						year: now_year,
 						month: now_month
 					}
