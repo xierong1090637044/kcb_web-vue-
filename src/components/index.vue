@@ -2,7 +2,7 @@
 	<div style="position: relative;width: 100%;height: 100%;" class="display_flex_bet">
 		<Spin size="large" fix v-if="loading"></Spin>
 
-		<div style="width: 65%;height: 100%;">
+		<div style="width: 70%;height: 100%;">
 			<div style="padding:20px 0;background: #FFFFFF;">
 				<div style="padding:0 0 20px 0;font-size: 16px;font-weight: bold;">库存概况：</div>
 				<Row>
@@ -40,22 +40,25 @@
 				</Col>
 			</Row>
 		</div>
-		
+
 		<!--右边部分-->
-		<div style="width: 30%;height: 100%;">
+		<div style="width: 25%;height: 100%;">
 			<!--公告部分-->
 			<Card>
-				<p slot="title">
-					<Icon type="ios-film-outline"></Icon>
-					Classic film
-				</p>
-				<a href="#" slot="extra" @click.prevent="changeLimit">
-					<Icon type="ios-loop-strong"></Icon>
-					Change
-				</a>
+				<div class="display_flex_bet">
+					<div slot="title" class="display_flex">
+						<img src="@/assets/gonggao.png" style="width: 1.25rem;height: 1.25rem;" />
+						<span style="margin-left: 0.3125rem;">公告</span>
+					</div>
+					<div slot="title" class="display_flex">
+						<Icon type="ios-arrow-back" />
+						<Icon type="ios-arrow-forward" />
+					</div>
+				</div>
+				
 				<ul>
 					<li v-for="item in randomMovieList">
-						
+
 					</li>
 				</ul>
 			</Card>
@@ -90,7 +93,8 @@
 				chartData1: {
 					columns: ['日期', '出库金额', '入库金额'],
 					rows: []
-				}
+				},
+				noticeList:[]
 			};
 		},
 
@@ -158,6 +162,15 @@
 					let result = res.data.outChart
 					that.chartData.rows = result
 					that.chartData1.rows = result
+					
+					let params = {
+						funcName: 'indexNotice',
+						data: {}
+					}
+					Bmob.functions(params.funcName, params.data).then(function(res) {
+						that.noticeList =res.results
+						console.log(that.noticeList)
+					})
 				});
 			},
 
