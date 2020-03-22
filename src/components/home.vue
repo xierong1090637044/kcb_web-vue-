@@ -4,7 +4,7 @@
       <Header>
         <div class="display_flex_bet">
           <div class="display_flex">
-            <img src="../assets/logo.png" class="headerIcon" />
+            <img src="@/assets/logo.png" class="headerIcon" />
             <div class="layout-logo">库存管理V 1.0.0</div>
           </div>
           <div class="display_flex" style="color: #fff;">
@@ -28,7 +28,7 @@
       </Header>
       <Layout>
         <Sider hide-trigger :style="{height:screenHeight - 64+'px'}">
-          <Menu :active-name="activename" theme="light" width="auto">
+          <Menu theme="light" width="auto">
 
             <MenuItem name="1" to='/home/index'>
             <div class="display_flex">
@@ -64,6 +64,15 @@
               </template>
               <MenuItem name="3-1" to='/home/goodOutBuy'>销售出库</MenuItem>
 							<MenuItem name="3-2" to='/home/goodOutBuyReturn'>销售退货</MenuItem>
+            </Submenu>
+
+            <Submenu name="8">
+              <template slot="title">
+                <Icon type="md-cash" style="font-size: 20px;"></Icon>财务管理
+              </template>
+              <MenuItem name="8-1" to='/home/finance/financeLsit'>我的账户</MenuItem>
+            	<!--<MenuItem name="8-2" to='/home/goodOutBuyReturn'>收入类别</MenuItem>
+              <MenuItem name="8-3" to='/home/goodOutBuyReturn'>支出类别</MenuItem>-->
             </Submenu>
 
             <MenuItem name="4" to='/home/goods'>
@@ -111,8 +120,6 @@
 
     data() {
       return {
-        activeIndex: '1',
-        activename: "1",
         user: JSON.parse(localStorage.getItem('user')),
         screenHeight: window.innerHeight,
       }
@@ -136,10 +143,6 @@
         this.$router.push({
           path: '/'
         })
-      },
-
-      handleSelect(key, keyPath) {
-        console.log(key, keyPath);
       },
     },
 

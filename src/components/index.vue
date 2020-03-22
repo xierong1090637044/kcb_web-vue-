@@ -56,9 +56,9 @@
           </div>
         </div>
 
-        <ul style="padding:0.625rem 0.625rem 0;">
+        <ul style="padding:0.625rem 0.625rem 0;height: 15.625rem;overflow-y: scroll;" class="noticeContent">
           <li v-for="(item,index) in noticeList" :key="index" style="margin-bottom: 0.3125rem;">
-            {{item.content}}
+            {{index+1}}、{{item.content}}
           </li>
         </ul>
       </Card>
@@ -201,6 +201,23 @@
 </script>
 
 <style>
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 1px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+    background: #535353;
+  }
+
+  ::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    background: #ededed;
+  }
   .icon {
     width: 1em;
     height: 1em;

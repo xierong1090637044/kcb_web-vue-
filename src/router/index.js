@@ -64,31 +64,36 @@ export default new Router({
         requireAuth: false // 只要此字段为true，必须做鉴权处理
       }
     },
+
     {
       path: '/home/',
       name: 'home',
       component: home,
-      children: [{
+      children: [{ //财务模块
+          path: 'finance/financeLsit',
+          name: 'financeLsit',
+          component: () => import('@/components/finance/financeLsit'), //财务列表
+        }, {
           path: 'goodAllocation',
           name: 'goodAllocation',
           component: goodAllocation
         },
-				{
-				  path: 'goodEnterPurchaseReturn',
-				  name: 'goodEnterPurchaseReturn',
-				  component: () => import('@/components/goodEnterPurchaseReturn'), // vue路由懒加载  异步加载
-				  meta: {
-				    title: '采购退货',
-				  }
-				},
-				{
-				  path: 'goodOutBuyReturn',
-				  name: 'goodOutBuyReturn',
-				  component: () => import('@/components/goodOutBuyReturn'), // vue路由懒加载  异步加载
-				  meta: {
-				    title: '销售退货',
-				  }
-				},
+        {
+          path: 'goodEnterPurchaseReturn',
+          name: 'goodEnterPurchaseReturn',
+          component: () => import('@/components/goodEnterPurchaseReturn'), // vue路由懒加载  异步加载
+          meta: {
+            title: '采购退货',
+          }
+        },
+        {
+          path: 'goodOutBuyReturn',
+          name: 'goodOutBuyReturn',
+          component: () => import('@/components/goodOutBuyReturn'), // vue路由懒加载  异步加载
+          meta: {
+            title: '销售退货',
+          }
+        },
         {
           path: 'goodCount',
           name: 'goodCount',
