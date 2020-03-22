@@ -229,7 +229,7 @@
 
 		<!--生产商列表-->
 		<producerS @cancle="producerShow = false" v-if="producerShow" @select="selectProducter"></producerS>
-		<customS @cancle="customShow = false" :show="customShow" @select="selectCustom"></customS>
+		<customS @cancle="customShow = false" v-if="customShow" @select="selectCustom"></customS>
 
 	</div>
 </template>

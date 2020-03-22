@@ -89,7 +89,7 @@
 		name: 'login',
 		data() {
 			return {
-				loginType: "way2",
+				loginType: "way1",
 				button_login: false, //控制button的加载状态
 				padding_size: 30,
 				code_button: false,

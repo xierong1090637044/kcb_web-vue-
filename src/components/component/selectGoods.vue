@@ -102,7 +102,7 @@
 							}
 						}
 					},
-          {
+          /*{
             title: '产品二维码',
             width: 100,
             key: 'qrcodeImg',
@@ -122,7 +122,7 @@
                 })
               ]);
             }
-          },
+          },*/
           {
           	width: 160,
           	align: 'center',

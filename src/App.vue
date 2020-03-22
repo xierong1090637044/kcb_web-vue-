@@ -83,4 +83,8 @@
 		background-color: #426ab3 !important;
 		border-color: #426ab3 !important;
 	}
+  
+  .border_bottom{
+    border-bottom: 1px solid#F0F0F0;
+  }
 </style>

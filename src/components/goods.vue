@@ -47,7 +47,12 @@
       <template slot-scope="{ row, index }" slot="action">
         <div style="display: flex;justify-content: center;">
           <div style="margin-right: 10px" @click="showReserve(row)"><Button type="primary" size="small">库存</Button></div>
-          <div @click="edit(row)"><Button type="primary" size="small">编辑</Button></div>
+          <div @click="edit(row)"><Button type="primary" size="small" style="margin-right: 10px">编辑</Button></div>
+          <div @click="update(row)" v-if="row.order != 0">
+            <Tooltip content="升级为新的产品数据" placement="bottom-end">
+              <Button type="primary" size="small">升级</Button>
+            </Tooltip>
+           </div>
         </div>
         <div style="display: flex;justify-content: center;margin-top: 6px;">
           <div @click="deleteHeaderGood(row.objectId)" style="margin-right: 10px"><Button type="error" size="small">删除</Button></div>
@@ -101,6 +106,7 @@
 
     <!--添加产品或者编辑产品-->
     <addGoods :show="addGoodClick" :goodItem="editGood" @cancle="addGoodClick = false" @confrim="confrimAdd" v-if="addGoodClick"></addGoods>
+    <stocksS v-if="stockShow" @confrim="chooseStock" @cancle="stockShow = false"></stocksS>
 
   </div>
 </template>
@@ -108,9 +114,11 @@
   //import barcode from '@xkeshi/vue-barcode'
   import selectGoods from '@/components/component/selectGoods.vue'; //产品详情组件
   import addGoods from '@/components/component/goodAdd.vue';
+  import stocksS from '@/components/component/stocksS.vue';
 
   import jrQrcode from "jr-qrcode";
   import common from '@/serve/common.js';
+  import manage from '@/serve/manage.js';
   import goods from '@/serve/goods.js';
   import XLSX from 'xlsx';
   import Print from 'vue-print-nb';
@@ -119,11 +127,14 @@
   let that;
   export default {
     components: {
+      stocksS,
       selectGoods,
       addGoods
     },
     data() {
       return {
+        stockShow:false,
+        updateGood:{},
         downloadAllClick: false, //导出全部数据点击
         addGoodClick: false,
         editGood: '',
@@ -167,6 +178,10 @@
             width: 60,
             type: 'selection',
             align: 'center',
+          }, {
+            type: 'index',
+            width: 60,
+            align: 'center'
           },
           {
             width: 180,
@@ -327,6 +342,35 @@
     },
 
     methods: {
+
+      //升级旧产品数据
+      update(good) {
+        that.stockShow = true;
+        that.updateGood = good;
+      },
+      
+      //选择仓库后升级
+      chooseStock(value){
+        console.log(value)
+        let params = {
+          funcName: 'goodUpdate',
+          data: {
+            uid: that.$store.state.userid,
+            good:that.updateGood,
+            stockId:value.objectId
+          }
+        }
+        Bmob.functions(params.funcName, params.data).then(function(res) {
+          if(res.code == 1){
+            that.$Message.success('更新成功');
+            that.get_productList()
+          }else{
+            that.$Message.error(res.msg);
+          }
+          that.stockShow = false;
+          that.updateGood = {};
+        })
+      },
 
       //编辑产品
       edit(row) {
@@ -682,7 +726,6 @@
           }
         }
         Bmob.functions(params.funcName, params.data).then(function(res) {
-          console.log(res)
           for (let item of res.data) {
             item.class = (item.goodsClass ? (item.goodsClass.class_text || "") : "") + "    " + (item.second_class ?
               (item.second_class
