@@ -9,7 +9,7 @@
 
 		<div style="margin-bottom: 20px;" class="display_flex_bet">
 			<div class="display_flex">
-				<Input search enter-button placeholder="请输入产品名称" @on-search='searchOpreations'/>
+				<Input search enter-button placeholder="请输入产品名称" @on-search='searchOpreations' />
 				<Button type="error" @click="modal1=true" icon="ios-funnel-outline" style="margin-left: 10px;">筛选</Button>
 			</div>
 
@@ -22,10 +22,8 @@
 					<DropdownMenu slot="list">
 						<DropdownItem name="0"><Button type="primary"> 全部</Button></DropdownItem>
 						<DropdownItem name="-1"><Button type="primary"> 出库</Button></DropdownItem>
-						<DropdownItem name="4"><Button type="primary"> 销售</Button></DropdownItem>
 						<DropdownItem name="1"><Button type="primary"> 入库</Button></DropdownItem>
 						<DropdownItem name="5"><Button type="primary"> 采购</Button></DropdownItem>
-						<DropdownItem name="2"><Button type="primary"> 退货</Button></DropdownItem>
 						<DropdownItem name="3"><Button type="primary"> 盘点</Button></DropdownItem>
 					</DropdownMenu>
 				</Dropdown>
@@ -47,13 +45,13 @@
 			</template>
 		</Table>
 
-    <div style="margin: 10px;overflow: hidden">
-    	<div style="float: right;">
-    		<Page :total="1000" :current="pege_number" @on-change="changePage"></Page>
-    	</div>
-    </div>
+		<div style="margin: 10px;overflow: hidden">
+			<div style="float: right;">
+				<Page :total="1000" :current="pege_number" @on-change="changePage"></Page>
+			</div>
+		</div>
 
-    <!--筛选弹窗-->
+		<!--筛选弹窗-->
 		<Modal v-model="modal1" title="筛选" @on-ok="modal_confrim" @on-cancel="cancel" cancel-text="重置">
 			<Form :label-width="80">
 
@@ -79,7 +77,7 @@
 		</Modal>
 
 
-		<Modal title="详情"  v-model="detailShow" width="60%">
+		<Modal title="详情" v-model="detailShow" width="60%">
 			<div>
 				<Button type="primary" v-print="'#printTest'">打印</Button>
 			</div>
@@ -103,7 +101,7 @@
 						<th>产品名称</th>
 						<th>单位</th>
 						<th>数量</th>
-            <th>出库仓库</th>
+						<th>出库仓库</th>
 						<th>单价</th>
 						<th>合计</th>
 					</thead>
@@ -112,7 +110,7 @@
 							<td>{{item.goodsName}}</td>
 							<td>{{item.packingUnit?item.packingUnit:''}}</td>
 							<td>{{item.num}}</td>
-              <td>{{item.stock}}</td>
+							<td>{{item.stock}}</td>
 							<td>{{item.modify_retailPrice}}</td>
 							<td>{{item.modify_retailPrice * item.num}}</td>
 						</tr>
@@ -155,6 +153,58 @@
 
 			</div>
 
+
+			<div id="printTest" v-if="detail.type==3">
+				<div>
+					<div style="font-size: 22px;padding-bottom:10px;font-weight:800;font-family:宋体; text-align:center">盘点单</div>
+					<div class="display_flex_bet" style="margin-bottom: 10px;">
+						<div style="font-size:16px;font-family:宋体;"></div>
+						<div style="font-size:16px;font-family:宋体;">盘点日期：{{detail.createdTime}}</div>
+					</div>
+				</div>
+
+
+				<table>
+					<thead>
+						<th>产品名称</th>
+						<th>单位</th>
+						<th>数量</th>
+						<th>盘点仓库</th>
+						<th>盘点前库存</th>
+						<th>盘点后库存</th>
+					</thead>
+					<tbody>
+						<tr v-for="item in detail.detail" :key="item.id">
+							<td>{{item.goodsName}}</td>
+							<td>{{item.packingUnit?item.packingUnit:''}}</td>
+							<td>{{item.num}}</td>
+							<td>{{item.stock}}</td>
+							<td>{{item.reserve}}</td>
+							<td>{{item.now_reserve}}</td>
+						</tr>
+					</tbody>
+				</table>
+
+				<div>
+					<div class="display_flex_bet" style="margin-top: 10px;">
+						<div style="font-size:16px;font-family:宋体;"></div>
+						<div style="font-size:16px;font-family:宋体;" class="display_flex">
+							<div>操作者：</div>
+							<div style="width:100px">{{detail.opreater?detail.opreater.nickName:''}}</div>
+						</div>
+					</div>
+					<div class="display_flex_bet" style="margin-bottom: 40px;">
+						<div style="font-size:16px;font-family:宋体;">备注：{{detail.beizhu?detail.beizhu:'未填写'}}</div>
+						<div style="font-size:16px;font-family:宋体;" class="display_flex">
+							<div>经办人签字或盖章：</div>
+							<div style="width:100px"></div>
+						</div>
+					</div>
+				</div>
+
+
+			</div>
+
 			<div id="printTest" v-if="detail.type==1">
 				<div v-if="detail.extra_type == 1">
 					<div style="font-size: 22px;padding-bottom:10px;font-weight:800;font-family:宋体; text-align:center">采购单</div>
@@ -172,7 +222,7 @@
 						<th>产品名称</th>
 						<th>单位</th>
 						<th>数量</th>
-            <th>入库仓库</th>
+						<th>入库仓库</th>
 						<th>单价</th>
 						<th>合计</th>
 					</thead>
@@ -181,14 +231,14 @@
 							<td>{{item.goodsName}}</td>
 							<td>{{item.packingUnit?item.packingUnit:''}}</td>
 							<td>{{item.num}}</td>
-              <td>{{item.stock}}</td>
+							<td>{{item.stock}}</td>
 							<td>{{item.modify_retailPrice}}</td>
 							<td>{{item.modify_retailPrice * item.num}}</td>
 						</tr>
 					</tbody>
 				</table>
 
-			  <div v-if="detail.extra_type == 1">
+				<div v-if="detail.extra_type == 1">
 					<div class="display_flex_bet" style="margin-top: 10px;">
 						<div style="font-size:16px;font-family:宋体;">
 							实际付款：{{detail.real_money}}
@@ -252,7 +302,7 @@
 		data() {
 			return {
 				customShow: false,
-				producerShow:false,
+				producerShow: false,
 				GoodImg: {
 					show: false,
 					attr: ''
@@ -288,29 +338,29 @@
 					},
 					{
 						title: '数量',
-            sortable: true,
+						sortable: true,
 						key: 'real_num',
 					},
 					{
 						title: '客户或供应商',
-            key:'candpName',
+						key: 'candpName',
 					},
 					{
 						title: '操作类型',
-            key:'typeDesc',
+						key: 'typeDesc',
 					},
-          {
-          	title: '仓库',
-            key:'stock',
-            render: (h, params) => {
-              if(params.row.stockNames && params.row.stockNames.length >0){
-                return h('div', [params.row.stockNames.join("，")])
-              }else{
-                return h('div', [params.row.stock?params.row.stock.stock_name:""])
-              }
+					{
+						title: '仓库',
+						key: 'stock',
+						render: (h, params) => {
+							if (params.row.stockNames && params.row.stockNames.length > 0) {
+								return h('div', [params.row.stockNames.join("，")])
+							} else {
+								return h('div', [params.row.stock ? params.row.stock.stock_name : ""])
+							}
 
-            }
-          },
+						}
+					},
 					{
 						title: '备注',
 						key: 'beizhu',
@@ -390,10 +440,10 @@
 					}
 				],
 
-				search:{
-					goodName:'',
-					producer:'',
-					custom:''
+				search: {
+					goodName: '',
+					producer: '',
+					custom: ''
 				}
 			};
 		},
@@ -417,34 +467,27 @@
 		methods: {
 
 			//选择客户
-			selectCustom(row){
+			selectCustom(row) {
 				that.customShow = false
 				that.search.custom = row
 			},
 
 			//选择供应商
 			selectProducter(row) {
-			  that.producerShow = false
-			  that.search.producer = row
+				that.producerShow = false
+				that.search.producer = row
 			},
 
 			//输入产品名字筛选
-			searchOpreations(value){
+			searchOpreations(value) {
 				that.search.goodName = value
 				that.get_operations()
 			},
 
 			showReserve(row) {
 				console.log(row)
-        if(row.type == 1 || row.type == -1){
-          that.detail = row;
-          that.detailShow = true
-        }else{
-         this.$Message['error']({
-           background: true,
-           content: '暂无打印模板，敬请期待'
-         });
-        }
+				that.detail = row;
+				that.detailShow = true
 			},
 
 			//选择起始时间
@@ -470,11 +513,11 @@
 			//筛选取消
 			cancel() {
 				that.search = {
-					goodName:'',
-					producer:'',
-					custom:''
-				},
-				that.select_custom = ''
+						goodName: '',
+						producer: '',
+						custom: ''
+					},
+					that.select_custom = ''
 				that.start_time = ''
 				that.end_time = ''
 				that.get_operations();
@@ -500,11 +543,11 @@
 					this.$refs.table.exportCsv({
 						filename: '盘点记录',
 					});
-				}else if (that.type == 4) {
+				} else if (that.type == 4) {
 					this.$refs.table.exportCsv({
 						filename: '销售记录',
 					});
-				}else if (that.type == 3) {
+				} else if (that.type == 3) {
 					this.$refs.table.exportCsv({
 						filename: '采购记录',
 					});
@@ -535,70 +578,72 @@
 				if (that.end_time) {
 					query.equalTo("createdAt", "<", that.end_time);
 				}
-				if(that.type){
-					if(that.type == 4){
+				if (that.type) {
+					if (that.type == 4) {
 						query.equalTo('type', '==', -1);
 						query.equalTo('extra_type', '==', 1);
-					}else if(that.type == 5){
+					} else if (that.type == 5) {
 						query.equalTo('type', '==', 1);
 						query.equalTo('extra_type', '==', 1);
-					}else if(that.type == 1){
+					} else if (that.type == 1) {
 						query.equalTo('type', '==', 1);
 						query.equalTo('extra_type', '==', 2);
-					}else if(that.type == -1){
+					} else if (that.type == -1) {
 						query.equalTo('type', '==', -1);
 						query.equalTo('extra_type', '==', 2);
-					}else{
+					} else {
 						query.equalTo('type', '==', that.type);
 					}
 				}
 
-				if(that.search.goodName){
-					query.equalTo("goodsName","==", { "$regex": "" + that.search.goodName + ".*" });
+				if (that.search.goodName) {
+					query.equalTo("goodsName", "==", {
+						"$regex": "" + that.search.goodName + ".*"
+					});
 				}
 
-				if(that.search.producer){
-					query.equalTo("producer","==", that.search.producer.objectId);
+				if (that.search.producer) {
+					query.equalTo("producer", "==", that.search.producer.objectId);
 				}
 
-				if(that.search.custom){
-					query.equalTo("custom","==", that.search.custom.objectId);
+				if (that.search.custom) {
+					query.equalTo("custom", "==", that.search.custom.objectId);
 				}
-				query.include("opreater", "custom", "producer","stock");
+				query.include("opreater", "custom", "producer", "stock");
 				query.limit(that.page_size);
 				query.skip(that.page_size * (that.pege_number - 1));
 				query.order("-createdAt"); //按照条件降序
 				query.find().then(res => {
-					for(let item of res){
+					for (let item of res) {
 						item.nickName = item.opreater.nickName
-            if (item.type == 1) {
-            	if (item.extra_type == 2) {
-                item.typeDesc = "入库"
-            	} else if (item.extra_type == 1) {
-                item.typeDesc = "采购"
-            	} else if (item.extra_type == 4) {
-                item.typeDesc = "销售退货"
-            	}
-              item.candpName = item.producer?item.producer.producer_name:'未填写'
-            } else if (item.type == -1) {
-            	if (item.extra_type == 2) {
-                item.typeDesc = "出库"
-            	} else if (item.extra_type == 1) {
-                item.typeDesc = "销售"
-            	} else if (item.extra_type == 4) {
-                item.typeDesc = "采购退货"
-            	}
-              item.candpName = item.custom?item.custom.custom_name:'未填写'
-            } else if (item.type == 2) {
-              item.typeDesc = "退货"
-              item.candpName = item.custom?item.custom.custom_name:'未填写'
-            } else if (item.type == 3) {
-              item.typeDesc = "盘点"
-            } else if (item.type == -2) {
-              item.typeDesc = "调拨"
-            }
+						if (item.type == 1) {
+							if (item.extra_type == 2) {
+								item.typeDesc = "入库"
+							} else if (item.extra_type == 1) {
+								item.typeDesc = "采购"
+							} else if (item.extra_type == 4) {
+								item.typeDesc = "销售退货"
+							}
+							item.candpName = item.producer ? item.producer.producer_name : '未填写'
+						} else if (item.type == -1) {
+							if (item.extra_type == 2) {
+								item.typeDesc = "出库"
+							} else if (item.extra_type == 1) {
+								item.typeDesc = "销售"
+							} else if (item.extra_type == 4) {
+								item.typeDesc = "采购退货"
+							}
+							item.candpName = item.custom ? item.custom.custom_name : '未填写'
+						} else if (item.type == 2) {
+							item.typeDesc = "退货"
+							item.candpName = item.custom ? item.custom.custom_name : '未填写'
+						} else if (item.type == 3) {
+							item.typeDesc = "盘点"
+						} else if (item.type == -2) {
+							item.typeDesc = "调拨"
+						}
 
-            item.createdTime =  item.createdTime ? item.createdTime.iso.split(" ")[0] : item.createdAt
+						item.createdTime = item.createdTime ? item.createdTime.iso.split(" ")[0] : item.createdAt
 					}
 					this.order_opreations = res;
 					this.loading = false;
