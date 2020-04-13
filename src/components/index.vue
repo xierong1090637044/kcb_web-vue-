@@ -202,22 +202,6 @@
 
 <style>
 
-  ::-webkit-scrollbar {
-    width: 10px;
-    height: 1px;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    border-radius: 10px;
-    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
-    background: #535353;
-  }
-
-  ::-webkit-scrollbar-track {
-    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
-    border-radius: 10px;
-    background: #ededed;
-  }
   .icon {
     width: 1em;
     height: 1em;
