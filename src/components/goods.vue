@@ -202,8 +202,7 @@
               }, [
                 h('img', {
                   style: {
-                    width: '60px',
-                    padding: "4px 0",
+                    width: '20px',
                   },
                   attrs: {
                     src: params.row.goodsIcon
@@ -240,7 +239,7 @@
             sortable: true,
           },
           {
-            width: 100,
+            width: 150,
             align: 'center',
             title: '所属分类',
             key: 'class',
@@ -282,7 +281,7 @@
             key: 'producer',
           },
           {
-            width: 100,
+            width: 200,
             align: 'center',
             title: '条码值',
             key: 'productCode',
@@ -348,7 +347,7 @@
         that.stockShow = true;
         that.updateGood = good;
       },
-      
+
       //选择仓库后升级
       chooseStock(value){
         console.log(value)
@@ -740,6 +739,8 @@
                 false + '-old',
                 item.qrcodeImg = jrQrcode.getQrBase64(item.productCode)
             }
+
+            item.goodsIcon = item.goodsIcon?item.goodsIcon:"http://www.shoujixungeng.com/2020/04/17/44cb975b4052371b8033dcdb4c3eba85.png"
           }
           that.goods = res.data;
           that.loading = false;

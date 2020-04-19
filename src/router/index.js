@@ -2,10 +2,16 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import ViewUI from 'view-design';
 import Element from 'element-ui';
+import http from '@/serve/http.js';
 import 'element-ui/lib/theme-chalk/index.css';
 import '@/assets/all.css';
 import VCharts from 'v-charts'
+import VueQuillEditor from 'vue-quill-editor'
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
 
+Vue.use(VueQuillEditor)
 Vue.use(VCharts)
 Vue.use(Element);
 
@@ -48,6 +54,7 @@ Vue.use(Bmob)
 Vue.use(Router)
 Vue.use(ViewUI)
 Vue.use(Print);
+Vue.prototype.$http = http
 
 export default new Router({
   routes: [{
@@ -73,6 +80,14 @@ export default new Router({
           path: 'finance/financeLsit',
           name: 'financeLsit',
           component: () => import('@/components/finance/financeLsit'), //财务列表
+        },{ //线上商城
+          path: 'onlineShop/goodClass',
+          name: 'goodClass',
+          component: () => import('@/components/onlineShop/goodClass'),
+        },{ //线上商城商品管理
+          path: 'onlineShop/goodManage',
+          name: 'goodManage',
+          component: () => import('@/components/onlineShop/goodManage'),
         }, {
           path: 'goodAllocation',
           name: 'goodAllocation',

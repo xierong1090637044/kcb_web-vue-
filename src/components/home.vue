@@ -75,6 +75,14 @@
               <MenuItem name="8-3" to='/home/goodOutBuyReturn'>支出类别</MenuItem>-->
             </Submenu>
 
+            <Submenu name="9">
+              <template slot="title">
+                <i class="iconfont  icon-fq_kucunfeiyong" style="font-size: 20px;"></i>线上订货
+              </template>
+              <MenuItem name="9-1" to='/home/onlineShop/goodClass'>产品类别</MenuItem>
+              <MenuItem name="9-2" to='/home/onlineShop/goodManage'>商品管理</MenuItem>
+            </Submenu>
+
             <MenuItem name="4" to='/home/goods'>
             <div class="display_flex">
               <Icon type="md-cube" style="font-size: 20px;" />

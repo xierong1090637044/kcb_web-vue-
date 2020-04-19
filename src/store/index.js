@@ -6,6 +6,7 @@ Vue.use(Vuex);
 const state = {
 	user: JSON.parse(localStorage.getItem('user')),
 	userid: JSON.parse(localStorage.getItem('user'))?JSON.parse(localStorage.getItem('user')).objectId : '',
+  screenHeight: window.innerHeight,
 }
 const mutations = {
 	increment(state) {

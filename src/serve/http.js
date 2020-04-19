@@ -1,11 +1,15 @@
 import Bmob from "hydrogen-js-sdk";
+import { Message } from 'iview'
 export default {
-  httpPost(name, params) {
-    params.uid = that.$store.state.userid;
+  Post(name, params) {
+    params.uid = JSON.parse(localStorage.getItem('user')).objectId;
     return new Promise((resolve, reject) => {
       Bmob.functions(name, params).then(function(res) {
         if (res.code == 1) {
-          resolve(res.data)
+          Message.info(res.msg);
+          resolve(res)
+        }else{
+          Message.error(res.msg);
         }
       })
     })
