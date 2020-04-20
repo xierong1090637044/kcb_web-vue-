@@ -42,7 +42,7 @@
                 <i class="iconfont  icon-chanpinyuyue"></i>
                 库存管理
               </template>
-              <MenuItem name="7-1" to='/home/goodEnter'>产品入库</MenuItem>
+              <MenuItem name="7-1" to='/home/stock/goodEnter'>产品入库</MenuItem>
               <MenuItem name="7-2" to='/home/goodOut'>产品出库</MenuItem>
               <MenuItem name="7-3" to='/home/goodAllocation'>产品调拨</MenuItem>
               <MenuItem name="7-4" to='/home/goodCount'>产品盘点</MenuItem>
