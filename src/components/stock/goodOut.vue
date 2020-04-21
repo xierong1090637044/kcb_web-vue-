@@ -3,14 +3,14 @@
 		<div style="margin-bottom: 10px;">
 			<Breadcrumb separator="<b style='color: #999;'>/</b>">
 				<BreadcrumbItem to="/">首页</BreadcrumbItem>
-				<BreadcrumbItem to="/home/goods">产品入库</BreadcrumbItem>
+				<BreadcrumbItem to="/home/goods">产品出库</BreadcrumbItem>
 			</Breadcrumb>
 		</div>
 
 		<div style="background: #FFFFFF;padding-bottom: 1.25rem;">
 			<div>
 				<div style="text-align: right;padding:0 0 0.625rem;">
-					<Button type="primary" @click="handleSubmit(2)" :disabled="button_disabled">确定入库</Button>
+					<Button type="primary" @click="handleSubmit(2)" :disabled="button_disabled">确定出库</Button>
 				</div>
 				<Table :columns="columns" :data="selectGoods" ref="table" border :height="screenHeight - 440" size="small">
 					<template slot-scope="{ row, index }" slot="goodsName">
@@ -23,16 +23,16 @@
 						<div v-if="row.selected_model">
 							<div v-for="(model,key) in row.selected_model" :key="key" class="display_flex" style="margin:0.25rem 0.375rem;">
 								<div>{{model.custom1.value + model.custom2.value + model.custom3.value + model.custom4.value}}：</div>
-								<InputNumber placeholder="请输入数量" size="small" @on-focus="selectIndex = index" v-if="row.goodsName" :value="key== 0?1:0"
-								 :min="1" @on-change="handleModelNumChange($event, index,key,model)"></InputNumber>
+								<InputNumber placeholder="请输入数量" size="small" @on-focus="selectIndex = index" v-if="row.goodsName" :value="model.num"
+								 :min="0" @on-change="handleModelNumChange($event, index,key,model)"></InputNumber>
 							</div>
 						</div>
 						<div v-else>
 							<InputNumber placeholder="请输入数量" size="small" @on-focus="selectIndex = index" v-if="row.goodsName" :min="0"
-							 @on-change="modify_num($event, index)"></InputNumber>
+							 @on-change="modify_num($event, index)" :max="row.reserve"></InputNumber>
 						</div>
 					</template>
-					<template slot-scope="{row, index}" slot="modify_retailPrice">
+					<template slot-scope="{ row, index }" slot="modify_retailPrice">
             <InputNumber placeholder="请输入实际成本价" size="small" @on-focus="selectIndex = index" v-if="row.goodsName" :min="0"
               :value="Number(row.modify_retailPrice)" @on-change="modify_price($event, index)"></InputNumber>
           </template>
@@ -49,24 +49,22 @@
 				<Form :model="formItem" :label-width="100" style="margin-top: 1.875rem;">
 
 					<div class="display_flex">
-						<FormItem label="入库类型">
+						<FormItem label="出库类型">
 							<FormItem prop="producttime">
 								<Select v-model="formItem.stockClass" style="width:200px">
-									<Option value="采购入库" key="采购入库">采购入库</Option>
+									<Option v-for="(item,index) in allStockClass" :value="item" :key="item">{{item}}</Option>
 								</Select>
 							</FormItem>
 						</FormItem>
-
-						<FormItem label="入库仓库">
-							<FormItem prop="producttime">
-								<Input v-model="formItem.stock.stock_name" placeholder="请选择入库仓库" @on-focus="stockShow = true"></Input>
-								<Icon type="ios-arrow-down" slot="suffix" />
-							</FormItem>
+						
+						<FormItem label="出库仓库">
+							<Input v-model="formItem.stock.stock_name" placeholder="请选择出库仓库" @on-focus="stockShow = true"></Input>
+							<Icon type="ios-arrow-down" slot="suffix" />
 						</FormItem>
 
-						<FormItem label="入库日期">
+						<FormItem label="出库日期">
 							<FormItem prop="producttime">
-								<DatePicker type="datetime" placeholder="请选择入库日期" v-model="formItem.date" format="yyyy-MM-dd HH:mm:ss"></DatePicker>
+								<DatePicker type="datetime" placeholder="请选择出库日期" v-model="formItem.date" format="yyyy-MM-dd HH:mm:ss"></DatePicker>
 							</FormItem>
 						</FormItem>
 
@@ -87,8 +85,7 @@
 		</div>
 
 		<!--选择产品模板-->
-		<goodsS :show="goodsShow" @cancle="goodsShow = false" @confrimGoods="confrimSelectGoods" type="enter"
-		 :thisSelectGoods="selectGoods"></goodsS>
+		<goodsS :show="goodsShow" @cancle="goodsShow = false" @confrimGoods="confrimSelectGoods" type="out" :thisSelectGoods="selectGoods"></goodsS>
 		<stocksS v-if="stockShow" @confrim="chooseStock" @cancle="stockShow = false"></stocksS>
 
 	</div>
@@ -107,15 +104,17 @@
 		components: {
 			uploadImg,
 			goodsS,
-			stocksS
+			stocksS,
 		},
 		data() {
 			return {
+				chooseStockClick: false,
 				button_disabled: false,
 				stockShow: false,
 				shopShow: false,
 				producerShow: false,
 				goodsShow: false,
+				allStockClass:["借用出库","领料出库","零售出库","盘点出库","报损出库","调拨出库","网点发货出库","加工成品出库","委外出库","返修出库","批发出库","归还出库","其他出库"],
 				formItem: {
 					stock: '',
 					all_money: 0,
@@ -123,8 +122,8 @@
 					real_num: 0, //数量
 					beizhu: '', //备注
 					Images: [],
-					stockClass: '采购入库',
-					date: common.getDay(0, true,true), //入库日期
+					stockClass: '销售出库',
+					date: common.getDay(0,true), //入库日期
 				},
 				selectIndex: 0,
 				selectGoods: [],
@@ -144,6 +143,7 @@
 						align: 'center',
 					},
 					{
+
 						align: 'center',
 						title: '所属分类',
 						key: 'class',
@@ -158,15 +158,8 @@
 					{
 						width: 100,
 						align: 'center',
-						title: '成本价',
+						title: '零售价',
 						key: 'costPrice',
-					},
-					{
-						width: 100,
-						align: 'center',
-						title: '实际成本价',
-						key: 'modify_retailPrice',
-						slot: 'modify_retailPrice',
 					},
 					{
 						align: 'center',
@@ -216,16 +209,24 @@
 				}
 
 				if (selectGoods.length == 0) {
-					this.$Message.error('"没有选择入库产品');
+					that.$Message.error('"没有选择出库产品');
 					that.button_disabled = false;
+					that.$Loading.finish();
 					return
 				}
 
 				if (that.formItem.stock == null || that.formItem.stock == "" || that.formItem.stock == undefined) {
-					this.$Message.error('"请选择入库仓库');
+					that.$Message.error('"请选择出库仓库');
+					that.button_disabled = false;
+					that.$Loading.finish();
 					return
 				}
-				that.$http.Post("stock_goodEnter", {
+				
+				if (that.formItem.stockClass == null || that.formItem.stockClass == "" || that.formItem.stockClass == undefined) {
+					that.formItem.stockClass = "销售出库"
+				}
+
+				that.$http.Post("stock_goodOut", {
 					"goods": selectGoods,
 					"beizhu": that.formItem.beizhu,
 					"real_num": that.formItem.real_num,
@@ -246,6 +247,7 @@
 
 					}
 				})
+
 			},
 
 			//选择仓库
@@ -261,24 +263,6 @@
 				that.selectGoods[index].total_money = Number($event) * Number(that.selectGoods[index].modify_retailPrice)
 				that.selectGoods[index].really_total_money = Number($event) * Number(that.selectGoods[index].costPrice)
 
-				that.formItem.real_money = 0
-				that.formItem.all_money = 0
-				that.formItem.real_num = 0
-				for (let item of that.selectGoods) {
-					that.formItem.real_num += Number(item.num ? item.num : 0)
-					that.formItem.all_money += Number(item.total_money ? item.total_money : 0)
-					that.formItem.real_money += Number(item.really_total_money ? item.really_total_money : 0)
-				}
-			},
-			
-			//修改价格
-			modify_price($event, index) {
-				console.log($event, index, that.selectGoods)
-				that.selectGoods[index].modify_retailPrice = Number($event)
-				that.selectGoods[index].total_money = that.selectGoods[index].num * Number($event)
-				that.selectGoods[index].really_total_money = that.selectGoods[index].num * Number($event)
-			
-				console.log(that.selectGoods)
 				that.formItem.real_money = 0
 				that.formItem.all_money = 0
 				that.formItem.real_num = 0
@@ -317,12 +301,13 @@
 				that.selectGoods = [];
 				that.goodsShow = false;
 				let count = 0;
+
 				for (let item of goods) {
-					that.formItem.real_money += Number(item.retailPrice)
-					that.formItem.all_money += Number(item.costPrice)
 					that.formItem.real_num += Number(item.num)
+					that.formItem.real_money += Number(item.retailPrice)
 					that.selectGoods.push(item)
 					count += 1
+
 					if (count == goods.length) {
 						for (let i = 0; i <= 4; i++) {
 							let good = {}
@@ -340,7 +325,6 @@
 						}
 					}
 				}
-				//console.log(goods, that.selectGoods)
 			},
 
 			//增加选择的产品数目
@@ -382,8 +366,8 @@
 					real_num: 0, //数量
 					beizhu: '', //备注
 					Images: [],
-					stockClass: '采购入库',
-					date: common.getDay(0, true,true), //入库日期
+					stockClass: '销售出库',
+					date: common.getDay(0, true), //入库日期
 				}
 			},
 

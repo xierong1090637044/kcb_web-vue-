@@ -32,10 +32,6 @@
                 @on-change="modify_num($event, index)"></InputNumber>
             </div>
           </template>
-          <!--<template slot-scope="{ row, index }" slot="modify_retailPrice">
-            <InputNumber placeholder="请输入实际成本价" size="small" @on-focus="selectIndex = index" v-if="row.goodsName" :min="0"
-              :value="Number(row.modify_retailPrice)" @on-change="modify_price($event, index)"></InputNumber>
-          </template>-->
           <template slot-scope="{ row, index }" slot="action">
             <ButtonGroup>
               <Button icon="md-add" @click="addSelectGoods"></Button>
@@ -61,7 +57,7 @@
 
             <FormItem label="调拨日期">
               <FormItem prop="producttime">
-                <DatePicker type="date" placeholder="请选择调拨日期" v-model="formItem.date" format="yyyy-MM-dd"></DatePicker>
+                <DatePicker type="datetime" placeholder="请选择调拨日期" v-model="formItem.date" format="yyyy-MM-dd HH:mm:ss"></DatePicker>
               </FormItem>
             </FormItem>
 
@@ -69,6 +65,11 @@
               <Input v-model="formItem.beizhu" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入备注"></Input>
             </FormItem>
           </div>
+					<div>
+						<FormItem label="凭证图">
+							<uploadImg @selectImg="selectImg"></uploadImg>
+						</FormItem>
+					</div>
 
         </Form>
       </div>
@@ -77,15 +78,13 @@
 
     <!--选择产品模板-->
     <goodsS :show="goodsShow" @cancle="goodsShow = false" @confrimGoods="confrimSelectGoods" type="allocation" :thisSelectGoods="selectGoods"></goodsS>
-
     <stocksS @cancle="chooseStockClick = false" @confrim="selectStcok" v-if="chooseStockClick"></stocksS>
   </div>
 </template>
 <script>
   import goodsS from '@/components/component/goodsS.vue';
-  import producerS from '@/components/component/producerS.vue';
-  import shopS from '@/components/component/shopS.vue';
   import stocksS from '@/components/component/stocksS.vue';
+	import uploadImg from '@/components/component/uploadImg.vue';
 
   import send_temp from '@/serve/send_temp.js';
   import common from '@/serve/common.js';
@@ -95,18 +94,15 @@
   let shouldProducts = [];
   export default {
     components: {
+			uploadImg,
       goodsS,
-      producerS,
       stocksS,
-      shopS
     },
     data() {
       return {
         chooseStockClick:false,//选择仓库点击
         button_disabled: false,
         stockShow: false,
-        shopShow: false,
-        producerShow: false,
         goodsShow: false,
         stockType:'',
         formItem: {
@@ -181,6 +177,12 @@
     },
 
     methods: {
+			
+			//选择凭证图
+			selectImg(value) {
+				that.formItem.Images = value
+			},
+			
       selectStcok(value) {
         if(that.stockType == "in"){
           that.formItem.inStock = value

@@ -56,7 +56,7 @@
 
             <FormItem label="盘点日期">
               <FormItem prop="producttime">
-                <DatePicker type="date" placeholder="请选择盘点日期" v-model="formItem.date" format="yyyy-MM-dd"></DatePicker>
+                <DatePicker type="datetime" placeholder="请选择盘点日期" v-model="formItem.date" format="yyyy-MM-dd HH:mm:ss"></DatePicker>
               </FormItem>
             </FormItem>
 
@@ -64,6 +64,11 @@
               <Input v-model="formItem.beizhu" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入备注"></Input>
             </FormItem>
           </div>
+					<div>
+						<FormItem label="凭证图">
+							<uploadImg @selectImg="selectImg"></uploadImg>
+						</FormItem>
+					</div>
 
         </Form>
       </div>
@@ -79,6 +84,7 @@
 <script>
   import goodsS from '@/components/component/goodsS.vue';
   import stocksS from '@/components/component/stocksS.vue';
+	import uploadImg from '@/components/component/uploadImg.vue';
 
   import send_temp from '@/serve/send_temp.js';
   import common from '@/serve/common.js';
@@ -87,6 +93,7 @@
   let that;
   export default {
     components: {
+			uploadImg,
       goodsS,
       stocksS
     },
@@ -169,6 +176,11 @@
     },
 
     methods: {
+			//选择凭证图
+			selectImg(value) {
+				that.formItem.Images = value
+			},
+			
       //提交表单
       handleSubmit(type) {
 
@@ -269,6 +281,7 @@
             query.set("master", poiID);
             query.set('goodsName', selectGoods[0].goodsName);
             query.set("stockIds", stockIds);
+						query.set("Images", that.formItem.Images);
             query.set("createdTime", {
               "__type": "Date",
               "iso": that.formItem.date

@@ -43,9 +43,9 @@
                 库存管理
               </template>
               <MenuItem name="7-1" to='/home/stock/goodEnter'>产品入库</MenuItem>
-              <MenuItem name="7-2" to='/home/goodOut'>产品出库</MenuItem>
-              <MenuItem name="7-3" to='/home/goodAllocation'>产品调拨</MenuItem>
-              <MenuItem name="7-4" to='/home/goodCount'>产品盘点</MenuItem>
+              <MenuItem name="7-2" to='/home/stock/goodOut'>产品出库</MenuItem>
+              <MenuItem name="7-3" to='/home/stock/goodAllocation'>产品调拨</MenuItem>
+              <MenuItem name="7-4" to='/home/stock/goodCount'>产品盘点</MenuItem>
             </Submenu>
 
             <Submenu name="2">
@@ -100,7 +100,7 @@
             <Submenu name="6">
               <template slot="title">
                 <Icon type="ios-copy" style="font-size: 20px;"></Icon>
-                管理
+                基本资料
               </template>
               <MenuItem name="2-1" to='/home/manage/category'>产品类别管理</MenuItem>
               <MenuItem name="2-2" to='/home/manage/stocks'>仓库管理</MenuItem>
