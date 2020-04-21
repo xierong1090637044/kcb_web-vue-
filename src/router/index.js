@@ -37,7 +37,6 @@ import customs from '@/components/manage/customs'; // 客户管理页面
 import producers from '@/components/manage/producers'; // 客户管理页面
 
 import goodEnterPurchase from '@/components/goodEnterPurchase'; // 入库或采购页面
-import goodOut from '@/components/goodOut'; // 盘点页面
 import goodOutBuy from '@/components/goodOutBuy'; // 盘点页面
 
 import updateHistory from '@/components/updateHistroy'; // 出库或销售页面
@@ -73,42 +72,44 @@ export default new Router({
       path: '/home/',
       name: 'home',
       component: home,
-      children: [{ //财务模块
+      children: [{
           path: 'finance/financeLsit',
           name: 'financeLsit',
           component: () => import('@/components/finance/financeLsit'), //财务列表
-        },{ //线上商城
+        },{
           path: 'onlineShop/goodClass',
           name: 'goodClass',
-          component: () => import('@/components/onlineShop/goodClass'),
-        },{ //线上商城商品管理
+          component: () => import('@/components/onlineShop/goodClass'),//线上商城
+        },{
           path: 'onlineShop/goodManage',
           name: 'goodManage',
-          component: () => import('@/components/onlineShop/goodManage'),
-        }, {//产品入库页面
+          component: () => import('@/components/onlineShop/goodManage'), //线上商城商品管理
+        }, {
           path: 'stock/goodEnter',
           name: 'goodEnter',
-          component: () => import('@/components/stock/goodEnter'),
-        },{//产品出库页面
+          component: () => import('@/components/stock/goodEnter'),//产品入库页面
+        },{
           path: 'stock/goodOut',
           name: 'goodOut',
-          component: () => import('@/components/stock/goodOut'),
-        },{//产品调拨页面
+          component: () => import('@/components/stock/goodOut'),//产品出库页面
+        },{
           path: 'stock/goodAllocation',
           name: 'goodAllocation',
-           component: () => import('@/components/stock/goodAllocation'),
-        },{//产品盘点页面
+           component: () => import('@/components/stock/goodAllocation'),//产品调拨页面
+        },{
           path: 'stock/goodCount',
           name: 'goodCount',
-           component: () => import('@/components/stock/goodCount'),
+           component: () => import('@/components/stock/goodCount'),//产品盘点页面
         },
+				{
+				  path: 'stock/goodEnterPurchase',
+				  name: 'goodEnterPurchase',
+				  component: () => import('@/components/stock/goodEnterPurchase'), //产品采购页面
+				},
         {
-          path: 'goodEnterPurchaseReturn',
+          path: 'stock/goodEnterPurchaseReturn',
           name: 'goodEnterPurchaseReturn',
-          component: () => import('@/components/goodEnterPurchaseReturn'), // vue路由懒加载  异步加载
-          meta: {
-            title: '采购退货',
-          }
+          component: () => import('@/components/stock/goodEnterPurchaseReturn'), 
         },
         {
           path: 'goodOutBuyReturn',
@@ -117,11 +118,6 @@ export default new Router({
           meta: {
             title: '销售退货',
           }
-        },        
-        {
-          path: 'goodEnterPurchase',
-          name: 'goodEnterPurchase',
-          component: goodEnterPurchase
         },
         {
           path: 'goodOutBuy',

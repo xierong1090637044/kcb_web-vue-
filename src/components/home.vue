@@ -53,8 +53,8 @@
                 <i class="iconfont  icon-navicon-cgdd" style="font-size: 20px;"></i>
                 采购
               </template>
-              <MenuItem name="2-1" to='/home/goodEnterPurchase'>采购入库</MenuItem>
-							<MenuItem name="2-2" to='/home/goodEnterPurchaseReturn'>采购退货</MenuItem>
+              <MenuItem name="2-1" to='/home/stock/goodEnterPurchase'>采购入库</MenuItem>
+							<MenuItem name="2-2" to='/home/stock/goodEnterPurchaseReturn'>采购退货</MenuItem>
             </Submenu>
 
             <Submenu name="3">
