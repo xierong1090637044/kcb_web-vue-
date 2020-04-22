@@ -1,10 +1,9 @@
 <template>
 	<div>
-		<Modal title="选择结算账户" :closable="false" width="80%" :value="true">
+		<Modal title="选择结算账户" :closable="false" width="80%" :value="true" @on-cancel="outData">
 			<Table :columns="columns" :data="data" stripe border :height="screenHeight - 350">
 				<template slot-scope="{ row, index }" slot="action">
-					<Button type="primary" size="small" style="margin-right: 5px" @click="edit(row)">修改</Button>
-					<Button type="error" size="small" @click="remove(row)">删除</Button>
+					<Button type="primary" size="small" style="margin-right: 5px" @click="select(row)">选择</Button>
 				</template>
 			</Table>
 		</Modal>
@@ -74,11 +73,19 @@
 
 		mounted() {
 			that = this;
-			that.$Loading.start();
 			that.getAccountList()
 		},
 
 		methods: {
+			
+			select(row){
+				this.$emit('select',row)
+			},
+			
+			//取消操作
+			outData(){
+			  this.$emit('cancle',false)
+			},
 
 			//得到账户列表
 			getAccountList() {

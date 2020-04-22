@@ -69,7 +69,7 @@
 					
 					<div class="display_flex">
 						<FormItem label="结算账户">
-							<Input v-model="formItem.account" type="number"></Input>
+							<Input v-model="formItem.account.name" @on-focus="accountShow = true"></Input>
 						</FormItem>
 						
 						<FormItem label="现结款">
@@ -121,7 +121,7 @@
 		<!--生产商列表-->
 		<producerS @cancle="producerShow = false" v-if="producerShow" @select="selectProducter"></producerS>
 		<stocksS v-if="stockShow" @confrim="chooseStock" @cancle="stockShow = false"></stocksS>
-		<accountsSelect></accountsSelect>
+		<accountsSelect v-if="accountShow" @cancle="accountShow = false" @select="selectAccount"></accountsSelect>
 
 	</div>
 </template>
@@ -148,7 +148,7 @@
 			return {
 				button_disabled: false,
 				stockShow: false,
-				shopShow: false,
+				accountShow: false,
 				producerShow: false,
 				goodsShow: false,
 				formItem: {
@@ -240,6 +240,12 @@
 				that.formItem.Images = value
 			},
 			
+			//选择账户
+			selectAccount(value){
+				that.formItem.account = value
+				that.accountShow = false
+			},
+			
 			//选择仓库
 			chooseStock(value) {
 			  that.formItem.stock = value
@@ -285,166 +291,30 @@
 					that.button_disabled = false;
 					return;
 				}
-
-				let billsObj = new Array();
-				let detailObj = [];
-				let stockIds = [];
-				let stockNames = [];
-
-				for (let i = 0; i < selectGoods.length; i++) {
-					let num = Number(selectGoods[i].reserve) + selectGoods[i].num;
-
-					//单据
-					let detailBills = {}
-					let tempBills = Bmob.Query('Bills');
-
-					let pointer = Bmob.Pointer('_User')
-					let user = pointer.set(uid)
-					let pointer1 = Bmob.Pointer('Goods')
-					let tempGoods_id = pointer1.set(selectGoods[i].header ? selectGoods[i].header.objectId : selectGoods[i].objectId);
-
-					let masterId = localStorage.getItem('masterId');
-					let pointer2 = Bmob.Pointer('_User')
-					let poiID2 = pointer2.set(masterId);
-
-					tempBills.set('goodsName', selectGoods[i].goodsName);
-					tempBills.set('retailPrice', (selectGoods[i].modify_retailPrice).toString());
-					tempBills.set('num', Number(selectGoods[i].num));
-					tempBills.set('total_money', selectGoods[i].total_money);
-					tempBills.set('really_total_money', selectGoods[i].really_total_money);
-					tempBills.set('goodsId', tempGoods_id);
-					tempBills.set('userId', user);
-					tempBills.set("opreater", poiID2);
-					tempBills.set('type', 1);
-					tempBills.set('extra_type', 1);
-					tempBills.set("status", true); // 操作单详情
-					tempBills.set("createdTime", {
-						"__type": "Date",
-						"iso": that.formItem.date
-					}); // 操作单详情
-					if (that.producer) {
-						let producer = Bmob.Pointer('producers');
-						let producerID = producer.set(that.formItem.producer.objectId);
-						tempBills.set("producer", producerID);
+				
+				that.$http.Post("stock_goodEnterPurchase", {
+					"goods": selectGoods,
+					"beizhu": that.formItem.beizhu,
+					"real_num": that.formItem.real_num,
+					"stockId": that.formItem.stock.objectId,
+					"stockName": that.formItem.stock.stock_name,
+					"otherMoney": that.formItem.otherMoney, //其他金额 +
+					"discountMoney":  that.formItem.discountMoney, //优惠金额 -
+					"haveGetMoney":  that.formItem.haveGetMoney, //预付款 
+					"real_money": that.formItem.real_money,
+					"all_money": that.formItem.all_money,
+					"accountId":that.formItem.account.objectId,
+					"producerId":that.formItem.producer.objectId,
+					"Images": that.formItem.Images,
+					"opreater": JSON.parse(localStorage.getItem("user")).objectId,
+					"nowDay": that.formItem.date
+				}).then(res => {
+					if (res) {
+						that.button_disabled = false;
+						that.$Loading.finish();
+						that.handleData();
 					}
-
-					let goodsId = {}
-
-					const pointer3 = Bmob.Pointer('stocks');
-					let stockId = pointer3.set(that.formItem.stock.objectId);
-					tempBills.set("stock", stockId);
-					detailBills.stock = that.formItem.stock.stock_name
-					if (stockIds.indexOf(that.formItem.stock.objectId) == -1) {
-						stockIds.push(that.formItem.stock.objectId)
-						stockNames.push(that.formItem.stock.stock_name)
-					}
-
-					detailBills.goodsName = selectGoods[i].goodsName
-					detailBills.modify_retailPrice = (selectGoods[i].modify_retailPrice).toString()
-					detailBills.retailPrice = selectGoods[i].retailPrice
-					detailBills.total_money = selectGoods[i].total_money
-					goodsId.costPrice = selectGoods[i].costPrice
-					goodsId.retailPrice = selectGoods[i].retailPrice
-					goodsId.objectId = selectGoods[i].objectId
-					goodsId.reserve = num
-					if (selectGoods[i].selected_model) {
-						goodsId.selected_model = selectGoods[i].selected_model
-						goodsId.models = selectGoods[i].models
-					}
-					detailBills.goodsId = goodsId
-					detailBills.num = selectGoods[i].num
-					detailBills.packingUnit = selectGoods[i].packingUnit
-					detailBills.type = 1
-
-					billsObj.push(tempBills)
-					detailObj.push(detailBills)
-
-				}
-				//插入单据
-				Bmob.Query('Bills').saveAll(billsObj).then(function(res) {
-						//console.log("批量新增单据成功", res);
-						let bills = []
-						for (let i = 0; i < res.length; i++) {
-							bills.push(res[i].success.objectId)
-						}
-
-
-						let pointer = Bmob.Pointer('_User')
-						let poiID = pointer.set(uid);
-
-						let masterId = localStorage.getItem('masterId');
-						let pointer1 = Bmob.Pointer('_User')
-						let poiID1 = pointer1.set(masterId);
-
-						let query = Bmob.Query('order_opreations');
-						//query.set("relations", relID);
-						query.set("beizhu", that.formItem.beizhu);
-						query.set("detail", detailObj);
-						query.set("real_num", that.formItem.real_num);
-						query.set("type", 1);
-						query.set("extra_type", 1);
-						query.set("bills", bills);
-						query.set("opreater", poiID1);
-						query.set("master", poiID);
-						//query.set("stock", stockId);
-						query.set("stockIds", stockIds);
-						query.set("stockNames", stockNames);
-						query.set('goodsName', selectGoods[0].goodsName);
-						query.set('real_money', Number(that.formItem.real_money));
-						query.set('debt', that.formItem.all_money - Number(that.formItem.real_money));
-						query.set("createdTime", {
-							"__type": "Date",
-							"iso": that.formItem.date
-						});
-
-						if (that.formItem.producer) {
-							let producer = Bmob.Pointer('producers');
-							let producerID = producer.set(that.formItem.producer.objectId);
-							query.set("producer", producerID);
-							//如果客户有欠款
-							if ((that.formItem.all_money - Number(that.formItem.real_money)) > 0) {
-								let query = Bmob.Query('producers');
-								query.get(that.formItem.producer.objectId).then(res => {
-									var debt = (res.debt == null) ? 0 : res.debt;
-									debt = debt + (that.formItem.all_money - Number(that.formItem.real_money));
-									//console.log(debt);
-									let query = Bmob.Query('producers');
-									query.get(that.formItem.producer.objectId).then(res => {
-										res.set('debt', debt)
-										res.save()
-									})
-								})
-							}
-						}
-
-						query.set("all_money", that.formItem.all_money);
-						query.set("Images", that.formItem.Images);
-						query.set("status", true); // 操作单详情
-						query.save().then(res => {
-							let operationId = res.objectId
-							let createdAt = res.createdAt
-							//console.log("添加操作历史记录成功", res);
-
-							if (true) {
-								common.enterAddGoodNumNew(selectGoods, that.formItem.stock).then(result => { //添加产品数量
-									setTimeout(function() {
-										that.$Loading.finish();
-										that.$Message.success('采购成功');
-										that.handleData();
-										that.button_disabled = false;
-										common.log(thisUser.nickName + "采购了'" + selectGoods[0].goodsName + "'等" + selectGoods
-											.length + "商品", 1, operationId);
-									}, 500)
-								})
-							}
-
-						})
-
-					},
-					function(error) {
-						// 批量新增异常处理
-						console.log("异常处理");
-					});
+				})
 
 			},
 
