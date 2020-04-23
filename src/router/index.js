@@ -118,6 +118,13 @@ export default new Router({
           name: 'goodOutBuyReturn',
           component: () => import('@/components/stock/goodOutBuyReturn'), //销售退货
         },
+				
+				{
+				  path: 'orders/stockOrders',
+				  name: 'stockOrders',
+				  component: () => import('@/components/orders/stockOrders'), //销售退货
+				},
+				
         {
           path: 'index',
           name: 'index',

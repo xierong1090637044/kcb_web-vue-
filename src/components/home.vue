@@ -79,7 +79,7 @@
               <template slot="title">
                 <i class="iconfont  icon-fq_kucunfeiyong" style="font-size: 20px;"></i>线上订货
               </template>
-              <MenuItem name="9-1" to='/home/onlineShop/goodClass'>产品类别</MenuItem>
+              <MenuItem name="9-1" to='/home/onlineShop/goodClass'>线上展示类别</MenuItem>
               <MenuItem name="9-2" to='/home/onlineShop/goodManage'>商品管理</MenuItem>
             </Submenu>
 
@@ -89,13 +89,21 @@
               <div style="margin-left: 10px;margin-top: 4px;">产品管理</div>
             </div>
             </MenuItem>
-
-            <MenuItem name="5" to='/home/operations'>
-            <div class="display_flex">
-              <Icon type="ios-paper" style="font-size: 20px;" />
-              <div style="margin-left: 10px;margin-top: 4px;">操作记录</div>
-            </div>
-            </MenuItem>
+						
+						<Submenu name="5">
+						  <template slot="title">
+						    <Icon type="ios-paper" style="font-size: 20px;"></Icon>
+						    操作记录
+						  </template>
+						  <MenuItem name="5-1" to='/home/orders/stockOrders?type=1&extra_type=2'>入库记录</MenuItem>
+							<MenuItem name="5-2" to='/home/orders/stockOrders?type=-1&extra_type=2'>出库记录</MenuItem>
+							<MenuItem name="5-3" to='/home/orders/stockOrders?type=-2'>调拨记录</MenuItem>
+							<MenuItem name="5-4" to='/home/orders/stockOrders?type=3'>盘点记录</MenuItem>
+							<MenuItem name="5-5" to='/home/orders/stockOrders'>采购记录</MenuItem>
+							<MenuItem name="5-6" to='/home/orders/stockOrders'>采购退货记录</MenuItem>
+							<MenuItem name="5-7" to='/home/orders/stockOrders'>销售记录</MenuItem>
+							<MenuItem name="5-8" to='/home/orders/stockOrders'>销售退货记录</MenuItem>
+						</Submenu>
 
             <Submenu name="6">
               <template slot="title">
