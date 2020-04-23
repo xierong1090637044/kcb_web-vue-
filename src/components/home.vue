@@ -62,8 +62,8 @@
                 <Icon type="md-cart" style="font-size: 20px;"></Icon>
                 销售
               </template>
-              <MenuItem name="3-1" to='/home/goodOutBuy'>销售出库</MenuItem>
-							<MenuItem name="3-2" to='/home/goodOutBuyReturn'>销售退货</MenuItem>
+              <MenuItem name="3-1" to='/home/stock/goodOutBuy'>销售出库</MenuItem>
+							<MenuItem name="3-2" to='/home/stock/goodOutBuyReturn'>销售退货</MenuItem>
             </Submenu>
 
             <Submenu name="8">

@@ -89,7 +89,7 @@
 						
 						<FormItem label="采购日期">
 							<FormItem prop="producttime">
-								<DatePicker type="date" placeholder="请选择采购日期" v-model="formItem.date" format="yyyy-MM-dd"></DatePicker>
+								<DatePicker type="datetime" placeholder="请选择采购日期" v-model="formItem.date" format="yyyy-MM-dd HH:mm:ss"></DatePicker>
 							</FormItem>
 						</FormItem>
 					
@@ -163,7 +163,7 @@
 					haveGetMoney: 0, //预付款 -
 					beizhu: '', //备注
 					Images: [],
-					date: common.getDay(0), //采购日期
+					date: common.getDay(0,true,true), //采购日期
 				},
 				selectIndex: 0,
 				selectGoods: [],
@@ -444,6 +444,20 @@
 					good.packingUnit = ''
 					good.createdAt = ''
 					that.selectGoods.push(good)
+				}
+				that.formItem = {
+					account:'',//结算账户
+					producer: '',
+					stock: '',
+					all_money: 0,
+					real_money: 0,
+					real_num: 0, //数量
+					otherMoney: 0, //其他金额 +
+					discountMoney: 0, //优惠金额 -
+					haveGetMoney: 0, //预付款 -
+					beizhu: '', //备注
+					Images: [],
+					date: common.getDay(0,true,true), //采购日期
 				}
 			},
 

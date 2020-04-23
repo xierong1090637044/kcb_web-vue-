@@ -52,19 +52,19 @@
 
 			<div style="padding: 0 0.625rem;">
 				<Form :model="formItem" :label-width="100" style="margin-top: 1.875rem;">
-					
+
 					<div style="display: flex;">
 						<FormItem label="出库仓库">
 							<Input v-model="formItem.stock.stock_name" placeholder="请选择出库仓库" @on-focus="stockShow = true"></Input>
 							<Icon type="ios-arrow-down" slot="suffix" />
 						</FormItem>
-						
+
 						<FormItem label="退货日期">
 							<FormItem prop="producttime">
-								<DatePicker type="date" placeholder="请选择退货日期" v-model="formItem.date" format="yyyy-MM-dd"></DatePicker>
+								<DatePicker type="datetime" placeholder="请选择退货日期" v-model="formItem.date" format="yyyy-MM-dd HH:mm:ss"></DatePicker>
 							</FormItem>
 						</FormItem>
-					
+
 						<FormItem label="供货商">
 							<Input placeholder="选择供货商" :readonly="true" @on-focus="producerShow = true" :value="formItem.producer.producer_name">
 							<Icon type="ios-arrow-down" slot="suffix" />
@@ -76,12 +76,12 @@
 					</div>
 
 					<div style="display: flex;">
-						
+
 						<FormItem label="备注">
 							<Input v-model="formItem.beizhu" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入备注"></Input>
 						</FormItem>
 
-						<FormItem label="凭证图" >
+						<FormItem label="凭证图">
 							<uploadImg @selectImg="selectImg"></uploadImg>
 						</FormItem>
 					</div>
@@ -133,7 +133,7 @@
 					real_num: 0, //数量
 					beizhu: '', //备注
 					Images: [],
-					date: common.getDay(0), //采购日期
+					date: common.getDay(0,true,true), //采购日期
 				},
 				selectIndex: 0,
 				selectGoods: [],
@@ -210,11 +210,11 @@
 			selectImg(value) {
 				that.formItem.Images = value
 			},
-			
+
 			//选择仓库
 			chooseStock(value) {
-			  that.formItem.stock = value
-			  that.stockShow = false
+				that.formItem.stock = value
+				that.stockShow = false
 			},
 
 			//选择供货商
@@ -261,7 +261,7 @@
 				let detailObj = [];
 				let stockIds = [];
 				let stockNames = [];
-				
+
 				const pointer3 = Bmob.Pointer('stocks');
 				let stockId = pointer3.set(that.formItem.stock.objectId);
 
@@ -304,7 +304,7 @@
 
 					let goodsId = {}
 
-					
+
 					tempBills.set("stock", stockId);
 					detailBills.stock = that.formItem.stock.stock_name
 					if (stockIds.indexOf(that.formItem.stock.objectId) == -1) {
@@ -374,20 +374,6 @@
 							let producer = Bmob.Pointer('producers');
 							let producerID = producer.set(that.formItem.producer.objectId);
 							query.set("producer", producerID);
-							//如果客户有欠款
-							if ((that.formItem.all_money - Number(that.formItem.real_money)) > 0) {
-								let query = Bmob.Query('producers');
-								query.get(that.formItem.producer.objectId).then(res => {
-									var debt = (res.debt == null) ? 0 : res.debt;
-									debt = debt + (that.formItem.all_money - Number(that.formItem.real_money));
-									//console.log(debt);
-									let query = Bmob.Query('producers');
-									query.get(that.formItem.producer.objectId).then(res => {
-										res.set('debt', debt)
-										res.save()
-									})
-								})
-							}
 						}
 
 						query.set("all_money", that.formItem.all_money);
@@ -399,18 +385,16 @@
 							let operationId = res.objectId
 							let createdAt = res.createdAt
 							//console.log("添加操作历史记录成功", res);
-
-							if (true) {
-								common.outRedGoodNumNew(selectGoods, that.formItem.stock).then(result => { //添加产品数量
-									setTimeout(function() {
-										that.$Loading.finish();
-										that.$Message.success('采购成功');
-										that.handleData();
-										that.button_disabled = false;
-										common.log(thisUser.nickName + "处理了采购退货'" + selectGoods[0].goodsName + "'等" + selectGoods.length + "商品", 1, operationId);
-									}, 500)
-								})
-							}
+							common.outRedGoodNumNew(selectGoods, that.formItem.stock).then(result => { //添加产品数量
+								setTimeout(function() {
+									that.$Loading.finish();
+									that.$Message.success('采购成功');
+									that.handleData();
+									that.button_disabled = false;
+									common.log(thisUser.nickName + "处理了采购退货'" + selectGoods[0].goodsName + "'等" + selectGoods.length + "商品",
+										1, operationId);
+								}, 500)
+							})
 
 						})
 
@@ -548,6 +532,17 @@
 					good.packingUnit = ''
 					good.createdAt = ''
 					that.selectGoods.push(good)
+				}
+				
+				that.formItem = {
+					producer: '',
+					stock: '',
+					all_money: 0,
+					real_money: 0,
+					real_num: 0, //数量
+					beizhu: '', //备注
+					Images: [],
+					date: common.getDay(0,true,true), //采购日期
 				}
 			},
 

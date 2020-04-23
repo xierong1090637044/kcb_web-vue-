@@ -123,7 +123,7 @@
 					beizhu: '', //备注
 					Images: [],
 					stockClass: '销售出库',
-					date: common.getDay(0,true), //入库日期
+					date: common.getDay(0,true,true), //入库日期
 				},
 				selectIndex: 0,
 				selectGoods: [],
@@ -367,7 +367,7 @@
 					beizhu: '', //备注
 					Images: [],
 					stockClass: '销售出库',
-					date: common.getDay(0, true), //入库日期
+					date: common.getDay(0, true,true), //入库日期
 				}
 			},
 

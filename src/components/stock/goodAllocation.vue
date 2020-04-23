@@ -111,7 +111,7 @@
           real_num: 0, //数量
           beizhu: '', //备注
           Images: [],
-          date: common.getDay(0),//入库日期
+          date: common.getDay(0,true,true),//入库日期
           inStock:"",
           outStock:"",
         },
@@ -533,6 +533,17 @@
           good.createdAt = ''
           that.selectGoods.push(good)
         }
+				
+				that.formItem= {
+				  all_money: 0,
+				  real_money: 0,
+				  real_num: 0, //数量
+				  beizhu: '', //备注
+				  Images: [],
+				  date: common.getDay(0,true,true),//入库日期
+				  inStock:"",
+				  outStock:"",
+				}
       },
 
       reduceSelectGoods(index) {

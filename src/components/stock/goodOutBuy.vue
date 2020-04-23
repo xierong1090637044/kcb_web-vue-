@@ -3,7 +3,7 @@
 		<div style="margin-bottom: 10px;">
 			<Breadcrumb separator="<b style='color: #999;'>/</b>">
 				<BreadcrumbItem to="/">首页</BreadcrumbItem>
-				<BreadcrumbItem to="/home/goods">产品采购</BreadcrumbItem>
+				<BreadcrumbItem to="/home/goods">产品销售</BreadcrumbItem>
 			</Breadcrumb>
 		</div>
 
@@ -12,7 +12,7 @@
 				<div class="display_flex_bet">
 					<div></div>
 					<div style="text-align: right;margin-bottom: 1.5rem;">
-						<Button type="primary" @click="handleSubmit(2)" :disabled="button_disabled">确定采购</Button>
+						<Button type="primary" @click="handleSubmit(2)" :disabled="button_disabled">确定销售</Button>
 					</div>
 				</div>
 
@@ -53,34 +53,58 @@
 			<div style="padding: 0 0.625rem;">
 				<Form :model="formItem" :label-width="100" style="margin-top: 1.875rem;">
 					
+					<div class="display_flex">
+						<FormItem label="商品总价">
+							<Input v-model="formItem.all_money" :disabled="true"></Input>
+						</FormItem>
+						
+						<FormItem label="其他费用">
+							<Input v-model="formItem.otherMoney" type="number" placeholder="请输入其他费用"></Input>
+						</FormItem>
+						
+						<FormItem label="优惠金额">
+							<Input v-model="formItem.discountMoney" type="number" placeholder="请输入优惠金额"></Input>
+						</FormItem>
+					</div>
+					
+					<div class="display_flex">
+						<FormItem label="结算账户">
+							<Input v-model="formItem.account.name" @on-focus="accountShow = true"></Input>
+						</FormItem>
+						
+						<FormItem label="现结(预付)款">
+							<Input v-model="formItem.haveGetMoney" type="number" placeholder="请输入其他费用"></Input>
+						</FormItem>
+						
+						<FormItem label="现结(预付)后欠款" :label-width="140">
+							<Input :value="Number(formItem.real_money) - Number(formItem.haveGetMoney) - Number(formItem.discountMoney) +Number(formItem.otherMoney)" :disabled="true"></Input>
+						</FormItem>
+					</div>
+					
 					<div style="display: flex;">
-						<FormItem label="入库仓库">
-							<Input v-model="formItem.stock.stock_name" placeholder="请选择入库仓库" @on-focus="stockShow = true"></Input>
+						<FormItem label="出库仓库">
+							<Input v-model="formItem.stock.stock_name" placeholder="请选择出库仓库" @on-focus="stockShow = true"></Input>
 							<Icon type="ios-arrow-down" slot="suffix" />
 						</FormItem>
 						
-						<FormItem label="采购日期">
+						<FormItem label="销售日期">
 							<FormItem prop="producttime">
-								<DatePicker type="date" placeholder="请选择采购日期" v-model="formItem.date" format="yyyy-MM-dd"></DatePicker>
+								<DatePicker type="datetime" placeholder="请选择销售日期" v-model="formItem.date" format="yyyy-MM-dd HH:mm:ss"></DatePicker>
 							</FormItem>
 						</FormItem>
 					
-						<FormItem label="供货商">
-							<Input placeholder="选择供货商" :readonly="true" @on-focus="producerShow = true" :value="formItem.producer.producer_name">
+						<FormItem label="客户">
+							<Input placeholder="选择客户" :readonly="true" @on-focus="customShow = true" :value="formItem.custom.custom_name">
 							<Icon type="ios-arrow-down" slot="suffix" />
 							</Input>
 						</FormItem>
-						<FormItem label="本次付款">
-							<Input placeholder="请输入本次实际付款金额" v-model="formItem.real_money"></Input>
-						</FormItem>
-					</div>
-
-					<div style="display: flex;">
 						
 						<FormItem label="备注">
 							<Input v-model="formItem.beizhu" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入备注"></Input>
 						</FormItem>
-
+					</div>
+					
+					<div>
 						<FormItem label="凭证图" >
 							<uploadImg @selectImg="selectImg"></uploadImg>
 						</FormItem>
@@ -92,29 +116,31 @@
 		</div>
 
 		<!--选择产品模板-->
-		<goodsS :show="goodsShow" @cancle="goodsShow = false" @confrimGoods="confrimSelectGoods" type="enter"
+		<goodsS :show="goodsShow" @cancle="goodsShow = false" @confrimGoods="confrimSelectGoods" type="out"
 		 :thisSelectGoods="selectGoods"></goodsS>
 		<!--生产商列表-->
-		<producerS @cancle="producerShow = false" v-if="producerShow" @select="selectProducter"></producerS>
+		<customS @cancle="customShow = false" v-if="customShow" @select="selectProducter"></customS>
 		<stocksS v-if="stockShow" @confrim="chooseStock" @cancle="stockShow = false"></stocksS>
+		<accountsSelect v-if="accountShow" @cancle="accountShow = false" @select="selectAccount"></accountsSelect>
 
 	</div>
 </template>
 <script>
 	import goodsS from '@/components/component/goodsS.vue';
-	import producerS from '@/components/component/producerS.vue';
+	import customS from '@/components/component/customS.vue';
 	import stocksS from '@/components/component/stocksS.vue';
 	import uploadImg from '@/components/component/uploadImg.vue';
-
-	import send_temp from '@/serve/send_temp.js';
+	import accountsSelect from '@/components/component/accountsSelect.vue';
+	
 	import common from '@/serve/common.js';
 	import goods from '@/serve/goods.js';
 
 	let that;
 	export default {
 		components: {
+			accountsSelect,
 			goodsS,
-			producerS,
+			customS,
 			stocksS,
 			uploadImg
 		},
@@ -122,18 +148,22 @@
 			return {
 				button_disabled: false,
 				stockShow: false,
-				shopShow: false,
-				producerShow: false,
+				accountShow: false,
+				customShow: false,
 				goodsShow: false,
 				formItem: {
-					producer: '',
+					account:'',//结算账户
+					custom: '',
 					stock: '',
 					all_money: 0,
 					real_money: 0,
 					real_num: 0, //数量
+					otherMoney: 0, //其他金额 +
+					discountMoney: 0, //优惠金额 -
+					haveGetMoney: 0, //预付款 -
 					beizhu: '', //备注
 					Images: [],
-					date: common.getDay(0), //采购日期
+					date: common.getDay(0,true,true), //销售日期
 				},
 				selectIndex: 0,
 				selectGoods: [],
@@ -153,7 +183,6 @@
 						align: 'center',
 					},
 					{
-
 						align: 'center',
 						title: '所属分类',
 						key: 'class',
@@ -168,14 +197,14 @@
 					{
 						width: 100,
 						align: 'center',
-						title: '成本价',
-						key: 'costPrice',
+						title: '零售价',
+						key: 'retailPrice',
 					},
 					{
 						width: 200,
 						align: 'center',
-						title: '实际成本价',
-						key: 'costPrice',
+						title: '实际零售价',
+						key: 'modify_retailPrice',
 						slot: 'modify_retailPrice',
 					},
 					{
@@ -211,16 +240,22 @@
 				that.formItem.Images = value
 			},
 			
+			//选择账户
+			selectAccount(value){
+				that.formItem.account = value
+				that.accountShow = false
+			},
+			
 			//选择仓库
 			chooseStock(value) {
 			  that.formItem.stock = value
 			  that.stockShow = false
 			},
 
-			//选择供货商
+			//选择客户
 			selectProducter(value) {
-				that.formItem.producer = value;
-				that.producerShow = false;
+				that.formItem.custom = value;
+				that.customShow = false;
 			},
 			//提交表单
 			handleSubmit(type) {
@@ -237,185 +272,49 @@
 				}
 
 				if (selectGoods.length == 0) {
-					that.$Message.error('"没有选择采购产品');
+					that.$Message.error('"没有选择销售产品');
 					that.$Loading.finish();
 					that.button_disabled = false;
 					return
 				}
 
 				if (that.formItem.stock == "" || that.formItem.stock == undefined || that.formItem.stock == null) {
-					that.$Message.error('"请选择入库仓库');
+					that.$Message.error('"请选择出库仓库');
 					that.$Loading.finish();
 					that.button_disabled = false;
 					return
 				}
 
-				if (that.formItem.producer == "") {
-					that.$Message.error('"没有选择供货商');
+				if (that.formItem.custom == "") {
+					that.$Message.error('"没有选择客户');
 					that.$Loading.finish();
 					that.button_disabled = false;
 					return;
 				}
-
-				let billsObj = new Array();
-				let detailObj = [];
-				let stockIds = [];
-				let stockNames = [];
-
-				for (let i = 0; i < selectGoods.length; i++) {
-					let num = Number(selectGoods[i].reserve) + selectGoods[i].num;
-
-					//单据
-					let detailBills = {}
-					let tempBills = Bmob.Query('Bills');
-
-					let pointer = Bmob.Pointer('_User')
-					let user = pointer.set(uid)
-					let pointer1 = Bmob.Pointer('Goods')
-					let tempGoods_id = pointer1.set(selectGoods[i].header ? selectGoods[i].header.objectId : selectGoods[i].objectId);
-
-					let masterId = localStorage.getItem('masterId');
-					let pointer2 = Bmob.Pointer('_User')
-					let poiID2 = pointer2.set(masterId);
-
-					tempBills.set('goodsName', selectGoods[i].goodsName);
-					tempBills.set('retailPrice', (selectGoods[i].modify_retailPrice).toString());
-					tempBills.set('num', Number(selectGoods[i].num));
-					tempBills.set('total_money', selectGoods[i].total_money);
-					tempBills.set('really_total_money', selectGoods[i].really_total_money);
-					tempBills.set('goodsId', tempGoods_id);
-					tempBills.set('userId', user);
-					tempBills.set("opreater", poiID2);
-					tempBills.set('type', 1);
-					tempBills.set('extra_type', 1);
-					tempBills.set("status", true); // 操作单详情
-					tempBills.set("createdTime", {
-						"__type": "Date",
-						"iso": that.formItem.date
-					}); // 操作单详情
-					if (that.producer) {
-						let producer = Bmob.Pointer('producers');
-						let producerID = producer.set(that.formItem.producer.objectId);
-						tempBills.set("producer", producerID);
+				
+				that.$http.Post("stock_goodOutBuy", {
+					"goods": selectGoods,
+					"beizhu": that.formItem.beizhu,
+					"real_num": that.formItem.real_num,
+					"stockId": that.formItem.stock.objectId,
+					"stockName": that.formItem.stock.stock_name,
+					"otherMoney": that.formItem.otherMoney, //其他金额 +
+					"discountMoney":  that.formItem.discountMoney, //优惠金额 -
+					"haveGetMoney":  that.formItem.haveGetMoney, //预付款 
+					"real_money": that.formItem.real_money,
+					"all_money": that.formItem.all_money,
+					"accountId":that.formItem.account.objectId,
+					"customId":that.formItem.custom.objectId,
+					"Images": that.formItem.Images,
+					"opreater": JSON.parse(localStorage.getItem("user")).objectId,
+					"nowDay": that.formItem.date
+				}).then(res => {
+					if (res) {
+						that.button_disabled = false;
+						that.$Loading.finish();
+						that.handleData();
 					}
-
-					let goodsId = {}
-
-					const pointer3 = Bmob.Pointer('stocks');
-					let stockId = pointer3.set(that.formItem.stock.objectId);
-					tempBills.set("stock", stockId);
-					detailBills.stock = that.formItem.stock.stock_name
-					if (stockIds.indexOf(that.formItem.stock.objectId) == -1) {
-						stockIds.push(that.formItem.stock.objectId)
-						stockNames.push(that.formItem.stock.stock_name)
-					}
-
-					detailBills.goodsName = selectGoods[i].goodsName
-					detailBills.modify_retailPrice = (selectGoods[i].modify_retailPrice).toString()
-					detailBills.retailPrice = selectGoods[i].retailPrice
-					detailBills.total_money = selectGoods[i].total_money
-					goodsId.costPrice = selectGoods[i].costPrice
-					goodsId.retailPrice = selectGoods[i].retailPrice
-					goodsId.objectId = selectGoods[i].objectId
-					goodsId.reserve = num
-					if (selectGoods[i].selected_model) {
-						goodsId.selected_model = selectGoods[i].selected_model
-						goodsId.models = selectGoods[i].models
-					}
-					detailBills.goodsId = goodsId
-					detailBills.num = selectGoods[i].num
-					detailBills.packingUnit = selectGoods[i].packingUnit
-					detailBills.type = 1
-
-					billsObj.push(tempBills)
-					detailObj.push(detailBills)
-
-				}
-				//插入单据
-				Bmob.Query('Bills').saveAll(billsObj).then(function(res) {
-						//console.log("批量新增单据成功", res);
-						let bills = []
-						for (let i = 0; i < res.length; i++) {
-							bills.push(res[i].success.objectId)
-						}
-
-
-						let pointer = Bmob.Pointer('_User')
-						let poiID = pointer.set(uid);
-
-						let masterId = localStorage.getItem('masterId');
-						let pointer1 = Bmob.Pointer('_User')
-						let poiID1 = pointer1.set(masterId);
-
-						let query = Bmob.Query('order_opreations');
-						//query.set("relations", relID);
-						query.set("beizhu", that.formItem.beizhu);
-						query.set("detail", detailObj);
-						query.set("real_num", that.formItem.real_num);
-						query.set("type", 1);
-						query.set("extra_type", 1);
-						query.set("bills", bills);
-						query.set("opreater", poiID1);
-						query.set("master", poiID);
-						//query.set("stock", stockId);
-						query.set("stockIds", stockIds);
-						query.set("stockNames", stockNames);
-						query.set('goodsName', selectGoods[0].goodsName);
-						query.set('real_money', Number(that.formItem.real_money));
-						query.set('debt', that.formItem.all_money - Number(that.formItem.real_money));
-						query.set("createdTime", {
-							"__type": "Date",
-							"iso": that.formItem.date
-						});
-
-						if (that.formItem.producer) {
-							let producer = Bmob.Pointer('producers');
-							let producerID = producer.set(that.formItem.producer.objectId);
-							query.set("producer", producerID);
-							//如果客户有欠款
-							if ((that.formItem.all_money - Number(that.formItem.real_money)) > 0) {
-								let query = Bmob.Query('producers');
-								query.get(that.formItem.producer.objectId).then(res => {
-									var debt = (res.debt == null) ? 0 : res.debt;
-									debt = debt + (that.formItem.all_money - Number(that.formItem.real_money));
-									//console.log(debt);
-									let query = Bmob.Query('producers');
-									query.get(that.formItem.producer.objectId).then(res => {
-										res.set('debt', debt)
-										res.save()
-									})
-								})
-							}
-						}
-
-						query.set("all_money", that.formItem.all_money);
-						query.set("Images", that.formItem.Images);
-						query.set("status", true); // 操作单详情
-						query.save().then(res => {
-							let operationId = res.objectId
-							let createdAt = res.createdAt
-							//console.log("添加操作历史记录成功", res);
-
-							if (true) {
-								common.enterAddGoodNumNew(selectGoods, that.formItem.stock).then(result => { //添加产品数量
-									setTimeout(function() {
-										that.$Loading.finish();
-										that.$Message.success('采购成功');
-										that.handleData();
-										that.button_disabled = false;
-										common.log(thisUser.nickName + "采购了'" + selectGoods[0].goodsName + "'等" + selectGoods
-											.length + "商品", 1, operationId);
-									}, 500)
-								})
-							}
-
-						})
-
-					},
-					function(error) {
-						// 批量新增异常处理
-						console.log("异常处理");
-					});
+				})
 
 			},
 
@@ -501,7 +400,7 @@
 							good.stocks = ''
 							good.class = ''
 							good.reserve = ''
-							good.costPrice = ''
+							good.retailPrice = ''
 							good.modify_retailPrice = ''
 							good.retailPrice = ''
 							good.packageContent = ''
@@ -521,7 +420,7 @@
 				good.stocks = ''
 				good.class = ''
 				good.reserve = ''
-				good.costPrice = ''
+				good.retailPrice = ''
 				good.modify_retailPrice = ''
 				good.retailPrice = ''
 				good.packageContent = ''
@@ -538,13 +437,28 @@
 					good.stocks = ''
 					good.class = ''
 					good.reserve = ''
-					good.costPrice = ''
+					good.retailPrice = ''
 					good.modify_retailPrice = ''
 					good.retailPrice = ''
 					good.packageContent = ''
 					good.packingUnit = ''
 					good.createdAt = ''
 					that.selectGoods.push(good)
+				}
+				
+				that.formItem= {
+					account:'',//结算账户
+					custom: '',
+					stock: '',
+					all_money: 0,
+					real_money: 0,
+					real_num: 0, //数量
+					otherMoney: 0, //其他金额 +
+					discountMoney: 0, //优惠金额 -
+					haveGetMoney: 0, //预付款 -
+					beizhu: '', //备注
+					Images: [],
+					date: common.getDay(0,true,true), //销售日期
 				}
 			},
 

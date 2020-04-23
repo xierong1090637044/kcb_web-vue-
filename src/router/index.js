@@ -36,9 +36,6 @@ import staffs from '@/components/manage/staffs'; // 员工管理页面
 import customs from '@/components/manage/customs'; // 客户管理页面
 import producers from '@/components/manage/producers'; // 客户管理页面
 
-import goodEnterPurchase from '@/components/goodEnterPurchase'; // 入库或采购页面
-import goodOutBuy from '@/components/goodOutBuy'; // 盘点页面
-
 import updateHistory from '@/components/updateHistroy'; // 出库或销售页面
 
 import admin from '@/components/admin/index'; // 管理员页面
@@ -111,18 +108,15 @@ export default new Router({
           name: 'goodEnterPurchaseReturn',
           component: () => import('@/components/stock/goodEnterPurchaseReturn'), 
         },
+				{
+				  path: 'stock/goodOutBuy',
+				  name: 'goodOutBuy',
+				  component: () => import('@/components/stock/goodOutBuy'),//销售出库
+				},
         {
-          path: 'goodOutBuyReturn',
+          path: 'stock/goodOutBuyReturn',
           name: 'goodOutBuyReturn',
-          component: () => import('@/components/goodOutBuyReturn'), // vue路由懒加载  异步加载
-          meta: {
-            title: '销售退货',
-          }
-        },
-        {
-          path: 'goodOutBuy',
-          name: 'goodOutBuy',
-          component: goodOutBuy
+          component: () => import('@/components/stock/goodOutBuyReturn'), //销售退货
         },
         {
           path: 'index',
