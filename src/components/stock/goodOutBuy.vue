@@ -155,6 +155,7 @@
 					account:'',//结算账户
 					custom: '',
 					stock: '',
+					allCostPrice:0,//总成本额
 					all_money: 0,
 					real_money: 0,
 					real_num: 0, //数量
@@ -298,6 +299,7 @@
 					"real_num": that.formItem.real_num,
 					"stockId": that.formItem.stock.objectId,
 					"stockName": that.formItem.stock.stock_name,
+					"allCostPrice":that.formItem.allCostPrice,
 					"otherMoney": that.formItem.otherMoney, //其他金额 +
 					"discountMoney":  that.formItem.discountMoney, //优惠金额 -
 					"haveGetMoney":  that.formItem.haveGetMoney, //预付款 
@@ -324,15 +326,16 @@
 				that.selectGoods[index].modify_retailPrice = Number($event)
 				that.selectGoods[index].total_money = that.selectGoods[index].num * Number($event)
 				that.selectGoods[index].really_total_money = that.selectGoods[index].num * Number($event)
-
-				console.log(that.selectGoods)
+				
 				that.formItem.real_money = 0
 				that.formItem.all_money = 0
 				that.formItem.real_num = 0
+				that.formItem.allCostPrice = 0
 				for (let item of that.selectGoods) {
 					that.formItem.real_num += Number(item.num ? item.num : 0)
 					that.formItem.all_money += Number(item.total_money ? item.total_money : 0)
 					that.formItem.real_money += Number(item.really_total_money ? item.really_total_money : 0)
+					that.formItem.allCostPrice += Number(item.num) * Number(item.costPrice)
 				}
 			},
 
@@ -346,10 +349,12 @@
 				that.formItem.real_money = 0
 				that.formItem.all_money = 0
 				that.formItem.real_num = 0
+				that.formItem.allCostPrice = 0
 				for (let item of that.selectGoods) {
 					that.formItem.real_num += Number(item.num ? item.num : 0)
 					that.formItem.all_money += Number(item.total_money ? item.total_money : 0)
 					that.formItem.real_money += Number(item.really_total_money ? item.really_total_money : 0)
+					that.formItem.allCostPrice += Number(item.num) * Number(item.costPrice)
 				}
 			},
 
@@ -364,7 +369,8 @@
 				}
 
 				console.log(_sumNum)
-
+				
+				that.selectGoods[index].models = that.selectGoods[index].selected_model
 				that.selectGoods[index].num = _sumNum
 				that.selectGoods[index].total_money = _sumNum * Number(this.selectGoods[index].modify_retailPrice)
 				that.selectGoods[index].really_total_money = _sumNum * Number(this.selectGoods[index].modify_retailPrice)
@@ -372,10 +378,12 @@
 				that.formItem.real_money = 0
 				that.formItem.all_money = 0
 				that.formItem.real_num = 0
+				that.formItem.allCostPrice = 0
 				for (let item of that.selectGoods) {
 					that.formItem.real_num += Number(item.num ? item.num : 0)
 					that.formItem.all_money += Number(item.total_money ? item.total_money : 0)
 					that.formItem.real_money += Number(item.total_money ? item.total_money : 0)
+					that.formItem.allCostPrice += Number(item.num) * Number(item.costPrice)
 				}
 			},
 
@@ -383,6 +391,7 @@
 				that.formItem.real_money = 0;
 				that.formItem.all_money = 0;
 				that.formItem.real_num = 0;
+				that.formItem.allCostPrice = 0;
 				that.selectGoods = [];
 				that.goodsShow = false;
 
@@ -391,6 +400,7 @@
 					that.formItem.real_money += Number(item.num) * Number(item.modify_retailPrice)
 					that.formItem.all_money += Number(item.num) * Number(item.modify_retailPrice)
 					that.formItem.real_num += Number(item.num) * Number(item.num)
+					that.formItem.allCostPrice += Number(item.num) * Number(item.costPrice)
 					that.selectGoods.push(item)
 					count += 1
 					if (count == goods.length) {
@@ -451,6 +461,7 @@
 					custom: '',
 					stock: '',
 					all_money: 0,
+					allCostPrice:0,
 					real_money: 0,
 					real_num: 0, //数量
 					otherMoney: 0, //其他金额 +
@@ -463,8 +474,18 @@
 			},
 
 			reduceSelectGoods(index) {
-				console.log(index)
 				that.selectGoods.splice(index, 1)
+				
+				that.formItem.real_money = 0
+				that.formItem.all_money = 0
+				that.formItem.real_num = 0
+				that.formItem.allCostPrice = 0
+				for (let item of that.selectGoods) {
+					that.formItem.real_num += Number(item.num ? item.num : 0)
+					that.formItem.all_money += Number(item.total_money ? item.total_money : 0)
+					that.formItem.real_money += Number(item.really_total_money ? item.really_total_money : 0)
+					that.formItem.allCostPrice += Number(item.num) * Number(item.costPrice)
+				}
 			},
 		}
 	};

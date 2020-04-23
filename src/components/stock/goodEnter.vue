@@ -298,7 +298,8 @@
 				for (let model of that.selectGoods[index].selected_model) {
 					_sumNum += model.num
 				}
-
+				
+				that.selectGoods[index].models = that.selectGoods[index].selected_model
 				that.selectGoods[index].num = _sumNum
 				that.selectGoods[index].total_money = _sumNum * Number(this.selectGoods[index].modify_retailPrice)
 				that.selectGoods[index].really_total_money = _sumNum * Number(this.selectGoods[index].costPrice)
@@ -390,6 +391,15 @@
 			reduceSelectGoods(index) {
 				console.log(index)
 				that.selectGoods.splice(index, 1)
+				
+				that.formItem.real_money = 0
+				that.formItem.all_money = 0
+				that.formItem.real_num = 0
+				for (let item of that.selectGoods) {
+					that.formItem.real_num += Number(item.num ? item.num : 0)
+					that.formItem.all_money += Number(item.total_money ? item.total_money : 0)
+					that.formItem.real_money += Number(item.really_total_money ? item.really_total_money : 0)
+				}
 			},
 		}
 	};
