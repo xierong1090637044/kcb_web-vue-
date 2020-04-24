@@ -3,7 +3,7 @@
 		<div style="margin-bottom: 10px;">
 			<Breadcrumb separator="<b style='color: #999;'>/</b>">
 				<BreadcrumbItem to="/">首页</BreadcrumbItem>
-				<BreadcrumbItem to="/home/goods">销售记录</BreadcrumbItem>
+				<BreadcrumbItem to="/home/goods">操作记录</BreadcrumbItem>
 			</Breadcrumb>
 		</div>
 
@@ -23,9 +23,9 @@
 				<div style="display: flex;justify-content: center;">
 					<div style="margin-right: 10px" @click="showReserve(row)"><Button type="primary" size="small">详情</Button></div>
 					<!--<div v-if="row.type == 1 && row.status == false" style="margin-right: 10px"><Button type="primary" size="small"
-						 v-print="'#printMe'" @click="Print(row)">销售出库</Button></div>
+						 v-print="'#printMe'" @click="Print(row)">销售入库</Button></div>
 					<div v-if="row.type == -1 && row.status == false" style="margin-right: 10px"><Button type="primary" size="small"
-						 v-print="'#printMe'" @click="Print(row)">销售出库</Button></div>-->
+						 v-print="'#printMe'" @click="Print(row)">销售入库</Button></div>-->
 					<div @click="deleteHeaderGood(row.objectId)"><Button type="error" size="small">撤销</Button></div>
 				</div>
 
@@ -46,11 +46,6 @@
 					<DatePicker type="date" placeholder="起始时间" style="width: 200px" @on-change="change_startdata" v-model="params.start_time"></DatePicker>
 					<DatePicker type="date" placeholder="结束时间" style="width: 200px" @on-change="change_enddata" v-model="params.end_time"></DatePicker>
 				</FormItem>
-
-				<FormItem label="客户" style="margin-top: 10px;">
-					<Input v-model="params.custom.custom_name" placeholder="请选择客户" @on-focus="producerShow = true"></Input>
-				</FormItem>
-
 			</Form>
 		</Modal>
 
@@ -64,30 +59,33 @@
 					<Button type="primary" v-print="'#printTest'">打印</Button>
 				</div>
 
+				<!---入库单详情-->
 				<div id="printTest">
-					<div style="font-size: 22px;padding-bottom:10px;font-weight:800; text-align:center">销售单</div>
-					<div class="display_flex_bet" style="margin-bottom: 10px;">
-						<div style="font-size:14px;">客户：{{detail.candpName}}</div>
-						<div style="font-size:14px;">销售日期：{{detail.createdTime}}</div>
+					<div>
+						<div style="font-size: 22px;padding-bottom:10px;font-weight:800; text-align:center">销售退货单</div>
 					</div>
 					<div class="display_flex_bet" style="margin-bottom: 10px;">
-						<div style="font-size:14px;">出库仓库：{{detail.stock.stock_name}}</div>
+						<div style="font-size:14px;">客户：{{detail.candpName}}</div>
+						<div style="font-size:14px;">销售退货日期：{{detail.createdTime}}</div>
+					</div>
+					<div class="display_flex_bet" style="margin-bottom: 10px;">
+						<div style="font-size:14px;">入库店仓：{{detail.stock.stock_name}}</div>
 						<div style="font-size:14px;">单据编号：{{detail.objectId}}</div>
 					</div>
 
 					<table>
 						<thead>
 							<th>产品名称</th>
-							<th>单位</th>
 							<th>数量</th>
-							<th>单价（元）</th>
-							<th>合计（元）</th>
+							<th>单位</th>
+							<th>单价</th>
+							<th>合计</th>
 						</thead>
 						<tbody>
 							<tr v-for="item in detail.detail" :key="item.id">
 								<td>{{item.goodsName}}</td>
-								<td>{{item.packingUnit?item.packingUnit:''}}</td>
 								<td>{{item.num}}</td>
+								<td>{{item.packingUnit?item.packingUnit:''}}</td>
 								<td>{{item.modify_retailPrice}}</td>
 								<td>{{item.modify_retailPrice * item.num}}</td>
 							</tr>
@@ -95,8 +93,8 @@
 						<tbody>
 							<tr>
 								<td style="font-weight: bold;">合计</td>
-								<td></td>
 								<td>{{detail.real_num}}</td>
+								<td></td>
 								<td></td>
 								<td>{{detail.all_money}}</td>
 							</tr>
@@ -107,7 +105,6 @@
 							</tr>
 						</tbody>
 					</table>
-
 					<div class="display_flex_bet" style="margin-top: 10px;">
 						<div style="font-size:14px;font-weight: bold;" class="display_flex">
 							<div>制单人：</div>
@@ -121,8 +118,6 @@
 				</div>
 			</Modal>
 		</div>
-
-
 	</div>
 </template>
 <script>
@@ -132,19 +127,17 @@
 
 	import expandRow from '@/components/component/expandRow.vue';
 	import customS from '@/components/component/customS.vue';
-	import producerS from '@/components/component/producerS.vue';
 	let that;
 	let user;
 	export default {
 		components: {
 			expandRow,
-			customS,
-			producerS
+			customS
 		},
 		data() {
 			return {
 				customShow: false,
-				producerShow: false,
+				customShow: false,
 				GoodImg: {
 					show: false,
 					attr: ''
@@ -153,11 +146,11 @@
 				detailShow: false,
 
 				order_opreations: [],
+				order_bills: [],
 				padding_size: 30,
 				modal1: false,
 				userid: JSON.parse(localStorage.getItem('user')).objectId || '',
 				user: JSON.parse(localStorage.getItem('user')),
-
 				screenHeight: window.innerHeight,
 				loading: true,
 				columns: [{
@@ -174,38 +167,9 @@
 						}
 					},
 					{
-						title: '销售数量',
+						title: '退货数量',
 						sortable: true,
 						key: 'real_num',
-					},
-					{
-						title: '商品总价',
-						sortable: true,
-						key: 'all_money',
-					},
-					{
-						title: '其他费用',
-						sortable: true,
-						key: 'otherMoney',
-					},
-					{
-						title: '优惠金额',
-						sortable: true,
-						key: 'discountMoney',
-					},
-					{
-						title: '现结款',
-						sortable: true,
-						key: 'haveGetMoney',
-					},
-					{
-						title: '现结后欠款',
-						sortable: true,
-						key: 'debt',
-					},
-					{
-						title: '结算账户',
-						key: 'accountName',
 					},
 					{
 						title: '客户',
@@ -285,7 +249,7 @@
 								style: {
 									"color": (params.row.status) ? "#2ca879" : "#f30"
 								},
-							}, [(params.row.status) ? "已出库" : "未出库"])
+							}, [(params.row.status) ? "已入库" : "未入库"])
 						}
 					},
 					{
@@ -293,8 +257,8 @@
 						key: 'nickName',
 					},
 					{
-						title: '时间',
-						key: 'createdTime',
+						title: '创建时间',
+						key: 'createdAt',
 					},
 					{
 						width: 200,
@@ -318,21 +282,26 @@
 
 		mounted() {
 			that = this;
+			that.get_operations();
 			window.onresize = () => {
 				return (() => {
 					that.screenHeight = window.innerHeight;
 
 				})();
 			};
-
-			this.get_operations();
 		},
 
 		methods: {
 
 			//选择客户
+			selectCustom(row) {
+				that.customShow = false
+				that.params.custom = row
+			},
+
+			//选择客户
 			selectProducter(row) {
-				that.producerShow = false
+				that.customShow = false
 				that.params.custom = row
 			},
 
@@ -370,21 +339,23 @@
 			//筛选取消
 			cancel() {
 				that.params = {
-					goodName: '',
-					custom: '',
-					start_time: '',
-					end_time: '',
-					page_size: 100,
-					page_number: 1,
-				}
+						goodName: '',
+						custom: '',
+						start_time: '',
+						end_time: '',
+						page_size: 100,
+						page_number: 1,
+					},
 				that.get_operations();
 			},
 
 			//导出数据表格点击
 			exportData(type) {
-				this.$refs.table.exportCsv({
-					filename: '销售退货记录',
-				});
+				if (that.type == 1) {
+					this.$refs.table.exportCsv({
+						filename: '销售退货',
+					});
+				}
 			},
 
 			//改变页数
@@ -403,19 +374,15 @@
 				if (that.params.end_time) {
 					query.equalTo("createdAt", "<", that.params.end_time);
 				}
-				query.equalTo('type', '==', -1);
-				query.equalTo('extra_type', '==', 1);
+
+				query.equalTo('type', '==', 1);
+				query.equalTo('extra_type', '==', 4);
 				if (that.params.goodName) {
 					query.equalTo("goodsName", "==", {
 						"$regex": "" + that.params.goodName + ".*"
 					});
 				}
-
-				if (that.params.custom) {
-					query.equalTo("custom", "==", that.params.custom.objectId);
-				}
-
-				query.include("opreater", "account", "custom", "stock");
+				query.include("opreater", "custom", "stock");
 				query.limit(that.params.page_size);
 				query.skip(that.params.page_size * (that.params.page_number - 1));
 				query.order("-createdAt"); //按照条件降序
@@ -425,14 +392,12 @@
 						item.stockName = item.stock ? item.stock.stock_name : '未填写'
 						item.candpName = item.custom ? item.custom.custom_name : '未填写'
 						item.createdTime = item.createdTime ? item.createdTime.iso.split(" ")[0] : item.createdAt
-						item.accountName = item.account ? item.account.name : '未填写'
-						item.statusDesc = item.status ? '已出库' : '未出库'
+						item.statusDesc = item.status ? '已入库' : '未入库'
 					}
 					this.order_opreations = res;
 					this.loading = false;
 				});
 			},
-
 
 		}
 	};

@@ -50,153 +50,187 @@ Vue.use(Print);
 Vue.prototype.$http = http
 
 export default new Router({
-  routes: [{
-      path: '/',
-      name: 'landing',
-      component: landing
-    },
-    {
-      path: '/404',
-      name: '404',
-      component: () => import('@/components/error'), // vue路由懒加载  异步加载
-      meta: {
-        title: '404',
-        requireAuth: false // 只要此字段为true，必须做鉴权处理
-      }
-    },
+	routes: [{
+			path: '/',
+			name: 'landing',
+			component: landing
+		},
+		{
+			path: '/404',
+			name: '404',
+			component: () => import('@/components/error'), // vue路由懒加载  异步加载
+			meta: {
+				title: '404',
+				requireAuth: false // 只要此字段为true，必须做鉴权处理
+			}
+		},
 
-    {
-      path: '/home/',
-      name: 'home',
-      component: home,
-      children: [{
-          path: 'finance/financeLsit',
-          name: 'financeLsit',
-          component: () => import('@/components/finance/financeLsit'), //财务列表
-        },{
-          path: 'onlineShop/goodClass',
-          name: 'goodClass',
-          component: () => import('@/components/onlineShop/goodClass'),//线上商城
-        },{
-          path: 'onlineShop/goodManage',
-          name: 'goodManage',
-          component: () => import('@/components/onlineShop/goodManage'), //线上商城商品管理
-        }, {
-          path: 'stock/goodEnter',
-          name: 'goodEnter',
-          component: () => import('@/components/stock/goodEnter'),//产品入库页面
-        },{
-          path: 'stock/goodOut',
-          name: 'goodOut',
-          component: () => import('@/components/stock/goodOut'),//产品出库页面
-        },{
-          path: 'stock/goodAllocation',
-          name: 'goodAllocation',
-           component: () => import('@/components/stock/goodAllocation'),//产品调拨页面
-        },{
-          path: 'stock/goodCount',
-          name: 'goodCount',
-           component: () => import('@/components/stock/goodCount'),//产品盘点页面
-        },
-				{
-				  path: 'stock/goodEnterPurchase',
-				  name: 'goodEnterPurchase',
-				  component: () => import('@/components/stock/goodEnterPurchase'), //产品采购页面
+		{
+			path: '/home/',
+			name: 'home',
+			component: home,
+			children: [{
+					path: 'finance/financeLsit',
+					name: 'financeLsit',
+					component: () => import('@/components/finance/financeLsit'), //财务列表
+				}, {
+					path: 'onlineShop/goodClass',
+					name: 'goodClass',
+					component: () => import('@/components/onlineShop/goodClass'), //线上商城
+				}, {
+					path: 'onlineShop/goodManage',
+					name: 'goodManage',
+					component: () => import('@/components/onlineShop/goodManage'), //线上商城商品管理
+				}, {
+					path: 'stock/goodEnter',
+					name: 'goodEnter',
+					component: () => import('@/components/stock/goodEnter'), //产品入库页面
+				}, {
+					path: 'stock/goodOut',
+					name: 'goodOut',
+					component: () => import('@/components/stock/goodOut'), //产品出库页面
+				}, {
+					path: 'stock/goodAllocation',
+					name: 'goodAllocation',
+					component: () => import('@/components/stock/goodAllocation'), //产品调拨页面
+				}, {
+					path: 'stock/goodCount',
+					name: 'goodCount',
+					component: () => import('@/components/stock/goodCount'), //产品盘点页面
 				},
-        {
-          path: 'stock/goodEnterPurchaseReturn',
-          name: 'goodEnterPurchaseReturn',
-          component: () => import('@/components/stock/goodEnterPurchaseReturn'), 
-        },
 				{
-				  path: 'stock/goodOutBuy',
-				  name: 'goodOutBuy',
-				  component: () => import('@/components/stock/goodOutBuy'),//销售出库
+					path: 'stock/goodEnterPurchase',
+					name: 'goodEnterPurchase',
+					component: () => import('@/components/stock/goodEnterPurchase'), //产品采购页面
 				},
-        {
-          path: 'stock/goodOutBuyReturn',
-          name: 'goodOutBuyReturn',
-          component: () => import('@/components/stock/goodOutBuyReturn'), //销售退货
-        },
-				
 				{
-				  path: 'orders/stockOrders',
-				  name: 'stockOrders',
-				  component: () => import('@/components/orders/stockOrders'), //销售退货
+					path: 'stock/goodEnterPurchaseReturn',
+					name: 'goodEnterPurchaseReturn',
+					component: () => import('@/components/stock/goodEnterPurchaseReturn'),
 				},
-				
-        {
-          path: 'index',
-          name: 'index',
-          component: index
-        },
-        {
-          path: 'thanks',
-          name: 'thanks',
-          component: thanks
-        },
-        {
-          path: 'test',
-          name: 'test',
-          component: test
-        },
-        {
-          path: 'goods',
-          name: 'goods',
-          component: goods
-        },
-        {
-          path: 'operations',
-          name: 'operations',
-          component: operations
-        },
-        {
-          path: 'download',
-          name: 'download',
-          component: download
-        },
-        {
-          path: 'manage/category',
-          name: 'category',
-          component: category
-        },
-        {
-          path: 'manage/stocks',
-          name: 'stocks',
-          component: stocks
-        },
-        {
-          path: 'manage/shops',
-          name: 'shops',
-          component: shops
-        },
-        {
-          path: 'manage/staffs',
-          name: 'staffs',
-          component: staffs
-        },
-        {
-          path: 'manage/customs',
-          name: 'customs',
-          component: customs
-        },
-        {
-          path: 'manage/producers',
-          name: 'producers',
-          component: producers
-        },
-        {
-          path: 'updateHistory',
-          name: 'updateHistory',
-          component: updateHistory
-        },
-        {
-          path: 'admin',
-          name: 'admin',
-          component: admin
-        }
-      ]
-    },
+				{
+					path: 'stock/goodOutBuy',
+					name: 'goodOutBuy',
+					component: () => import('@/components/stock/goodOutBuy'), //销售出库
+				},
+				{
+					path: 'stock/goodOutBuyReturn',
+					name: 'goodOutBuyReturn',
+					component: () => import('@/components/stock/goodOutBuyReturn'), //销售退货
+				},
 
-  ]
+				{
+					path: 'orders/stockOrdersIn',
+					name: 'stockOrdersIn',
+					component: () => import('@/components/orders/stockOrdersIn'), //入库记录
+				},
+				{
+					path: 'orders/stockOrdersOut',
+					name: 'stockOrdersOut',
+					component: () => import('@/components/orders/stockOrdersOut'), //出库记录
+				},
+				{
+					path: 'orders/stockOrdersCount',
+					name: 'stockOrdersCount',
+					component: () => import('@/components/orders/stockOrdersCount'), //盘点记录
+				},
+				{
+					path: 'orders/stockOrdersAllocation',
+					name: 'stockOrdersAllocation',
+					component: () => import('@/components/orders/stockOrdersAllocation'), //调拨记录
+				},
+				{
+					path: 'orders/goodPurchaseOrders',
+					name: 'goodPurchaseOrders',
+					component: () => import('@/components/orders/goodPurchaseOrders'), //采购记录
+				},
+				{
+					path: 'orders/goodPurchaseReturnOrders',
+					name: 'goodPurchaseReturnOrders',
+					component: () => import('@/components/orders/goodPurchaseReturnOrders'), //采购退货记录
+				},
+				{
+					path: 'orders/goodBuyOrders',
+					name: 'goodBuyOrders',
+					component: () => import('@/components/orders/goodBuyOrders'), //销售记录
+				},
+				{
+					path: 'orders/goodBuyOrdersReturn',
+					name: 'goodBuyOrdersReturn',
+					component: () => import('@/components/orders/goodBuyOrdersReturn'), //销售退货记录
+				},
+				{
+					path: 'index',
+					name: 'index',
+					component: index
+				},
+				{
+					path: 'thanks',
+					name: 'thanks',
+					component: thanks
+				},
+				{
+					path: 'test',
+					name: 'test',
+					component: test
+				},
+				{
+					path: 'goods',
+					name: 'goods',
+					component: goods
+				},
+				{
+					path: 'operations',
+					name: 'operations',
+					component: operations
+				},
+				{
+					path: 'download',
+					name: 'download',
+					component: download
+				},
+				{
+					path: 'manage/category',
+					name: 'category',
+					component: category
+				},
+				{
+					path: 'manage/stocks',
+					name: 'stocks',
+					component: stocks
+				},
+				{
+					path: 'manage/shops',
+					name: 'shops',
+					component: shops
+				},
+				{
+					path: 'manage/staffs',
+					name: 'staffs',
+					component: staffs
+				},
+				{
+					path: 'manage/customs',
+					name: 'customs',
+					component: customs
+				},
+				{
+					path: 'manage/producers',
+					name: 'producers',
+					component: producers
+				},
+				{
+					path: 'updateHistory',
+					name: 'updateHistory',
+					component: updateHistory
+				},
+				{
+					path: 'admin',
+					name: 'admin',
+					component: admin
+				}
+			]
+		},
+
+	]
 })

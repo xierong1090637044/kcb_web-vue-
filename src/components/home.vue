@@ -95,14 +95,14 @@
 						    <Icon type="ios-paper" style="font-size: 20px;"></Icon>
 						    操作记录
 						  </template>
-						  <MenuItem name="5-1" to='/home/orders/stockOrders?type=1&extra_type=2'>入库记录</MenuItem>
-							<MenuItem name="5-2" to='/home/orders/stockOrders?type=-1&extra_type=2'>出库记录</MenuItem>
-							<MenuItem name="5-3" to='/home/orders/stockOrders?type=-2'>调拨记录</MenuItem>
-							<MenuItem name="5-4" to='/home/orders/stockOrders?type=3'>盘点记录</MenuItem>
-							<MenuItem name="5-5" to='/home/orders/stockOrders'>采购记录</MenuItem>
-							<MenuItem name="5-6" to='/home/orders/stockOrders'>采购退货记录</MenuItem>
-							<MenuItem name="5-7" to='/home/orders/stockOrders'>销售记录</MenuItem>
-							<MenuItem name="5-8" to='/home/orders/stockOrders'>销售退货记录</MenuItem>
+						  <MenuItem name="5-1" to='/home/orders/stockOrdersIn?type=1&extra_type=2'>入库记录</MenuItem>
+							<MenuItem name="5-2" to='/home/orders/stockOrdersOut?type=-1&extra_type=2'>出库记录</MenuItem>
+							<MenuItem name="5-3" to='/home/orders/stockOrdersAllocation?type=-2'>调拨记录</MenuItem>
+							<MenuItem name="5-4" to='/home/orders/stockOrdersCount?type=3'>盘点记录</MenuItem>
+							<MenuItem name="5-5" to='/home/orders/goodPurchaseOrders'>采购记录</MenuItem>
+							<MenuItem name="5-6" to='/home/orders/goodPurchaseReturnOrders'>采购退货记录</MenuItem>
+							<MenuItem name="5-7" to='/home/orders/goodBuyOrders'>销售记录</MenuItem>
+							<MenuItem name="5-8" to='/home/orders/goodBuyOrdersReturn'>销售退货记录</MenuItem>
 						</Submenu>
 
             <Submenu name="6">
