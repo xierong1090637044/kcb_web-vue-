@@ -110,15 +110,11 @@
 
       //得到今日概况
       gettoday_detail: function() {
-        let params = {
-          funcName: 'recordToday',
-          data: {
-            uid: that.$store.state.userid,
-            startTime: common.getDay(0) + " 00:00:01",
-            endTime: common.getDay(0) + " 23:59:59"
-          }
-        }
-        Bmob.functions(params.funcName, params.data).then(function(res) {
+        that.$http.Post("recordToday", {
+          startTime: common.getDay(0) + " 00:00:01",
+          endTime: common.getDay(0) + " 23:59:59"
+        }).then(res => {
+          console.log(res)
           that.todayDet = res.data
           that.loadallGoods()
         })

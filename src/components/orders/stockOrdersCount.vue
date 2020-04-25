@@ -34,7 +34,7 @@
 
 		<div style="margin: 10px;overflow: hidden">
 			<div style="float: right;">
-				<Page :total="1000" :current="params.page_number" @on-change="changePage"></Page>
+				<Page :total="1000" :current="params.pageNum" @on-change="changePage"></Page>
 			</div>
 		</div>
 
@@ -244,15 +244,15 @@
 				],
 
 				params: {
-					goodName: '',
+					goodsName: '',
 					producer: '',
 					custom: '',
 					type: 3,
 					extra_type: '',
 					start_time: '',
 					end_time: '',
-					page_size: 100,
-					page_number: 1,
+					pageSize: 50,
+					pageNum: 1,
 				}
 			};
 		},
@@ -270,21 +270,9 @@
 
 		methods: {
 
-			//选择客户
-			selectCustom(row) {
-				that.customShow = false
-				that.params.custom = row
-			},
-
-			//选择供应商
-			selectProducter(row) {
-				that.producerShow = false
-				that.params.producer = row
-			},
-
 			//输入产品名字筛选
 			searchOpreations(value) {
-				that.params.goodName = value
+				that.params.goodsName = value
 				that.get_operations()
 			},
 
@@ -316,15 +304,15 @@
 			//筛选取消
 			cancel() {
 				that.params = {
-						goodName: '',
+						goodsName: '',
 						producer: '',
 						custom: '',
-						type: Number(this.$route.query.type),
-						extra_type: Number(this.$route.query.extra_type),
+						type: 3,
+						extra_type: '',
 						start_time: '',
 						end_time: '',
-						page_size: 100,
-						page_number: 1,
+						pageSize: 50,
+						pageNum: 1,
 					},
 					that.select_custom = ''
 				that.get_operations();
@@ -340,34 +328,23 @@
 			},
 
 			//改变页数
-			changePage(page_number) {
-				that.params.page_number = page_number;
+			changePage(pageNum) {
+				that.params.pageNum = pageNum;
 				that.get_operations();
 			},
 
 			//查询操作列表
 			get_operations() {
-				const query = Bmob.Query('order_opreations');
-				query.equalTo('master', '==', that.userid);
-				if (that.params.start_time) {
-					query.equalTo("createdAt", ">", that.params.start_time);
-				}
-				if (that.params.end_time) {
-					query.equalTo("createdAt", "<", that.params.end_time);
-				}
-
-				query.equalTo('type', '==', that.params.type);
-				if (that.params.goodName) {
-					query.equalTo("goodsName", "==", {
-						"$regex": "" + that.params.goodName + ".*"
-					});
-				}
-				query.include("opreater", "custom", "producer", "stock");
-				query.limit(that.params.page_size);
-				query.skip(that.params.page_size * (that.params.page_number - 1));
-				query.order("-createdAt"); //按照条件降序
-				query.find().then(res => {
-					for (let item of res) {
+				that.$http.Post("order_opreationList", {
+				  startTime: that.params.start_time,
+				  endTime: that.params.end_time,
+				  type: that.params.type,
+				  extra_type: that.params.extra_type,
+				  pageSize: that.params.pageSize,
+				  pageNum: that.params.pageNum,
+				  goodsName: that.params.goodsName,
+				}).then(res => {
+					for (let item of res.data) {
 						item.nickName = item.opreater.nickName
 						if (item.type == 3) {
 							for (let bill of item.detail) {
@@ -381,7 +358,7 @@
 						}
 						item.createdTime = item.createdTime ? item.createdTime.iso.split(" ")[0] : item.createdAt
 					}
-					this.order_opreations = res;
+					this.order_opreations = res.data;
 					this.loading = false;
 				});
 			},
