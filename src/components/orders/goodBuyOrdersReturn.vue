@@ -13,8 +13,12 @@
 				<Button type="error" @click="modal1=true" icon="ios-funnel-outline" style="margin-left: 10px;">筛选</Button>
 			</div>
 
-			<div>
-				<Button type="primary" @click="exportData()" icon="ios-download-outline"> 导出操作数据</Button>
+			<div class="display_flex">
+			  <Button type="primary" @click="exportData()" icon="ios-download-outline" style="margin-right: 10px;"> 导出操作数据</Button>
+
+			  <JsonExcel :fields="json_fields" name="销售退货记录.xls" :data="json_data">
+			    <Button type="primary" icon="ios-download-outline"> 导出各商品销售退货的详细记录</Button>
+			  </JsonExcel>
 			</div>
 		</div>
 
@@ -278,7 +282,21 @@
 					pageNum: 1,
           type:1,
           extra_type:4,
-				}
+				},
+
+        json_fields: {
+          "产品名称": "goodsName",
+          "包装含量": "goodsId.packageContent",
+          "包装单位": "goodsId.packingUnit",
+          "退货数量": "num",
+          "单价": "retailPrice",
+          //"总计": "total_money",
+          "入库仓库": "stock.stock_name",
+          "客户": "custom.custom_name",
+          "退货日期": "createdAt",
+          "操作者": "opreater.nickName"
+        },
+        json_data: []
 			};
 		},
 
@@ -294,6 +312,18 @@
 		},
 
 		methods: {
+      fetchBillList() {
+        that.$http.Post("orders_detailBills", {
+          startTime: that.params.start_time,
+          endTime: that.params.end_time,
+          type: 1,
+          extra_type: 4,
+          goodsName: that.params.goodsName,
+        }).then(res => {
+          let results= res.data.flat()
+          that.json_data= results
+        })
+      },
 
 			//选择客户
 			selectCustom(row) {
@@ -321,7 +351,7 @@
 			//选择起始时间
 			change_startdata(e) {
 				if (e) {
-					that.params.start_time = e + " 00:00:00"
+					that.params.start_time = e + " 00:00:01"
 				}
 
 			},
@@ -329,7 +359,7 @@
 			//选择结束时间
 			change_enddata(e) {
 				if (e) {
-					that.params.end_time = e + " 00:00:00"
+					that.params.end_time = e + " 23:59:59"
 				}
 			},
 
@@ -387,6 +417,7 @@
 						item.statusDesc = item.status ? '已入库' : '未入库'
 					}
 					this.order_opreations = res.data;
+          that.fetchBillList();
 					this.loading = false;
 				});
 			},

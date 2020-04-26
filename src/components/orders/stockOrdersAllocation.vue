@@ -13,8 +13,11 @@
         <Button type="error" @click="modal1=true" icon="ios-funnel-outline" style="margin-left: 10px;">筛选</Button>
       </div>
 
-      <div>
-        <Button type="primary" @click="exportData()" icon="ios-download-outline"> 导出操作数据</Button>
+      <div class="display_flex">
+        <Button type="primary" @click="exportData()" icon="ios-download-outline" style="margin-right: 10px;"> 导出操作数据</Button>
+        <JsonExcel :fields="json_fields" name="调拨记录.xls" :data="json_data">
+          <Button type="primary" icon="ios-download-outline"> 导出各商品调拨的详细记录</Button>
+        </JsonExcel>
       </div>
     </div>
 
@@ -249,7 +252,19 @@
           end_time: '',
           pageSize: 50,
           pageNum: 1,
-        }
+        },
+        json_fields: {
+          "产品名称": "goodsName",
+          "包装含量": "goodsId.packageContent",
+          "包装单位": "goodsId.packingUnit",
+          //"总计": "total_money",
+          "入库仓库": "stock.stock_name",
+          "出库仓库": "out_stock.stock_name",
+          "数量": "num",
+          "调拨日期": "createdAt",
+          "操作者": "opreater.nickName"
+        },
+        json_data: []
       };
     },
 
@@ -266,16 +281,16 @@
 
     methods: {
 
-      //选择客户
-      selectCustom(row) {
-        that.customShow = false
-        that.params.custom = row
-      },
-
-      //选择供应商
-      selectProducter(row) {
-        that.producerShow = false
-        that.params.producer = row
+      fetchBillList() {
+        that.$http.Post("orders_detailBills", {
+          startTime: that.params.start_time,
+          endTime: that.params.end_time,
+          type: -2,
+          extra_type: '',
+          goodsName: that.params.goodsName,
+        }).then(res => {
+          that.json_data= res.data.flat()
+        })
       },
 
       //输入产品名字筛选
@@ -292,7 +307,7 @@
       //选择起始时间
       change_startdata(e) {
         if (e) {
-          that.params.start_time = e + " 00:00:00"
+          that.params.start_time = e + " 00:00:01"
         }
 
       },
@@ -300,7 +315,7 @@
       //选择结束时间
       change_enddata(e) {
         if (e) {
-          that.params.end_time = e + " 00:00:00"
+          that.params.end_time = e + " 23:59:59"
         }
       },
 
@@ -366,6 +381,7 @@
             item.createdTime = item.createdTime ? item.createdTime.iso.split(" ")[0] : item.createdAt
           }
           this.order_opreations = res.data;
+          that.fetchBillList();
           this.loading = false;
         });
       },

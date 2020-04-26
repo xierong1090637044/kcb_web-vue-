@@ -5,6 +5,7 @@ export default {
     params.uid = JSON.parse(localStorage.getItem('user')).objectId;
     return new Promise((resolve, reject) => {
       Bmob.functions(name, params).then(function(res) {
+        console.log(res)
         if (res.code == 1) {
           Message.info(res.msg);
           resolve(res)

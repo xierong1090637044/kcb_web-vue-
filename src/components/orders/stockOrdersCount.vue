@@ -13,8 +13,12 @@
 				<Button type="error" @click="modal1=true" icon="ios-funnel-outline" style="margin-left: 10px;">筛选</Button>
 			</div>
 
-			<div>
-				<Button type="primary" @click="exportData()" icon="ios-download-outline"> 导出操作数据</Button>
+			<div class="display_flex">
+				<Button type="primary" @click="exportData()" icon="ios-download-outline" style="margin-right: 10px;"> 导出操作数据</Button>
+
+        <JsonExcel :fields="json_fields" name="盘点记录.xls" :data="json_data">
+          <Button type="primary" icon="ios-download-outline"> 导出各商品盘点的详细记录</Button>
+        </JsonExcel>
 			</div>
 		</div>
 
@@ -253,7 +257,21 @@
 					end_time: '',
 					pageSize: 50,
 					pageNum: 1,
-				}
+				},
+        json_fields: {
+          "产品名称": "goodsName",
+          "数量": "num",
+          "包装含量": "goodsId.packageContent",
+          "包装单位": "goodsId.packingUnit",
+          //"总计": "total_money",
+          "盘点前库存": "reserve",
+          "盘点后库存": "now_reserve",
+          "盘点仓库": "stock.stock_name",
+          //"销售客户": "custom.custom_name",
+          "盘点日期": "createdAt",
+          "操作者": "opreater.nickName"
+        },
+        json_data: []
 			};
 		},
 
@@ -270,6 +288,18 @@
 
 		methods: {
 
+      fetchBillList() {
+        that.$http.Post("orders_detailBills", {
+          startTime: that.params.start_time,
+          endTime: that.params.end_time,
+          type: 3,
+          extra_type: '',
+          goodsName: that.params.goodsName,
+        }).then(res => {
+          that.json_data= res.data.flat()
+        })
+      },
+
 			//输入产品名字筛选
 			searchOpreations(value) {
 				that.params.goodsName = value
@@ -284,7 +314,7 @@
 			//选择起始时间
 			change_startdata(e) {
 				if (e) {
-					that.params.start_time = e + " 00:00:00"
+					that.params.start_time = e + " 00:00:01"
 				}
 
 			},
@@ -292,7 +322,7 @@
 			//选择结束时间
 			change_enddata(e) {
 				if (e) {
-					that.params.end_time = e + " 00:00:00"
+					that.params.end_time = e + " 23:59:59"
 				}
 			},
 
@@ -359,6 +389,7 @@
 						item.createdTime = item.createdTime ? item.createdTime.iso.split(" ")[0] : item.createdAt
 					}
 					this.order_opreations = res.data;
+          that.fetchBillList()
 					this.loading = false;
 				});
 			},

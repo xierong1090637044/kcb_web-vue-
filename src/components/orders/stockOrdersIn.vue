@@ -13,8 +13,11 @@
 				<Button type="error" @click="modal1=true" icon="ios-funnel-outline" style="margin-left: 10px;">筛选</Button>
 			</div>
 
-			<div>
-				<Button type="primary" @click="exportData()" icon="ios-download-outline"> 导出操作数据</Button>
+			<div class="display_flex">
+				<Button type="primary" @click="exportData()" icon="ios-download-outline" style="margin-right: 10px;"> 导出操作数据</Button>
+        <JsonExcel :fields="json_fields" name="入库记录.xls" :data="json_data">
+          <Button type="primary" icon="ios-download-outline"> 导出各商品入库的详细记录</Button>
+        </JsonExcel>
 			</div>
 		</div>
 
@@ -260,7 +263,21 @@
 					end_time: '',
 					pageSize: 50,
 					pageNum: 1,
-				}
+				},
+
+        json_fields: {
+          "产品名称": "goodsName",
+          "入库类别": "stockClass",
+          "数量": "num",
+          "包装含量": "goodsId.packageContent",
+          "包装单位": "goodsId.packingUnit",
+          //"总计": "total_money",
+          "入库仓库": "stock.stock_name",
+          //"销售客户": "custom.custom_name",
+          "入库日期": "createdAt",
+          "操作者": "opreater.nickName"
+        },
+        json_data: []
 			};
 		},
 
@@ -276,6 +293,26 @@
 		},
 
 		methods: {
+
+      fetchBillList() {
+        that.$http.Post("orders_detailBills", {
+          startTime: that.params.start_time,
+          endTime: that.params.end_time,
+          type: 1,
+          extra_type: 2,
+          goodsName: that.params.goodsName,
+        }).then(res => {
+          let results= res.data.flat()
+          for(let item of results){
+            if (item.extra_type == 1 || item.extra_type == 2) {
+              item.stockClass = "采购入库"
+            }else if (item.extra_type == 4) {
+              item.stockClass = "销售退货入库"
+            }
+          }
+          that.json_data= results
+        })
+      },
 
 			//选择客户
 			selectCustom(row) {
@@ -327,14 +364,13 @@
 						goodsName: '',
 						producer: '',
 						custom: '',
-						type: Number(this.$route.query.type),
-						extra_type: Number(this.$route.query.extra_type),
+						type: 1,
+						extra_type: 2,
 						start_time: '',
 						end_time: '',
 						pageSize: 50,
 						pageNum: 1,
 					},
-					that.select_custom = ''
 				that.get_operations();
 			},
 
@@ -367,15 +403,17 @@
           console.log(res)
           for (let item of res.data) {
           	item.nickName = item.opreater.nickName
-          	if (item.type == 1) {
-          		if (item.extra_type == 2) {
-          			item.typeDesc = "入库"
-          		}
+          	if (item.extra_type == 1) {
+          	  item.stockClass = "采购入库"
+          	}else if (item.extra_type == 4) {
+          	  item.stockClass = "销售退货入库"
           	}
           	item.createdTime = item.createdTime ? item.createdTime.iso.split(" ")[0] : item.createdAt
           }
           this.order_opreations = res.data;
+          that.fetchBillList()
           this.loading = false;
+
         })
 			},
 
