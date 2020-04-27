@@ -14,10 +14,10 @@
       </div>
 
       <div class="display_flex">
-        <Button type="primary" @click="exportData()" icon="ios-download-outline" style="margin-right: 10px;"> 导出操作数据</Button>
+        <Button type="primary" @click="exportData()" icon="ios-download-outline" style="margin-right: 10px;"> 导出出库汇总记录</Button>
 
-        <JsonExcel :fields="json_fields" name="入库记录.xls" :data="json_data">
-          <Button type="primary" icon="ios-download-outline"> 导出各商品出库的详细记录</Button>
+        <JsonExcel :fields="json_fields" name="出库详细记录.xls" :data="json_data">
+          <Button type="primary" icon="ios-download-outline"> 导出出库详细记录</Button>
         </JsonExcel>
       </div>
     </div>
@@ -305,15 +305,15 @@
           extra_type: 2,
           goodsName: that.params.goodsName,
         }).then(res => {
-          let results= res.data.flat()
-          for(let item of results){
+          let results = res.data.flat()
+          for (let item of results) {
             if (item.extra_type == 1 || item.extra_type == 2) {
               item.stockClass = "销售出库"
-            }else if (item.extra_type == 4) {
+            } else if (item.extra_type == 4) {
               item.stockClass = "采购退货出库"
             }
           }
-          that.json_data= results
+          that.json_data = results
         })
       },
 
@@ -379,11 +379,9 @@
 
       //导出数据表格点击
       exportData(type) {
-        if (that.type == 1) {
-          this.$refs.table.exportCsv({
-            filename: '出库记录',
-          });
-        }
+        this.$refs.table.exportCsv({
+          filename: '出库汇总记录',
+        });
       },
 
       //改变页数
@@ -407,7 +405,7 @@
             item.nickName = item.opreater.nickName
             if (item.extra_type == 1) {
               item.stockClass = "销售出库"
-            }else if (item.extra_type == 4) {
+            } else if (item.extra_type == 4) {
               item.stockClass = "采购退货出库"
             }
             item.createdTime = item.createdTime ? item.createdTime.iso.split(" ")[0] : item.createdAt

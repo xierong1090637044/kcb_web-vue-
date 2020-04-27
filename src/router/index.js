@@ -141,6 +141,11 @@ export default new Router({
 					name: 'stockOrdersAllocation',
 					component: () => import('@/components/orders/stockOrdersAllocation'), //调拨记录
 				},
+        {
+        	path: 'orders/goodPurchaseLaterOrders',
+        	name: 'goodPurchaseLaterOrders',
+        	component: () => import('@/components/orders/goodPurchaseLaterOrders'), //采购订单记录
+        },
 				{
 					path: 'orders/goodPurchaseOrders',
 					name: 'goodPurchaseOrders',
@@ -151,6 +156,11 @@ export default new Router({
 					name: 'goodPurchaseReturnOrders',
 					component: () => import('@/components/orders/goodPurchaseReturnOrders'), //采购退货记录
 				},
+        {
+        	path: 'orders/goodBuyLaterOrders',
+        	name: 'goodBuyLaterOrders',
+        	component: () => import('@/components/orders/goodBuyLaterOrders'), //销售记录
+        },
 				{
 					path: 'orders/goodBuyOrders',
 					name: 'goodBuyOrders',

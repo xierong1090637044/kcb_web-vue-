@@ -14,9 +14,9 @@
       </div>
 
       <div class="display_flex">
-        <Button type="primary" @click="exportData()" icon="ios-download-outline" style="margin-right: 10px;"> 导出操作数据</Button>
-        <JsonExcel :fields="json_fields" name="调拨记录.xls" :data="json_data">
-          <Button type="primary" icon="ios-download-outline"> 导出各商品调拨的详细记录</Button>
+        <Button type="primary" @click="exportData()" icon="ios-download-outline" style="margin-right: 10px;"> 导出调拨汇总数据</Button>
+        <JsonExcel :fields="json_fields" name="调拨详细记录.xls" :data="json_data">
+          <Button type="primary" icon="ios-download-outline"> 导出调拨详细数据</Button>
         </JsonExcel>
       </div>
     </div>
@@ -343,11 +343,9 @@
 
       //导出数据表格点击
       exportData(type) {
-        if (that.type == 1) {
           this.$refs.table.exportCsv({
-            filename: '调拨记录',
+            filename: '调拨汇总记录',
           });
-        }
       },
 
       //改变页数

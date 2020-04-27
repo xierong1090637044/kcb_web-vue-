@@ -3,7 +3,7 @@
 		<div style="margin-bottom: 10px;">
 			<Breadcrumb separator="<b style='color: #999;'>/</b>">
 				<BreadcrumbItem to="/">首页</BreadcrumbItem>
-				<BreadcrumbItem to="/home/goods">操作记录</BreadcrumbItem>
+				<BreadcrumbItem to="/home/goods">销售订单记录</BreadcrumbItem>
 			</Breadcrumb>
 		</div>
 
@@ -14,11 +14,11 @@
 			</div>
 
 			<div class="display_flex">
-				<Button type="primary" @click="exportData()" icon="ios-download-outline" style="margin-right: 10px;"> 导出盘点汇总记录</Button>
+			  <Button type="primary" @click="exportData()" icon="ios-download-outline" style="margin-right: 10px;"> 导出销售订单汇总数据</Button>
 
-        <JsonExcel :fields="json_fields" name="盘点详情记录.xls" :data="json_data">
-          <Button type="primary" icon="ios-download-outline"> 导出盘点详细记录</Button>
-        </JsonExcel>
+			  <!--<JsonExcel :fields="json_fields" name="销售记录.xls" :data="json_data">
+			    <Button type="primary" icon="ios-download-outline"> 导出各商品销售的详细记录</Button>
+			  </JsonExcel>-->
 			</div>
 		</div>
 
@@ -26,10 +26,6 @@
 			<template slot-scope="{ row, index }" slot="action">
 				<div style="display: flex;justify-content: center;">
 					<div style="margin-right: 10px" @click="showReserve(row)"><Button type="primary" size="small">详情</Button></div>
-					<!--<div v-if="row.type == 1 && row.status == false" style="margin-right: 10px"><Button type="primary" size="small"
-						 v-print="'#printMe'" @click="Print(row)">采购入库</Button></div>
-					<div v-if="row.type == -1 && row.status == false" style="margin-right: 10px"><Button type="primary" size="small"
-						 v-print="'#printMe'" @click="Print(row)">销售出库</Button></div>-->
 					<div @click="deleteHeaderGood(row.objectId)"><Button type="error" size="small">撤销</Button></div>
 				</div>
 
@@ -50,6 +46,11 @@
 					<DatePicker type="date" placeholder="起始时间" style="width: 200px" @on-change="change_startdata" v-model="params.start_time"></DatePicker>
 					<DatePicker type="date" placeholder="结束时间" style="width: 200px" @on-change="change_enddata" v-model="params.end_time"></DatePicker>
 				</FormItem>
+
+				<FormItem label="客户" style="margin-top: 10px;">
+					<Input v-model="params.producer.producer_name" placeholder="请选择客户" @on-focus="producerShow = true"></Input>
+				</FormItem>
+
 			</Form>
 		</Modal>
 
@@ -57,50 +58,76 @@
 			<img :src="GoodImg.attr" style="height: 800px;margin: 0 auto;width: 100%;" />
 		</Modal>
 
-
-		<Modal title="详情" v-model="detailShow" width="60%" foot-hide>
-			<div>
-				<Button type="primary" v-print="'#printTest'">打印</Button>
-			</div>
-			<div id="printTest">
+		<div v-if="detailShow">
+			<Modal title="详情" width="60%" :value="true" @on-cancel="detailShow = false" footer-hide>
 				<div>
-					<div style="font-size: 22px;padding-bottom:10px;font-weight:800;font-family:宋体; text-align:center">盘点单</div>
+					<Button type="primary" v-print="'#printTest'">打印</Button>
 				</div>
-				<table>
-					<thead>
-						<th>产品名称</th>
-						<th>盘点仓库</th>
-						<th>盘点前库存</th>
-						<th>盘点后库存</th>
-					</thead>
-					<tbody>
-						<tr v-for="item in detail.detail" :key="item.id">
-							<td>{{item.goodsName}}</td>
-							<td>{{item.stock}}</td>
-							<td>{{item.reserve}}</td>
-							<td>{{item.now_reserve}}</td>
-						</tr>
-					</tbody>
-				</table>
 
-				<div>
-					<div class="display_flex_bet" style="margin:10px 0;">
-						<div style="font-size:14px;">制单日期：{{detail.createdTime}}</div>
-						<div style="font-size:14px;" class="display_flex">
-							<div>操作者：</div>
+				<div id="printTest">
+					<div style="font-size: 22px;padding-bottom:10px;font-weight:800; text-align:center">销售订单</div>
+					<div class="display_flex_bet" style="margin-bottom: 10px;">
+						<div style="font-size:14px;">客户：{{detail.candpName}}</div>
+						<div style="font-size:14px;">销售日期：{{detail.createdTime}}</div>
+					</div>
+					<div class="display_flex_bet" style="margin-bottom: 10px;">
+						<div style="font-size:14px;"v-if="detail.status">销售单据编号：{{detail.orderSellId}}</div>
+            <div v-else></div>
+						<div style="font-size:14px;">单据编号：{{detail.objectId}}</div>
+					</div>
+
+					<table>
+						<thead>
+							<th>产品名称</th>
+							<th>单位</th>
+							<th>数量</th>
+							<th>实际卖出价（元）</th>
+							<th>合计（元）</th>
+						</thead>
+						<tbody>
+							<tr v-for="item in detail.opreatGood" :key="item.id">
+								<td>{{item.goodsName}}</td>
+								<td>{{item.packingUnit?item.packingUnit:''}}</td>
+								<td>{{item.num}}</td>
+								<td>{{item.modify_retailPrice}}</td>
+								<td>{{item.modify_retailPrice * item.num}}</td>
+							</tr>
+						</tbody>
+						<tbody>
+							<tr>
+								<td style="font-weight: bold;">合计</td>
+								<td></td>
+								<td>{{detail.real_num}}</td>
+								<td></td>
+								<td>{{detail.all_money}}</td>
+							</tr>
+						</tbody>
+						<tbody>
+							<tr>
+								<td colspan="5" style="text-align: left;height: 80px;padding-left: 20px;font-weight: bold;">备注：{{detail.beizhu?detail.beizhu:'未填写'}}</td>
+							</tr>
+						</tbody>
+					</table>
+
+          <div class="display_flex_bet" style="margin-top: 10px;">
+          	<div style="font-size:14px;">其他费用：{{detail.otherMoney}}</div>
+          	<div style="font-size:14px;">预收款：{{detail.haveGetMoney}}</div>
+          </div>
+					<div class="display_flex_bet" style="margin-top: 10px;">
+
+						<div style="font-size:14px;font-weight: bold;" class="display_flex">
+							<div>制单人：</div>
 							<div style="width:100px">{{detail.opreater?detail.opreater.nickName:''}}</div>
 						</div>
-					</div>
-					<div class="display_flex_bet" style="margin-bottom: 40px;">
-						<div style="font-size:14px;">备注：{{detail.beizhu?detail.beizhu:'未填写'}}</div>
-						<div style="font-size:14px;" class="display_flex">
+						<div style="font-size:14px;font-weight: bold;" class="display_flex">
 							<div>经办人签字或盖章：</div>
 							<div style="width:100px"></div>
 						</div>
 					</div>
 				</div>
-			</div>
-		</Modal>
+			</Modal>
+		</div>
+
 
 	</div>
 </template>
@@ -132,11 +159,11 @@
 				detailShow: false,
 
 				order_opreations: [],
-				order_bills: [],
 				padding_size: 30,
 				modal1: false,
 				userid: JSON.parse(localStorage.getItem('user')).objectId || '',
 				user: JSON.parse(localStorage.getItem('user')),
+
 				screenHeight: window.innerHeight,
 				loading: true,
 				columns: [{
@@ -153,21 +180,41 @@
 						}
 					},
 					{
-						title: '仓库',
-						key: 'stock',
-						render: (h, params) => {
-							if (params.row.stockNames && params.row.stockNames.length > 0) {
-								return h('div', [params.row.stockNames.join("，")])
-							} else {
-								return h('div', [params.row.stock ? params.row.stock.stock_name : ""])
-							}
-
-						}
+						title: '销售数量',
+						sortable: true,
+						key: 'real_num',
 					},
+          {
+          	title: '商品总价',
+          	sortable: true,
+          	key: 'all_money',
+          },
 					{
-						title: '操作类别',
-						key: 'stockClass',
+						title: '其他费用',
+						sortable: true,
+						key: 'otherMoney',
 					},
+
+					{
+						title: '预收款',
+						sortable: true,
+						key: 'haveGetMoney',
+					},
+
+					{
+						title: '客户',
+						key: 'candpName',
+					},
+          {
+          	title: '交货时间',
+          	sortable: true,
+          	key: 'setDay',
+          },
+          {
+          	title: '收货时间',
+          	sortable: true,
+          	key: 'giveDay',
+          },
 					{
 						title: '备注',
 						key: 'beizhu',
@@ -231,12 +278,23 @@
 						}
 					},
 					{
+						title: '状态',
+						key: 'statusDesc',
+						render: (h, params) => {
+							return h('div', {
+								style: {
+									"color": (params.row.status) ? "#2ca879" : "#f30"
+								},
+							}, [(params.row.status) ? "已生成销售单" : "未生成销售单"])
+						}
+					},
+					{
 						title: '操作者',
 						key: 'nickName',
 					},
 					{
-						title: '创建时间',
-						key: 'createdAt',
+						title: '时间',
+						key: 'createdTime',
 					},
 					{
 						width: 200,
@@ -250,25 +308,23 @@
 				params: {
 					goodsName: '',
 					producer: '',
-					custom: '',
-					type: 3,
-					extra_type: '',
 					start_time: '',
 					end_time: '',
 					pageSize: 50,
 					pageNum: 1,
+          type:-3,
+          extra_type:''
 				},
         json_fields: {
           "产品名称": "goodsName",
-          "数量": "num",
           "包装含量": "goodsId.packageContent",
           "包装单位": "goodsId.packingUnit",
-          //"总计": "total_money",
-          "盘点前库存": "reserve",
-          "盘点后库存": "now_reserve",
-          "盘点仓库": "stock.stock_name",
-          //"销售客户": "custom.custom_name",
-          "盘点日期": "createdAt",
+          "实际销售价": "retailPrice",
+          "数量": "num",
+          "总计": "total_money",
+          "入库仓库": "stock.stock_name",
+          "客户": "producer.producer_name",
+          "销售日期": "createdAt",
           "操作者": "opreater.nickName"
         },
         json_data: []
@@ -277,28 +333,23 @@
 
 		mounted() {
 			that = this;
-			that.get_operations();
 			window.onresize = () => {
 				return (() => {
 					that.screenHeight = window.innerHeight;
 
 				})();
 			};
+
+			this.get_operations();
 		},
 
 		methods: {
 
-      fetchBillList() {
-        that.$http.Post("orders_detailBills", {
-          startTime: that.params.start_time,
-          endTime: that.params.end_time,
-          type: 3,
-          extra_type: '',
-          goodsName: that.params.goodsName,
-        }).then(res => {
-          that.json_data= res.data.flat()
-        })
-      },
+			//选择客户
+			selectProducter(row) {
+				that.producerShow = false
+				that.params.producer = row
+			},
 
 			//输入产品名字筛选
 			searchOpreations(value) {
@@ -334,25 +385,23 @@
 			//筛选取消
 			cancel() {
 				that.params = {
-						goodsName: '',
-						producer: '',
-						custom: '',
-						type: 3,
-						extra_type: '',
-						start_time: '',
-						end_time: '',
-						pageSize: 50,
-						pageNum: 1,
-					},
-					that.select_custom = ''
+					goodsName: '',
+					producer: '',
+					start_time: '',
+					end_time: '',
+					pageSize: 50,
+					pageNum: 1,
+          type:-3,
+          extra_type:''
+				}
 				that.get_operations();
 			},
 
 			//导出数据表格点击
 			exportData(type) {
-					this.$refs.table.exportCsv({
-						filename: '盘点汇总记录',
-					});
+				this.$refs.table.exportCsv({
+					filename: '销售订单汇总记录',
+				});
 			},
 
 			//改变页数
@@ -374,23 +423,19 @@
 				}).then(res => {
 					for (let item of res.data) {
 						item.nickName = item.opreater.nickName
-						if (item.type == 3) {
-							for (let bill of item.detail) {
-								let stockNames = []
-								stockNames.push(bill.stock)
-								item.stockNames = stockNames
-							}
-
-							item.typeDesc = "盘点"
-							item.stockClass = "盘点"
-						}
+						//item.stockName = item.stock ? item.stock.stock_name : '未填写'
+						item.candpName = item.producer ? item.producer.producer_name : '未填写'
 						item.createdTime = item.createdTime ? item.createdTime.iso.split(" ")[0] : item.createdAt
+            item.giveDay = item.giveDay ? item.giveDay.iso.split(" ")[0] : item.giveDay
+            item.setDay = item.setDay ? item.setDay.iso.split(" ")[0] : item.setDay
+						//item.accountName = item.account ? item.account.name : '未填写'
+						//item.statusDesc = item.status ? '已入库' : '未入库'
 					}
 					this.order_opreations = res.data;
-          that.fetchBillList()
 					this.loading = false;
 				});
 			},
+
 
 		}
 	};

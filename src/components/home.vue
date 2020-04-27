@@ -27,7 +27,7 @@
         </div>
       </Header>
       <Layout>
-        <Sider hide-trigger :style="{height:screenHeight - 64+'px'}">
+        <Sider hide-trigger :style="{height:screenHeight - 64+'px'}" style="overflow-y: scroll;">
           <Menu theme="light" width="auto">
 
             <MenuItem name="1" to='/home/index'>
@@ -89,7 +89,7 @@
               <div style="margin-left: 10px;margin-top: 4px;">产品管理</div>
             </div>
             </MenuItem>
-						
+
 						<Submenu name="5">
 						  <template slot="title">
 						    <Icon type="ios-paper" style="font-size: 20px;"></Icon>
@@ -99,10 +99,12 @@
 							<MenuItem name="5-2" to='/home/orders/stockOrdersOut?type=-1&extra_type=2'>出库记录</MenuItem>
 							<MenuItem name="5-3" to='/home/orders/stockOrdersAllocation?type=-2'>调拨记录</MenuItem>
 							<MenuItem name="5-4" to='/home/orders/stockOrdersCount?type=3'>盘点记录</MenuItem>
-							<MenuItem name="5-5" to='/home/orders/goodPurchaseOrders'>采购记录</MenuItem>
-							<MenuItem name="5-6" to='/home/orders/goodPurchaseReturnOrders'>采购退货记录</MenuItem>
-							<MenuItem name="5-7" to='/home/orders/goodBuyOrders'>销售记录</MenuItem>
-							<MenuItem name="5-8" to='/home/orders/goodBuyOrdersReturn'>销售退货记录</MenuItem>
+              <MenuItem name="5-5" to='/home/orders/goodPurchaseLaterOrders'>采购订单记录</MenuItem>
+							<MenuItem name="5-6" to='/home/orders/goodPurchaseOrders'>采购记录</MenuItem>
+							<MenuItem name="5-7" to='/home/orders/goodPurchaseReturnOrders'>采购退货记录</MenuItem>
+              <MenuItem name="5-8" to='/home/orders/goodBuyLaterOrders'>销售订单记录</MenuItem>
+							<MenuItem name="5-9" to='/home/orders/goodBuyOrders'>销售记录</MenuItem>
+							<MenuItem name="5-10" to='/home/orders/goodBuyOrdersReturn'>销售退货记录</MenuItem>
 						</Submenu>
 
             <Submenu name="6">

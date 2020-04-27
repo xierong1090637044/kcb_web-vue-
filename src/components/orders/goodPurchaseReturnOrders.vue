@@ -14,10 +14,10 @@
 			</div>
 
 			<div class="display_flex">
-			  <Button type="primary" @click="exportData()" icon="ios-download-outline" style="margin-right: 10px;"> 导出操作数据</Button>
+			  <Button type="primary" @click="exportData()" icon="ios-download-outline" style="margin-right: 10px;"> 导出采购退货汇总记录</Button>
 
 			  <JsonExcel :fields="json_fields" name="采购退货记录.xls" :data="json_data">
-			    <Button type="primary" icon="ios-download-outline"> 导出各商品采购退货的详细记录</Button>
+			    <Button type="primary" icon="ios-download-outline"> 导出采购退货详细记录</Button>
 			  </JsonExcel>
 			</div>
 		</div>
@@ -388,11 +388,9 @@
 
 			//导出数据表格点击
 			exportData(type) {
-				if (that.type == 1) {
 					this.$refs.table.exportCsv({
-						filename: '采购退货',
+						filename: '采购退货汇总记录',
 					});
-				}
 			},
 
 			//改变页数

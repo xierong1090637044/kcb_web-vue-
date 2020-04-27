@@ -14,9 +14,9 @@
 			</div>
 
 			<div class="display_flex">
-				<Button type="primary" @click="exportData()" icon="ios-download-outline" style="margin-right: 10px;"> 导出操作数据</Button>
-        <JsonExcel :fields="json_fields" name="入库记录.xls" :data="json_data">
-          <Button type="primary" icon="ios-download-outline"> 导出各商品入库的详细记录</Button>
+				<Button type="primary" @click="exportData()" icon="ios-download-outline" style="margin-right: 10px;"> 导出入库汇总记录</Button>
+        <JsonExcel :fields="json_fields" name="入库详细记录.xls" :data="json_data">
+          <Button type="primary" icon="ios-download-outline"> 导出入库详细记录</Button>
         </JsonExcel>
 			</div>
 		</div>
@@ -376,11 +376,9 @@
 
 			//导出数据表格点击
 			exportData(type) {
-				if (that.type == 1) {
 					this.$refs.table.exportCsv({
-						filename: '入库记录',
+						filename: '入库汇总记录',
 					});
-				}
 			},
 
 			//改变页数

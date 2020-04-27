@@ -14,10 +14,10 @@
       </div>
 
       <div class="display_flex">
-        <Button type="primary" @click="exportData()" icon="ios-download-outline" style="margin-right: 10px;"> 导出统计数据</Button>
+        <Button type="primary" @click="exportData()" icon="ios-download-outline" style="margin-right: 10px;"> 导出销售汇总数据</Button>
 
-        <JsonExcel :fields="json_fields" name="销售记录.xls" :data="json_data">
-          <Button type="primary" icon="ios-download-outline"> 导出各商品销售的详细记录</Button>
+        <JsonExcel :fields="json_fields" name="销售详细记录.xls" :data="json_data">
+          <Button type="primary" icon="ios-download-outline"> 导出销售详细记录</Button>
         </JsonExcel>
       </div>
     </div>
@@ -411,7 +411,7 @@
       //导出数据表格点击
       exportData(type) {
         this.$refs.table.exportCsv({
-          filename: '销售记录',
+          filename: '销售详细记录',
         });
       },
 

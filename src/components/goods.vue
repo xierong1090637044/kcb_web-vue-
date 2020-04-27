@@ -629,87 +629,12 @@
           return
         }
 
-        const query = Bmob.Query("stocks");
-        query.order("-num");
-        query.equalTo("parent", "==", that.userid);
-        query.equalTo("disabled", "!=", true);
-        query.find().then(res => {
-          let stocks = res;
-          if (res.length == 0) {
-            this.$Message['error']({
-              background: true,
-              content: '请先去添加一个仓库'
-            });
-
-            return
-          }
-
-          let count = 0;
-          for (let good of goods) {
-            let goodReserve = good.库存.toString()
-            let totalReserve = 0;
-            let reserves = [];
-            //console.log(good.库存)
-            if (goodReserve.indexOf(",") == -1) {
-              totalReserve = Number(goodReserve)
-              reserves.push(Number(goodReserve))
-            } else {
-              reserves = goodReserve.split(",");
-              //console.log(reserves)
-              for (let reserve of reserves) {
-                totalReserve += Number(reserve)
-              }
-            }
-
-            //console.log(reserves)
-            let queryObj = Bmob.Query('Goods');
-            queryObj.set('goodsName', "" + good.商品名字);
-            queryObj.set('costPrice', "" + good.成本价);
-            queryObj.set('retailPrice', "" + good.零售价);
-            if (good.包装含量) queryObj.set('packageContent', '' + good.包装含量);
-            if (good.单位) queryObj.set('packingUnit', '' + good.单位);
-            queryObj.set('reserve', totalReserve);
-            if (good.条形码) queryObj.set('productCode', '' + good.条形码);
-            if (good.存放位置) queryObj.set('position', '' + good.存放位置);
-            if (good.简介) queryObj.set('product_info', '' + good.简介);
-            if (good.生产厂家) queryObj.set('producer', '' + good.生产厂家);
-            queryObj.set("order", 0);
-            queryObj.set('userId', poiID);
-            queryObj.save().then(res => {
-              let this_result = res;
-
-              for (let stockIndex in stocks) {
-                const pointer1 = Bmob.Pointer('stocks')
-                const p_stock_id = pointer1.set(stocks[stockIndex].objectId) //仓库的id关联
-
-                const pointer2 = Bmob.Pointer('Goods')
-                const p_good_id = pointer2.set(this_result.objectId) //仓库的id关联
-
-                var queryObj1 = Bmob.Query('Goods');
-                queryObj1.set("order", 1)
-                queryObj1.set("goodsName", "" + good.商品名字);
-                queryObj1.set("costPrice", "" + good.成本价);
-                queryObj1.set("retailPrice", "" + good.零售价);
-                queryObj1.set("header", p_good_id)
-                queryObj1.set("userId", poiID)
-                queryObj1.set("stocks", p_stock_id)
-                queryObj1.set("reserve", reserves[stockIndex] ? Number(reserves[stockIndex]) : 0);
-                queryObj1.save().then(res => {
-
-                  if (stockIndex == stocks.length - 1) {
-                    count += 1;
-
-                    if (count == goods.length) {
-                      this.$Message.success('导入成功');
-                      that.get_productList()
-                    }
-                  }
-                })
-              }
-
-            })
-          }
-        });
+        that.$http.Post("system_uploadGoods", {
+           goods:goods
+        }).then(res => {
+          console.log(res)
+          that.get_productList()
+        })
       },
 
       //查询产品列表

@@ -385,11 +385,9 @@
 
 			//导出数据表格点击
 			exportData(type) {
-				if (that.type == 1) {
 					this.$refs.table.exportCsv({
-						filename: '销售退货',
+						filename: '销售退货汇总数据',
 					});
-				}
 			},
 
 			//改变页数
