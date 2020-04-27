@@ -48,7 +48,7 @@
 				</FormItem>
 
 				<FormItem label="客户" style="margin-top: 10px;">
-					<Input v-model="params.producer.producer_name" placeholder="请选择客户" @on-focus="producerShow = true"></Input>
+					<Input v-model="params.custom.custom_name" placeholder="请选择客户" @on-focus="customShow = true"></Input>
 				</FormItem>
 
 			</Form>
@@ -138,19 +138,17 @@
 
 	import expandRow from '@/components/component/expandRow.vue';
 	import customS from '@/components/component/customS.vue';
-	import producerS from '@/components/component/producerS.vue';
 	let that;
 	let user;
 	export default {
 		components: {
 			expandRow,
-			customS,
-			producerS
+			customS
 		},
 		data() {
 			return {
 				customShow: false,
-				producerShow: false,
+				customShow: false,
 				GoodImg: {
 					show: false,
 					attr: ''
@@ -307,7 +305,7 @@
 
 				params: {
 					goodsName: '',
-					producer: '',
+					custom: '',
 					start_time: '',
 					end_time: '',
 					pageSize: 50,
@@ -323,7 +321,7 @@
           "数量": "num",
           "总计": "total_money",
           "入库仓库": "stock.stock_name",
-          "客户": "producer.producer_name",
+          "客户": "custom.custom_name",
           "销售日期": "createdAt",
           "操作者": "opreater.nickName"
         },
@@ -347,8 +345,8 @@
 
 			//选择客户
 			selectProducter(row) {
-				that.producerShow = false
-				that.params.producer = row
+				that.customShow = false
+				that.params.custom = row
 			},
 
 			//输入产品名字筛选
@@ -386,7 +384,7 @@
 			cancel() {
 				that.params = {
 					goodsName: '',
-					producer: '',
+					custom: '',
 					start_time: '',
 					end_time: '',
 					pageSize: 50,
@@ -424,7 +422,7 @@
 					for (let item of res.data) {
 						item.nickName = item.opreater.nickName
 						//item.stockName = item.stock ? item.stock.stock_name : '未填写'
-						item.candpName = item.producer ? item.producer.producer_name : '未填写'
+						item.candpName = item.custom ? item.custom.custom_name : '未填写'
 						item.createdTime = item.createdTime ? item.createdTime.iso.split(" ")[0] : item.createdAt
             item.giveDay = item.giveDay ? item.giveDay.iso.split(" ")[0] : item.giveDay
             item.setDay = item.setDay ? item.setDay.iso.split(" ")[0] : item.setDay
