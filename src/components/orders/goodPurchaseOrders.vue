@@ -174,7 +174,7 @@
 						key: 'goodsName',
 						sortable: true,
 						render: (h, params) => {
-							return h('div', [params.row.goodsName + " 等"]);
+							return h('div', [params.row.goodsName]);
 						}
 					},
 					{

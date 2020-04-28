@@ -229,10 +229,12 @@
 
           let billsObj = new Array();
           let detailObj = [];
+          let goodsName = [];
           for (let i = 0; i < selectGoods.length; i++) {
 
           	let tempBills = Bmob.Query('Bills');
           	let detailBills = {}
+            goodsName.push(selectGoods[i].goodsName)
 
           	let pointer = Bmob.Pointer('_User')
           	let user = pointer.set(uid)
@@ -298,7 +300,7 @@
           	query.set("stock", stockId);
           	query.set("out_stock", out_stockId);
           	query.set("master", poiID);
-          	query.set('goodsName', selectGoods[0].goodsName);
+          	query.set('goodsName', goodsName);
             query.set("createdTime", {
               "__type": "Date",
               "iso": that.formItem.date

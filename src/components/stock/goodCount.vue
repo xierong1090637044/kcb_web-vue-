@@ -212,11 +212,13 @@
         let operation_ids = [];
         let billsObj = new Array();
         let detailObj = [];
-        let stockIds = []
+        let stockIds = [];
+        let goodsName = [];
         for (let i = 0; i < selectGoods.length; i++) {
           //单据
           let tempBills = Bmob.Query('Bills');
-          let detailBills = {}
+          let detailBills = {};
+          goodsName.push(selectGoods[i].goodsName)
 
           let pointer = Bmob.Pointer('_User')
           let user = pointer.set(uid)
@@ -279,7 +281,7 @@
             query.set("type", 3);
             query.set("opreater", poiID1);
             query.set("master", poiID);
-            query.set('goodsName', selectGoods[0].goodsName);
+            query.set('goodsName', goodsName);
             query.set("stockIds", stockIds);
 						query.set("Images", that.formItem.Images);
             query.set("createdTime", {

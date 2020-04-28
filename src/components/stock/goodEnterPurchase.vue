@@ -72,11 +72,11 @@
 							<Input v-model="formItem.account.name" @on-focus="accountShow = true"></Input>
 						</FormItem>
 						
-						<FormItem label="现结款">
+						<FormItem label="预付款">
 							<Input v-model="formItem.haveGetMoney" type="number" placeholder="请输入其他费用"></Input>
 						</FormItem>
 						
-						<FormItem label="现结后欠款">
+						<FormItem label="预付后欠款">
 							<Input :value="Number(formItem.real_money) - Number(formItem.haveGetMoney) - Number(formItem.discountMoney) +Number(formItem.otherMoney)" :disabled="true"></Input>
 						</FormItem>
 					</div>

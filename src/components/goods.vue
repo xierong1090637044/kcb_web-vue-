@@ -52,7 +52,7 @@
             <Tooltip content="升级为新的产品数据" placement="bottom-end">
               <Button type="primary" size="small">升级</Button>
             </Tooltip>
-           </div>
+          </div>
         </div>
         <div style="display: flex;justify-content: center;margin-top: 6px;">
           <div @click="deleteHeaderGood(row.objectId)" style="margin-right: 10px"><Button type="error" size="small">删除</Button></div>
@@ -133,8 +133,8 @@
     },
     data() {
       return {
-        stockShow:false,
-        updateGood:{},
+        stockShow: false,
+        updateGood: {},
         downloadAllClick: false, //导出全部数据点击
         addGoodClick: false,
         editGood: '',
@@ -349,21 +349,21 @@
       },
 
       //选择仓库后升级
-      chooseStock(value){
+      chooseStock(value) {
         console.log(value)
         let params = {
           funcName: 'goodUpdate',
           data: {
             uid: that.$store.state.userid,
-            good:that.updateGood,
-            stockId:value.objectId
+            good: that.updateGood,
+            stockId: value.objectId
           }
         }
         Bmob.functions(params.funcName, params.data).then(function(res) {
-          if(res.code == 1){
+          if (res.code == 1) {
             that.$Message.success('更新成功');
             that.get_productList()
-          }else{
+          } else {
             that.$Message.error(res.msg);
           }
           that.stockShow = false;
@@ -629,12 +629,87 @@
           return
         }
 
-        that.$http.Post("system_uploadGoods", {
-           goods:goods
-        }).then(res => {
-          console.log(res)
-          that.get_productList()
-        })
+        const query = Bmob.Query("stocks");
+        query.order("-num");
+        query.equalTo("parent", "==", that.userid);
+        query.equalTo("disabled", "!=", true);
+        query.find().then(res => {
+          let stocks = res;
+          if (res.length == 0) {
+            this.$Message['error']({
+              background: true,
+              content: '请先去添加一个仓库'
+            });
+
+            return
+          }
+
+          let count = 0;
+          for (let good of goods) {
+            let goodReserve = good.库存.toString()
+            let totalReserve = 0;
+            let reserves = [];
+            //console.log(good.库存)
+            if (goodReserve.indexOf(",") == -1) {
+              totalReserve = Number(goodReserve)
+              reserves.push(Number(goodReserve))
+            } else {
+              reserves = goodReserve.split(",");
+              //console.log(reserves)
+              for (let reserve of reserves) {
+                totalReserve += Number(reserve)
+              }
+            }
+
+            //console.log(reserves)
+            let queryObj = Bmob.Query('Goods');
+            queryObj.set('goodsName', "" + good.商品名字);
+            queryObj.set('costPrice', good.成本价 ? "" + good.成本价 : '0');
+            queryObj.set('retailPrice', good.零售价 ? "" + good.零售价 : '0');
+            if (good.包装含量) queryObj.set('packageContent', '' + good.包装含量);
+            if (good.单位) queryObj.set('packingUnit', '' + good.单位);
+            queryObj.set('reserve', totalReserve);
+            if (good.条形码) queryObj.set('productCode', '' + good.条形码);
+            if (good.存放位置) queryObj.set('position', '' + good.存放位置);
+            if (good.简介) queryObj.set('product_info', '' + good.简介);
+            if (good.生产厂家) queryObj.set('producer', '' + good.生产厂家);
+            queryObj.set("order", 0);
+            queryObj.set('userId', poiID);
+            queryObj.save().then(res => {
+              let this_result = res;
+
+              for (let stockIndex in stocks) {
+                const pointer1 = Bmob.Pointer('stocks')
+                const p_stock_id = pointer1.set(stocks[stockIndex].objectId) //仓库的id关联
+
+                const pointer2 = Bmob.Pointer('Goods')
+                const p_good_id = pointer2.set(this_result.objectId) //仓库的id关联
+
+                var queryObj1 = Bmob.Query('Goods');
+                queryObj1.set("order", 1)
+                queryObj1.set("goodsName", "" + good.商品名字);
+                queryObj1.set("costPrice", "" + good.成本价);
+                queryObj1.set("retailPrice", "" + good.零售价);
+                queryObj1.set("header", p_good_id)
+                queryObj1.set("userId", poiID)
+                queryObj1.set("stocks", p_stock_id)
+                queryObj1.set("reserve", reserves[stockIndex] ? Number(reserves[stockIndex]) : 0);
+                queryObj1.save().then(res => {
+
+                  if (stockIndex == stocks.length - 1) {
+                    count += 1;
+
+                    if (count == goods.length) {
+                      this.$Message.success('导入成功');
+                      that.get_productList()
+                    }
+                  }
+                })
+              }
+
+            })
+          }
+        });
       },
 
       //查询产品列表
@@ -665,7 +740,8 @@
                 item.qrcodeImg = jrQrcode.getQrBase64(item.productCode)
             }
 
-            item.goodsIcon = item.goodsIcon?item.goodsIcon:"http://www.shoujixungeng.com/2020/04/17/44cb975b4052371b8033dcdb4c3eba85.png"
+            item.goodsIcon = item.goodsIcon ? item.goodsIcon :
+              "http://www.shoujixungeng.com/2020/04/17/44cb975b4052371b8033dcdb4c3eba85.png"
           }
           that.goods = res.data;
           that.loading = false;

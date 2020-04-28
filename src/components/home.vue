@@ -123,8 +123,8 @@
 
           </Menu>
         </Sider>
-        <Layout :style="{height:screenHeight - 64+'px',background:'#fff'}">
-          <Content style="padding: 20px;">
+        <Layout :style="{height:screenHeight - 64+'px',background:'#f3f3f4'}">
+          <Content style="padding: 20px 20px 20px 0;">
             <router-view></router-view>
           </Content>
         </Layout>
