@@ -7,7 +7,7 @@
       </Breadcrumb>
     </div>
 
-    <div style="background: #FFFFFF;padding-bottom: 1.25rem;">
+    <div style="background: #FFFFFF;padding: 1.25rem 1.25rem 0;">
       <div>
         <div style="text-align: right;padding:0 0 0.625rem;">
           <Button type="primary" @click="handleSubmit(2)" :disabled="button_disabled">确定调拨</Button>
@@ -300,7 +300,7 @@
           	query.set("stock", stockId);
           	query.set("out_stock", out_stockId);
           	query.set("master", poiID);
-          	query.set('goodsName', goodsName);
+          	query.set('goodsName', goodsName.join(","));
             query.set("createdTime", {
               "__type": "Date",
               "iso": that.formItem.date

@@ -16,7 +16,7 @@
       </div>
     </div>
 
-    <Table :columns="columns" :data="data" stripe border :height="screenHeight - 250">
+    <Table :columns="columns" :data="data" stripe border :height="screenHeight - 200" size="small">
       <template slot-scope="{ row, index }" slot="action">
         <Button type="primary" size="small" style="margin-right: 5px" @click="edit(row)">修改</Button>
         <Button type="error" size="small" @click="remove(row)">删除</Button>
@@ -128,12 +128,12 @@
   import staffs from '@/serve/staffs.js';
   import shops from '@/serve/shops.js';
   import goods from '@/serve/goods.js';
-  
+
 
   let that;
   export default {
     components: {
-      
+
     },
     data() {
       return {
@@ -423,3 +423,9 @@
     },
   }
 </script>
+
+<style>
+  .ivu-form-item{
+    margin-bottom: 0.625rem;
+  }
+</style>

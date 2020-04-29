@@ -13,8 +13,8 @@
 			<span class="expand-key" v-if="item == '0'">产品管理 </span>
 			<span class="expand-key" v-if="item == '1'">员工管理 </span>
 			<span class="expand-key" v-if="item == '2'">仓库管理 </span>
-			<span class="expand-key" v-if="item == '3'">门店管理 </span>
-			<span class="expand-key" v-if="item == '4'">客户管理 </span>
+			<span class="expand-key" v-if="item == '3'">客户管理 </span>
+      <span class="expand-key" v-if="item == '4'">供货商管理 </span>
 			<span class="expand-key" v-if="item == '5'">产品类别管理 </span>
 			<span class="expand-key" v-if="item == '6'">库存管理</span>
       <span class="expand-key" v-if="item == '7'">采购</span>
@@ -29,6 +29,12 @@
 			<span class="expand-key" v-if="item == '1'">出库记录 </span>
 			<span class="expand-key" v-if="item == '2'">调拨记录 </span>
       <span class="expand-key" v-if="item == '3'">盘点记录 </span>
+      <span class="expand-key" v-if="item == '4'">盘点记录 </span>
+      <span class="expand-key" v-if="item == '5'">盘点记录 </span>
+      <span class="expand-key" v-if="item == '6'">盘点记录 </span>
+      <span class="expand-key" v-if="item == '7'">盘点记录 </span>
+      <span class="expand-key" v-if="item == '7'">盘点记录 </span>
+      <span class="expand-key" v-if="item == '7'">盘点记录 </span>
 			</Col>
 		</Row>
 

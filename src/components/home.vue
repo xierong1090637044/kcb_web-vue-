@@ -37,10 +37,24 @@
             </div>
             </MenuItem>
 
+            <Submenu name="6">
+              <template slot="title">
+                <i class="iconfont  icon-fq_zhibaoshu" style="font-size: 20px;"></i>
+                资料
+              </template>
+               <MenuItem name="2-7" to='/home/manage/goods'>产品管理</MenuItem>
+              <MenuItem name="2-1" to='/home/manage/category'>产品类别管理</MenuItem>
+              <MenuItem name="2-2" to='/home/manage/stocks'>仓库管理</MenuItem>
+              <!--<MenuItem name="2-3" to='/home/manage/shops'>门店管理</MenuItem>-->
+              <MenuItem name="2-4" to='/home/manage/staffs'>员工管理</MenuItem>
+              <MenuItem name="2-5" to='/home/manage/customs'>客户管理</MenuItem>
+              <MenuItem name="2-6" to='/home/manage/producers'>供应商管理</MenuItem>
+            </Submenu>
+
             <Submenu name="7">
               <template slot="title">
-                <i class="iconfont  icon-chanpinyuyue"></i>
-                库存管理
+                <i class="iconfont  icon-pandian" style="font-size: 18px;"></i>
+                库存
               </template>
               <MenuItem name="7-1" to='/home/stock/goodEnter'>产品入库</MenuItem>
               <MenuItem name="7-2" to='/home/stock/goodOut'>产品出库</MenuItem>
@@ -59,7 +73,7 @@
 
             <Submenu name="3">
               <template slot="title">
-                <Icon type="md-cart" style="font-size: 20px;"></Icon>
+                <i class="iconfont  icon-navicon-xsckd" style="font-size: 20px;"></i>
                 销售
               </template>
               <MenuItem name="3-1" to='/home/stock/goodOutBuy'>销售出库</MenuItem>
@@ -68,32 +82,33 @@
 
             <Submenu name="8">
               <template slot="title">
-                <Icon type="md-cash" style="font-size: 20px;"></Icon>财务管理
+                <i class="iconfont  icon-zijinzhanghu" style="font-size: 20px;"></i>财务
               </template>
+              <!--<MenuItem name="8-4" to='/home/finance/financeCustomIn'>应收账款</MenuItem>-->
               <MenuItem name="8-1" to='/home/finance/financeLsit'>我的账户</MenuItem>
-            	<!--<MenuItem name="8-2" to='/home/goodOutBuyReturn'>收入类别</MenuItem>
-              <MenuItem name="8-3" to='/home/goodOutBuyReturn'>支出类别</MenuItem>-->
+            	<MenuItem name="8-2" to='/home/finance/financeInClass'>收入类别</MenuItem>
+              <MenuItem name="8-3" to='/home/finance/financeOutClass'>支出类别</MenuItem>
+            </Submenu>
+            <Submenu name="10">
+              <template slot="title">
+                <i class="iconfont  icon-yuangong" style="font-size: 20px;"></i>人事
+              </template>
+              <MenuItem name="10-1" to='/home/staff/staffManage'>员工管理</MenuItem>
+              <!--<MenuItem name="10-1" to='/home/staff/staffManage'>员工薪资设置</MenuItem>-->
             </Submenu>
 
             <Submenu name="9">
               <template slot="title">
-                <i class="iconfont  icon-fq_kucunfeiyong" style="font-size: 20px;"></i>线上订货
+                <i class="iconfont  icon-fq_kucunfeiyong" style="font-size: 20px;"></i>订货
               </template>
               <MenuItem name="9-1" to='/home/onlineShop/goodClass'>线上展示类别</MenuItem>
               <MenuItem name="9-2" to='/home/onlineShop/goodManage'>商品管理</MenuItem>
             </Submenu>
 
-            <MenuItem name="4" to='/home/goods'>
-            <div class="display_flex">
-              <Icon type="md-cube" style="font-size: 20px;" />
-              <div style="margin-left: 10px;margin-top: 4px;">产品管理</div>
-            </div>
-            </MenuItem>
-
 						<Submenu name="5">
 						  <template slot="title">
-						    <Icon type="ios-paper" style="font-size: 20px;"></Icon>
-						    操作记录
+						    <i class="iconfont  icon-riqi" style="font-size: 20px;"></i>
+						    记录
 						  </template>
 						  <MenuItem name="5-1" to='/home/orders/stockOrdersIn?type=1&extra_type=2'>入库记录</MenuItem>
 							<MenuItem name="5-2" to='/home/orders/stockOrdersOut?type=-1&extra_type=2'>出库记录</MenuItem>
@@ -106,19 +121,6 @@
 							<MenuItem name="5-9" to='/home/orders/goodBuyOrders'>销售记录</MenuItem>
 							<MenuItem name="5-10" to='/home/orders/goodBuyOrdersReturn'>销售退货记录</MenuItem>
 						</Submenu>
-
-            <Submenu name="6">
-              <template slot="title">
-                <Icon type="ios-copy" style="font-size: 20px;"></Icon>
-                基本资料
-              </template>
-              <MenuItem name="2-1" to='/home/manage/category'>产品类别管理</MenuItem>
-              <MenuItem name="2-2" to='/home/manage/stocks'>仓库管理</MenuItem>
-              <!--<MenuItem name="2-3" to='/home/manage/shops'>门店管理</MenuItem>-->
-              <MenuItem name="2-4" to='/home/manage/staffs'>员工管理</MenuItem>
-              <MenuItem name="2-5" to='/home/manage/customs'>客户管理</MenuItem>
-              <MenuItem name="2-6" to='/home/manage/producers'>供应商管理</MenuItem>
-            </Submenu>
 
 
           </Menu>

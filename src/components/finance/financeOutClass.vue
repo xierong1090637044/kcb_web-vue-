@@ -6,19 +6,19 @@
 		<div style="margin-bottom: 10px;">
 			<Breadcrumb separator="<b style='color: #999;'>/</b>">
 				<BreadcrumbItem to="/">首页</BreadcrumbItem>
-				<BreadcrumbItem to="/home/goods">类别管理</BreadcrumbItem>
+				<BreadcrumbItem to="/home/goods">支出类别管理</BreadcrumbItem>
 			</Breadcrumb>
 		</div>
-		
+
 		<div style="margin-bottom: 10px;display: flex;align-items: center;justify-content: space-between;">
 			<div style="display: flex;align-items: center;">
 				<Button type="warning" @click="modal3 = true" icon="md-add" style="margin-right: 10px;background: #ed4014;">添加一级分类</Button>
 			</div>
 		</div>
-		
+
 		<Row type="flex" justify="start">
 			<Col span="12">
-				<Table :columns="columns" :data="data" stripe border :height="screenHeight - 250">
+				<Table :columns="columns" :data="data" stripe border :height="screenHeight - 250" size="small">
 					<template slot-scope="{ row, index }" slot="action">
 						<Button type="primary" size="small" style="margin-right: 5px" @click="edit(row,1)">修改</Button>
 						<Button type="primary" size="small" style="margin-right: 5px" @click="add(row)">添加二级分类</Button>
@@ -28,7 +28,7 @@
 				</Table>
 			</Col>
 			<Col span="11" offset="1">
-				<Table :columns="columns1" :data="data1" stripe border :height="screenHeight - 250" >
+				<Table :columns="columns1" :data="data1" stripe border :height="screenHeight - 250"  size="small">
 					<template slot-scope="{ row, index }" slot="action">
 						<Button type="primary" size="small" style="margin-right: 5px" @click="edit(row,2)">修改</Button>
 						<Button type="error" size="small" @click="remove(row,2)">删除</Button>
@@ -80,8 +80,7 @@
 	</div>
 </template>
 <script>
-	import goods from '@/serve/goods.js';
-	import manage from '@/serve/manage.js';
+	import finance from '@/serve/finance.js';
 
 	let that;
 	export default {
@@ -113,7 +112,7 @@
 						align: 'center'
 					}
 				],
-				
+
 				data1: [],
 				columns1: [
 					{
@@ -132,9 +131,9 @@
 
 		mounted() {
 			that = this;
-			manage.get_fristclass().then(res => {
+			finance.get_fristclass("financeOut").then(res => {
 				if(res.length > 0){
-					goods.get_secondclass(res[0].objectId).then(res1 => {
+					finance.get_secondclass(res[0].objectId).then(res1 => {
 						//console.log(res)
 						this.data1 = res1
 					})
@@ -148,7 +147,7 @@
 			//查看二级分类
 			getSecond(row){
 				that.select_item =row
-				goods.get_secondclass(row.objectId).then(res1 => {
+				finance.get_secondclass(row.objectId).then(res1 => {
 					that.data1 = res1
 				})
 			},
@@ -156,8 +155,8 @@
 			//添加一级分类确定
 			add_fristclass() {
 				that.loading = true;
-				manage.add_fristclass(that.frist_classtext).then(res => {
-					manage.get_fristclass().then(res => {
+				finance.add_fristclass(that.frist_classtext,"financeOut").then(res => {
+					finance.get_fristclass("financeOut").then(res => {
 						that.$Message.success('添加成功');
 						that.data = res
 						that.loading = false;
@@ -174,10 +173,10 @@
 			//添加二级分类确定
 			add_secondclass() {
 				that.loading = true;
-				manage.add_secondclass(that.select_item.objectId, that.second_classtext).then(res => {
+				finance.add_secondclass(that.select_item.objectId, that.second_classtext,"financeOut").then(res => {
 					console.log(res)
 					if (res) {
-						goods.get_secondclass(that.select_item.objectId).then(res1 => {
+						finance.get_secondclass(that.select_item.objectId).then(res1 => {
 							console.log(res1)
 							that.data1 = res1
 							that.loading = false;
@@ -204,16 +203,16 @@
 			modal_confrim() {
 				that.loading = true;
 				if(that.classType == 1){
-					manage.edit_fristclass(that.select_item.objectId, that.class_text).then(res => {
-						manage.get_fristclass().then(res => {
+					finance.edit_fristclass(that.select_item.objectId, that.class_text).then(res => {
+						finance.get_fristclass("financeOut").then(res => {
 							that.data = res;
 							that.loading = false;
 							that.$Message.success('修改成功');
 						})
 					})
 				}else{
-					manage.edit_secondclass(that.select_item1.objectId, that.class_text).then(res => {
-							goods.get_secondclass(that.select_item.objectId).then(res1 => {
+					finance.edit_secondclass(that.select_item1.objectId, that.class_text).then(res => {
+							finance.get_secondclass(that.select_item.objectId).then(res1 => {
 								//console.log(res)
 								that.data1 = res1
 								that.loading = false;
@@ -233,7 +232,7 @@
 					that.select_item = row.parent;
 					that.select_item1 = row;
 				}
-				
+
 			},
 
 			//确定删除
@@ -241,8 +240,8 @@
 				console.log(that.select_item.objectId)
 				that.loading = true;
 				if(that.classType == 1){
-					manage.delete_class('class_user', that.select_item.objectId).then(res => {
-							manage.get_fristclass().then(res => {
+					finance.delete_class('financeFristClass', that.select_item.objectId).then(res => {
+							finance.get_fristclass("financeOut").then(res => {
 								that.data = res;
 								that.modal2 = false,
 								that.loading = false;
@@ -250,8 +249,8 @@
 							})
 					})
 				}else{
-					manage.delete_class("second_class",that.select_item1.objectId).then(res => {
-						goods.get_secondclass(that.select_item.objectId).then(res1 => {
+					finance.delete_class("financeSecondClass",that.select_item1.objectId).then(res => {
+						finance.get_secondclass(that.select_item.objectId).then(res1 => {
 							that.data1 = res1
 							that.loading = false;
 							that.modal2 = false,
@@ -259,7 +258,7 @@
 						})
 					})
 				}
-				
+
 			},
 		},
 	}

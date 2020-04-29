@@ -7,7 +7,7 @@
       </Breadcrumb>
     </div>
 
-    <div style="background: #FFFFFF;padding-bottom: 1.25rem;">
+    <div style="background: #FFFFFF;padding: 1.25rem 1.25rem 0;">
       <div>
         <div style="text-align: right;padding:0 0 0.625rem;">
           <Button type="primary" @click="handleSubmit(2)" :disabled="button_disabled">确定盘点</Button>
@@ -281,7 +281,7 @@
             query.set("type", 3);
             query.set("opreater", poiID1);
             query.set("master", poiID);
-            query.set('goodsName', goodsName);
+            query.set('goodsName', goodsName.join(","));
             query.set("stockIds", stockIds);
 						query.set("Images", that.formItem.Images);
             query.set("createdTime", {

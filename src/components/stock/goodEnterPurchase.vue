@@ -7,7 +7,7 @@
 			</Breadcrumb>
 		</div>
 
-		<div style="background: #FFFFFF;padding-bottom: 1.25rem;">
+		<div style="background: #FFFFFF;padding: 1.25rem 1.25rem 0;">
 			<div>
 				<div class="display_flex_bet">
 					<div></div>

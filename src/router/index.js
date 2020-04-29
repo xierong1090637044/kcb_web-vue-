@@ -28,8 +28,7 @@ import home from '@/components/home'
 import index from '@/components/index' //首页
 import thanks from '@/components/thanks' // 感谢页面
 import test from '@/components/test' //样板页面
-import goods from '@/components/goods' //产品添加页面
-import operations from '@/components/operations' //操作记录页面
+
 import download from '@/components/download'; // app下载页面
 import category from '@/components/manage/category'; // 类别管理页面
 import stocks from '@/components/manage/stocks'; // 类别管理页面
@@ -76,10 +75,32 @@ export default new Router({
 					name: 'financeLsit',
 					component: () => import('@/components/finance/financeLsit'), //财务列表
 				}, {
+					path: 'finance/financeOutClass',
+					name: 'financeOutClass',
+					component: () => import('@/components/finance/financeOutClass'), //财务支出类别
+				},
+        {
+        	path: 'finance/financeInClass',
+        	name: 'financeInClass',
+        	component: () => import('@/components/finance/financeInClass'), //财务支出类别
+        },
+        {
+        	path: 'finance/financeCustomIn',
+        	name: 'financeCustomIn',
+        	component: () => import('@/components/finance/financeCustomIn'), //应收账款
+        },{
+        	path: 'finance/financeCustomInOrder',
+        	name: 'financeCustomInOrder',
+        	component: () => import('@/components/finance/financeCustomInOrder'), //创建应收账款
+        },
+        
+        {
 					path: 'onlineShop/goodClass',
 					name: 'goodClass',
 					component: () => import('@/components/onlineShop/goodClass'), //线上商城
-				}, {
+				},
+        
+        {
 					path: 'onlineShop/goodManage',
 					name: 'goodManage',
 					component: () => import('@/components/onlineShop/goodManage'), //线上商城商品管理
@@ -120,7 +141,18 @@ export default new Router({
 					name: 'goodOutBuyReturn',
 					component: () => import('@/components/stock/goodOutBuyReturn'), //销售退货
 				},
-
+        
+        {
+        	path: 'staff/staffManage',
+        	name: 'staffManage',
+        	component: () => import('@/components/staff/staffManage'), //员工管理页面
+        },
+        {
+        	path: 'staff/staffSalarySet',
+        	name: 'staffSalarySet',
+        	component: () => import('@/components/staff/staffSalarySet'), //员工薪资设置页面
+        },
+        
 				{
 					path: 'orders/stockOrdersIn',
 					name: 'stockOrdersIn',
@@ -171,6 +203,42 @@ export default new Router({
 					name: 'goodBuyOrdersReturn',
 					component: () => import('@/components/orders/goodBuyOrdersReturn'), //销售退货记录
 				},
+
+        {
+        	path: 'manage/goods',
+        	name: 'goods',
+        	component: () => import('@/components/manage/goods'), //产品管理页面
+        },
+        {
+        	path: 'manage/category',
+        	name: 'category',
+        	component: category
+        },
+        {
+        	path: 'manage/stocks',
+        	name: 'stocks',
+        	component: stocks
+        },
+        {
+        	path: 'manage/shops',
+        	name: 'shops',
+        	component: shops
+        },
+        {
+        	path: 'manage/staffs',
+        	name: 'staffs',
+        	component: staffs
+        },
+        {
+        	path: 'manage/customs',
+        	name: 'customs',
+        	component: customs
+        },
+        {
+        	path: 'manage/producers',
+        	name: 'producers',
+        	component: producers
+        },
 				{
 					path: 'index',
 					name: 'index',
@@ -187,50 +255,11 @@ export default new Router({
 					component: test
 				},
 				{
-					path: 'goods',
-					name: 'goods',
-					component: goods
-				},
-				{
-					path: 'operations',
-					name: 'operations',
-					component: operations
-				},
-				{
 					path: 'download',
 					name: 'download',
 					component: download
 				},
-				{
-					path: 'manage/category',
-					name: 'category',
-					component: category
-				},
-				{
-					path: 'manage/stocks',
-					name: 'stocks',
-					component: stocks
-				},
-				{
-					path: 'manage/shops',
-					name: 'shops',
-					component: shops
-				},
-				{
-					path: 'manage/staffs',
-					name: 'staffs',
-					component: staffs
-				},
-				{
-					path: 'manage/customs',
-					name: 'customs',
-					component: customs
-				},
-				{
-					path: 'manage/producers',
-					name: 'producers',
-					component: producers
-				},
+
 				{
 					path: 'updateHistory',
 					name: 'updateHistory',
