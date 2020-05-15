@@ -11,9 +11,22 @@
       <Input search enter-button placeholder="请输入产品名称~规格" style="width: 25%" @on-search='searchGoods' />
       <div>
         <Button type="success" style="margin-right: 10px;" @click="addProduct" icon="md-add">添加产品</Button>
-        <Button type="error" @click="delete_good()" style="margin-right: 10px;">批量删除</Button>
-        <Button type="primary" @click="exportData()" style="margin-right: 10px;"> 导出</Button>
         <Button type="primary" v-print="'#print_allqr'" style="margin-right: 10px;"> 打印当前页面二维码</Button>
+        <Dropdown style="margin-right: 10px" trigger="click">
+          <Button type="primary">批量操作
+            <Icon type="ios-arrow-down"></Icon>
+          </Button>
+          <DropdownMenu slot="list">
+            <DropdownItem name="删除">
+              <Button type="primary" @click="delete_good()" style="width: 100%;" size="small">删除</Button>
+            </DropdownItem>
+            <DropdownItem name="打印二维码">
+              <Button type="primary" v-print="'#print_selectedqr'" style="width: 100%;" size="small"> 打印二维码</Button>
+            </DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
+
+        <Button type="primary" @click="exportData()" style="margin-right: 10px;"> 导出</Button>
         <Dropdown style="margin-right: 10px" trigger="click">
           <Button type="primary">
             批量导入
@@ -47,17 +60,16 @@
       <template slot-scope="{ row, index }" slot="action">
         <div style="display: flex;justify-content: center;">
           <div style="margin-right: 10px" @click="showReserve(row)"><Button type="primary" size="small">库存</Button></div>
-          <div @click="edit(row)"><Button type="primary" size="small" style="margin-right: 10px">编辑</Button></div>
+          <div><Button type="primary" size="small" v-print="'#printMe'" @click="Print(row)">打印</Button></div>
+          <!--<div @click="edit(row)"><Button type="primary" size="small" style="margin-right: 10px">编辑</Button></div>-->
           <div @click="update(row)" v-if="row.order != 0">
             <Tooltip content="升级为新的产品数据" placement="bottom-end">
               <Button type="primary" size="small">升级</Button>
             </Tooltip>
           </div>
+          <!--<div @click="deleteHeaderGood(row.objectId)" style="margin-right: 10px"><Button type="error" size="small">删除</Button></div>-->
         </div>
-        <div style="display: flex;justify-content: center;margin-top: 6px;">
-          <div @click="deleteHeaderGood(row.objectId)" style="margin-right: 10px"><Button type="error" size="small">删除</Button></div>
-          <div><Button type="primary" size="small" v-print="'#printMe'" @click="Print(row)">打印</Button></div>
-        </div>
+
       </template>
     </Table>
     <div style="margin: 10px;overflow: hidden">
@@ -97,7 +109,7 @@
       </div>
     </div>
 
-    <Modal title="产品图片" v-model="GoodImg.show" :styles="{top: '4%'}">
+    <Modal title="大图" v-model="GoodImg.show" :styles="{top: '4%'}">
       <img :src="GoodImg.attr" style="margin: 0 auto;width: 50%;" />
     </Modal>
 
@@ -239,7 +251,7 @@
             sortable: true,
           },
           {
-            width: 150,
+            width: 200,
             align: 'center',
             title: '所属分类',
             key: 'class',
@@ -298,10 +310,16 @@
               }, [
                 h('img', {
                   style: {
-                    width: "65px",
+                    width: '20px',
                   },
                   attrs: {
                     src: params.row.qrcodeImg
+                  },
+                  on: {
+                    'click': function() {
+                      that.GoodImg.show = true
+                      that.GoodImg.attr = params.row.qrcodeImg
+                    }
                   }
                 })
               ]);
@@ -468,22 +486,6 @@
             that.addGoodClick = true
           }
         }
-      },
-
-      //输入实际的出入库的价格
-      modify_price($event, index) {
-        //console.log($event, index)
-
-        that.select_goods[index].modify_retailPrice = $event.target.value
-        that.select_goods[index].total_money = that.select_goods[index].num * Number($event.target.value)
-      },
-
-      //输入数量时触发
-      modify_num($event, index) {
-        //console.log($event, index)
-
-        that.select_goods[index].num = Number($event)
-        that.select_goods[index].total_money = Number($event) * Number(that.select_goods[index].modify_retailPrice)
       },
 
       //打印点击
@@ -664,6 +666,20 @@
             //console.log(reserves)
             let queryObj = Bmob.Query('Goods');
             queryObj.set('goodsName', "" + good.商品名字);
+            if (good.一级分类Id) {
+              const pointerClass = Bmob.Pointer("class_user")
+              const goodsClass = pointerClass.set(good.一级分类Id)
+              queryObj.set('goodsClass', goodsClass);
+            }
+            if (good.二级分类Id) {
+              const pointerSecondClass = Bmob.Pointer("second_class")
+              const goodsSecondClass = pointerSecondClass.set(good.二级分类Id)
+              queryObj.set('second_class', goodsSecondClass);
+            }
+            queryObj.set('brand', good.商品品牌 ? good.商品品牌 : '');
+            queryObj.set('packModel', good.规格 ? good.规格 : '');
+
+
             queryObj.set('costPrice', good.成本价 ? "" + good.成本价 : '0');
             queryObj.set('retailPrice', good.零售价 ? "" + good.零售价 : '0');
             if (good.包装含量) queryObj.set('packageContent', '' + good.包装含量);
@@ -714,21 +730,18 @@
 
       //查询产品列表
       get_productList() {
+
         let params = {
-          funcName: 'Goods',
-          data: {
-            uid: that.userid,
-            content: that.search_goodMame,
-            pageSize: 200,
-            pageNum: that.pege_number,
-            order: "-createdAt"
-          }
+          content: that.search_goodMame,
+          pageSize: 50,
+          pageNum: that.pege_number,
+          order: "-createdAt"
         }
-        Bmob.functions(params.funcName, params.data).then(function(res) {
+
+        that.$http.Post("Goods", params).then(res => {
           for (let item of res.data) {
             item.class = (item.goodsClass ? (item.goodsClass.class_text || "") : "") + "    " + (item.second_class ?
-              (item.second_class
-                .class_text || "") : "")
+              (item.second_class.class_text || "") : "")
             item.stocks = (item.stocks) ? item.stocks.stock_name : ""
             if (item.order == 0) {
               item.productCode = (item.productCode) ? item.productCode + '-' + true + '-new' : item.objectId + '-' +
@@ -739,13 +752,9 @@
                 false + '-old',
                 item.qrcodeImg = jrQrcode.getQrBase64(item.productCode)
             }
-
-            item.goodsIcon = item.goodsIcon ? item.goodsIcon :
-              "http://www.shoujixungeng.com/2020/04/17/44cb975b4052371b8033dcdb4c3eba85.png"
           }
           that.goods = res.data;
           that.loading = false;
-
         })
       },
 
@@ -769,6 +778,9 @@
               query.order("-createdAt"); //按照条件降序
               query.find().then(res => {
                 for (let item of res) {
+                  item.class = (item.goodsClass ? (item.goodsClass.class_text || "") : "") + "    " + (item
+                    .second_class ?
+                    (item.second_class.class_text || "") : "")
                   if (item.order == 0) {
                     item.productCode = (item.productCode) ? item.productCode + '-' + true + '-new' :
                       item.objectId +
@@ -815,6 +827,10 @@
     border-radius: 10px;
     background: #ededed;
   }*/
+
+  .ivu-modal-body{
+    text-align: center;
+   }
 
   .ivu-input-search {
     background-color: #426ab3 !important;

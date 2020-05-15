@@ -111,7 +111,7 @@
 						key: 'custom_phone',
 					},
 
-					{
+					/*{
 						title: '欠款金额',
 						key: 'debt',
             render: (h, params) => {
@@ -121,7 +121,7 @@
                 },
               }, ["￥"+(params.row.debt)])
             }
-					},
+					},*/
 					{
 						title: '创建时间',
 						key: 'createdAt',

@@ -42,7 +42,8 @@ import updateHistory from '@/components/updateHistroy'; // 出库或销售页面
 import admin from '@/components/admin/index'; // 管理员页面
 
 import Bmob from 'hydrogen-js-sdk';
-Bmob.initialize("825b954fe97e9186", "109063", "47f76baf4ee4d90630d7b2bc17f7505c");
+//Bmob.initialize("db7d7df44b87bb60", "109063","db1c531222c31c7511629dd458a72436");//测试
+Bmob.initialize("825b954fe97e9186", "109063", "47f76baf4ee4d90630d7b2bc17f7505c");//正式
 
 Vue.use(Bmob)
 Vue.use(Router)
@@ -93,13 +94,13 @@ export default new Router({
         	name: 'financeCustomInOrder',
         	component: () => import('@/components/finance/financeCustomInOrder'), //创建应收账款
         },
-        
+
         {
 					path: 'onlineShop/goodClass',
 					name: 'goodClass',
 					component: () => import('@/components/onlineShop/goodClass'), //线上商城
 				},
-        
+
         {
 					path: 'onlineShop/goodManage',
 					name: 'goodManage',
@@ -141,7 +142,7 @@ export default new Router({
 					name: 'goodOutBuyReturn',
 					component: () => import('@/components/stock/goodOutBuyReturn'), //销售退货
 				},
-        
+
         {
         	path: 'staff/staffManage',
         	name: 'staffManage',
@@ -152,7 +153,7 @@ export default new Router({
         	name: 'staffSalarySet',
         	component: () => import('@/components/staff/staffSalarySet'), //员工薪资设置页面
         },
-        
+
 				{
 					path: 'orders/stockOrdersIn',
 					name: 'stockOrdersIn',

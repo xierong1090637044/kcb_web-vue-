@@ -69,11 +69,11 @@
 
                   <!--<FormItem label="多规格" style="width: 25%;text-align: left;" v-if='type !="edit"'>
                     <el-switch v-model="formValidate.productMoreG" @change="switchValue"></el-switch>
-                  </FormItem>-->
+                  </FormItem>
 
                   <FormItem label="规格设置" style="width: 25%;" v-if="formValidate.productMoreG">
                     <Input placeholder="请设置多规格" @on-focus="productMoreG.show = true;productMoreG.type=1"></Input>
-                  </FormItem>
+                  </FormItem>-->
                 </div>
 
               </div>
@@ -382,6 +382,7 @@
               this.$emit('confrim', false)
             }
           })
+          
         } else if (formValidate.goodsName == "") {
           this.$emit('confrim', false)
           this.$Message.error('请填写产品名字');

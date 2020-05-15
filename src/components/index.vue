@@ -69,8 +69,7 @@
           <Card dis-hover>
             <p slot="title" style="font-weight: bold;">库存分布</p>
             <div>
-              <!--<ve-ring :series="chartSeries" height="300px" :judgeWidth="true"></ve-ring>-->
-              <div>敬请期待</div>
+              <ve-ring :series="stockRingChartSeries" height="200px" :judgeWidth="true"></ve-ring>
             </div>
           </Card>
           </Col>
@@ -186,6 +185,32 @@
           },
           data: ''
         },
+        stockRingChartSeries:{
+          type: "pie",
+          radius: ['30%', '65%'],
+          label: {
+            formatter: '{b|{b}}\n  {c}  {per|{d}%}  ',
+            backgroundColor: '#fafafa',
+            borderColor: '#fafafa',
+            borderWidth: 1,
+            borderRadius: 4,
+            rich: {
+              b: {
+                fontSize: 12,
+                lineHeight: 33,
+                align: 'center'
+              },
+              per: {
+                color: '#eee',
+                backgroundColor: '#334455',
+                padding: [2, 4],
+                lineHeight: 33,
+                borderRadius: 2
+              }
+            }
+          },
+          data: ''
+        },
         noticeList: [],
         noticePageNum: 1,
       };
@@ -210,7 +235,7 @@
           that.loadallGoods()
           that.getTodayPurchaseDetail()
           that.getCustomDetBarChartl()
-          //that.getStockPieChart()
+          that.getStockPieChart()
           that.getStaffDetBarChart()
           that.getStockDet()
         })
@@ -258,12 +283,17 @@
       },
 
       //得到库存分布数据
-      /*getStockPieChart: function() {
+      getStockPieChart: function() {
         that.$http.Post("record_stockPieChart", {}).then(res => {
-          //that.CustomBarChartData.rows = res.data
-          //console.log(res)
+
+          for(let item of res.data){
+            item.value = item.allReserve
+          }
+
+          console.log(res.data)
+          that.stockRingChartSeries.data = res.data
         })
-      },*/
+      },
 
       //得到资产详情
       getMoneyDesc() {
@@ -302,7 +332,7 @@
 
       //得到总库存数和总金额
       loadallGoods: function() {
-        that.$http.Post("stockAll", {}).then(res => {
+        that.$http.Post("record_stockAllCount", {}).then(res => {
           let result = res.data
           if (that.$store.state.user.rights && that.$store.state.user.rights.othercurrent[0] != '0') {
             result.total_money = 0

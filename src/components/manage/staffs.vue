@@ -37,7 +37,7 @@
     </Modal>
 
     <!--添加员工-->
-    <Modal v-model="modal3" title="添加员工" @on-ok="add_staff" @on-cancel="handleData" width="60%">
+    <Modal v-model="modal3" title="添加员工" @on-ok="add_staff" @on-cancel="handleData" width="60%" :styles="{top: '20px'}">
       <Form :label-width="80">
         <FormItem label="名字">
           <Input v-model="staff.name" placeholder="请输入员工的名字"></Input>
@@ -311,9 +311,7 @@
       this.$Loading.start();
       staffs.get_stafflist().then(res => {
         console.log(res)
-
         that.data = res;
-
         goods.getstock_list().then(res => {
           console.log(res)
           that.newStock.allStocks = res

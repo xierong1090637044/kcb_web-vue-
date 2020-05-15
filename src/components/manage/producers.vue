@@ -118,10 +118,10 @@
 							return h('div', [(params.row.disabled) ? "未启用" : "已启用"])
 						}
 					},
-					{
+					/*{
 						title: '欠款金额',
 						key: 'debt',
-					},
+					},*/
 					{
 						title: '创建时间',
 						key: 'createdAt',

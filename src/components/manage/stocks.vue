@@ -1,277 +1,233 @@
 // table.vue
 <template>
-	<div style="position: relative;">
-		<Spin size="large" fix v-if="loading"></Spin>
+  <div style="position: relative;">
+    <Spin size="large" fix v-if="loading"></Spin>
 
-		<div style="margin-bottom: 10px;">
-			<Breadcrumb separator="<b style='color: #999;'>/</b>">
-				<BreadcrumbItem to="/">首页</BreadcrumbItem>
-				<BreadcrumbItem to="/home/goods">仓库管理</BreadcrumbItem>
-			</Breadcrumb>
-		</div>
+    <div style="margin-bottom: 10px;">
+      <Breadcrumb separator="<b style='color: #999;'>/</b>">
+        <BreadcrumbItem to="/">首页</BreadcrumbItem>
+        <BreadcrumbItem to="/home/goods">仓库管理</BreadcrumbItem>
+      </Breadcrumb>
+    </div>
 
-		<div style="margin-bottom: 10px;display: flex;align-items: center;justify-content: space-between;">
+    <div style="margin-bottom: 10px;display: flex;align-items: center;justify-content: space-between;">
+      <div style="display: flex;align-items: center;">
+        <Button type="warning" @click="modal3 = true;type='add'" icon="md-add" style="margin-right: 10px;background: #ed4014;">添加仓库</Button>
+      </div>
+    </div>
+    <Table :columns="columns" :data="data" stripe border :height="screenHeight - 250" size="small">
+      <template slot-scope="{ row, index }" slot="action">
+        <Button type="primary" size="small" style="margin-right: 5px" @click="type= 'edit';stock = row;modal3 = true;">修改</Button>
+        <Button type="error" size="small" @click="remove(row)">删除</Button>
+      </template>
+    </Table>
 
-			<div style="display: flex;align-items: center;">
-				<Button type="warning" @click="modal3 = true" icon="md-add" style="margin-right: 10px;background: #ed4014;">添加仓库</Button>
-			</div>
+    <!--添加仓库-->
+    <div v-if="modal3">
+      <Modal title="添加仓库" @on-ok="add_stock" @on-cancel="reSet" :value="true">
+        <Form :label-width="80">
+          <FormItem label="名字">
+            <Input v-model="stock.stock_name" placeholder="请输入仓库的名字"></Input>
+          </FormItem>
+          <FormItem label="排序">
+            <Input v-model="stock.num" placeholder="排序"></Input>
+          </FormItem>
+          <FormItem label="负责人">
+            <Select placeholder="请选择仓库负责人" @on-change="changeCharge">
+              <Option v-for="(item,index) in charge" :value="index" :key="index">{{item.nickName}}</Option>
+            </Select>
+          </FormItem>
+          <FormItem label="联系电话">
+            <Input v-model="stock.phoneNumber" placeholder="联系电话"></Input>
+          </FormItem>
+          <FormItem label="地址">
+            <Input v-model="stock.address" placeholder="地址"></Input>
+          </FormItem>
 
-		</div>
-		<Table :columns="columns" :data="data" stripe border :height="screenHeight - 250">
-			<template slot-scope="{ row, index }" slot="action">
-				<Button type="primary" size="small" style="margin-right: 5px" @click="edit(row)">修改</Button>
-				<Button type="error" size="small" @click="remove(row)">删除</Button>
-			</template>
-		</Table>
+          <FormItem label="备注">
+            <Input v-model="stock.beizhu" placeholder="请输入备注"></Input>
+          </FormItem>
 
-		<!--<Modal v-model="modal" title="修改一级分类" @on-ok="modal_confrim">
-			<Form :label-width="80">
-				<FormItem label="名字">
-					<Input v-model="class_text"></Input>
-				</FormItem>
-			</Form>
-		</Modal>-->
-
-		<Modal v-model="modal2" width="360">
-			<p slot="header" style="color:#f60;text-align:center">
-				<Icon type="ios-information-circle"></Icon>
-				<span>确定删除此仓库</span>
-			</p>
-			<div style="text-align:center">
-				<p>删除后将无法恢复</p>
-			</div>
-			<div slot="footer">
-				<Button type="error" size="large" long @click="del">删除</Button>
-			</div>
-		</Modal>
-
-		<!--添加仓库-->
-		<Modal v-model="modal3" title="添加仓库" @on-ok="add_stock" @on-cancel="stock= {}">
-			<Form :label-width="80">
-				<FormItem label="名字">
-					<Input v-model="stock.name" placeholder="请输入仓库的名字"></Input>
-				</FormItem>
+          <FormItem label="启用">
+            <i-switch :value="!stock.disabled" size="large" @on-change="changeValue">
+              <span slot="open">启</span>
+              <span slot="close">关</span>
+            </i-switch>
+          </FormItem>
+        </Form>
+      </Modal>
+    </div>
 
 
-				<FormItem label="负责人">
-					<Select v-model="stock.charge" placeholder="请选择仓库负责人">
-						<Option v-for="(item,index) in charge" :value="item.objectId" :key="index">{{item.username}}</Option>
-					</Select>
-				</FormItem>
+    <Modal title="仓库图片" v-model="GoodImg.show" class-name="vertical-center-modal">
+      <img :src="GoodImg.attr" style="height: 800px;margin: 0 auto;width: 100%;" />
+    </Modal>
 
-				<FormItem label="备注">
-					<Input v-model="stock.beizhu" placeholder="请输入备注"></Input>
-				</FormItem>
-
-				<FormItem label="启用">
-					<i-switch v-model="stock.disabled" size="large">
-						<span slot="open">启</span>
-						<span slot="close">关</span>
-					</i-switch>
-				</FormItem>
-			</Form>
-		</Modal>
-		
-		<Modal title="仓库图片" v-model="GoodImg.show" class-name="vertical-center-modal">
-			<img :src="GoodImg.attr" style="height: 800px;margin: 0 auto;width: 100%;" />
-		</Modal>
-
-	</div>
+  </div>
 </template>
 <script>
-	import manage from '@/serve/manage.js';
-	import jrQrcode from "jr-qrcode";
+  import staffs from '@/serve/staffs.js';
+  import manage from '@/serve/manage.js';
+  import jrQrcode from "jr-qrcode";
 
-	let that;
-	export default {
-		components: {
+  let that;
+  export default {
+    components: {
 
-		},
-		data() {
-			return {
-				GoodImg: {
-					show: false,
-					attr: ''
-				},
-				screenHeight: window.innerHeight,
-				charge: "",
-				stock: {
-					name: "",
-					disabled: true,
-					charge: "",
-					shop: "",
-					beizhu: "",
-					objectId: "",
-				}, //添加仓库的对象
-				loading: false,
-				modal: false,
-				modal2: false,
-				modal3: false,
-				data: [],
-				columns: [{
-						type: 'index',
-						width: 60,
-						align: 'center'
-					},
-					{
-						title: '仓库图片',
-						key: 'Image',
-						width: 140,
-						render: (h, params) => {
-							return h('div', {
-								style: {
-									"text-align": "center"
-								},
-							}, [
-								h('img', {
-									style: {
-										height: "100px",
-										padding: "4px 0",
-									},
-									attrs: {
-										src: params.row.Image ? params.row.Image[0] : ''
-									},
-									on: {
-										'click': function() {
-											that.GoodImg.show = true
-											that.GoodImg.attr = params.row.Image[0]
-										}
-									}
-								})
-							]);
-						}
-					},
-					{
-						title: '仓库名字',
-						key: 'stock_name',
-					},
-					{
-						title: '仓库负责人',
-						key: 'charge',
-						render: (h, params) => {
-							return h('div', [params.row.charge ? params.row.charge.nickName : ''])
-						}
-					},
-					{
-						title: '是否已启用',
-						key: 'disabled',
-						render: (h, params) => {
-							return h('div', [(params.row.disabled) ? "未启用" : "已启用"])
-						}
-					},
-					{
-						title: '备注',
-						key: 'beizhu',
-					},
-					{
-						title: '仓库二维码',
-						width: 120,
-						key: 'qrcodeImg',
-						render: (h, params) => {
-							return h('div', {
-								style: {
-									"text-align": "center",
-									"padding": "10px 0"
-								},
-							}, [
-								h('img', {
-									style: {
-										width: "65px",
-									},
-									attrs: {
-										src: params.row.qrcodeImg
-									}
-								})
-							]);
-						}
-					},
-					{
-						title: '创建时间',
-						key: 'createdAt',
-						sortable: true
-					},
-					{
-						title: '操作',
-						slot: 'action',
-						align: 'center'
-					}
-				]
-			}
-		},
+    },
+    data() {
+      return {
+        GoodImg: {
+          show: false,
+          attr: ''
+        },
+        screenHeight: window.innerHeight,
+        charge: "",
+        type: '',
+        stock: {}, //添加仓库的对象
+        loading: false,
+        modal3: false,
+        data: [],
+        columns: [{
+            type: 'index',
+            width: 60,
+            align: 'center'
+          },
+          {
+            title: '仓库名字',
+            key: 'stock_name',
+          },
+          {
+            title: '地址',
+            key: 'address',
+          },
+          {
+            title: '联系电话',
+            key: 'phoneNumber',
+          },
+          {
+            title: '仓库负责人',
+            key: 'Ncharge',
+            render: (h, params) => {
+              return h('div', [params.row.Ncharge ? params.row.Ncharge.nickName : ''])
+            }
+          },
+          {
+            title: '备注',
+            key: 'beizhu',
+          },
+          {
+            title: '是否已启用',
+            key: 'disabled',
+            render: (h, params) => {
+              return h('div', [(params.row.disabled) ? "未启用" : "已启用"])
+            }
+          },
+          {
+            title: '创建时间',
+            key: 'createdAt',
+            sortable: true
+          },
+          {
+            title: '操作',
+            slot: 'action',
+            align: 'center'
+          }
 
-		mounted() {
-			that = this;
-			this.$Loading.start();
-			manage.getstock_list().then(res => {
-				for (let item of res) {
-					item.qrcodeImg = jrQrcode.getQrBase64((item.objectId + '-stock'))
-				}
-				that.data = res
-				manage.get_chargeList().then(res => {
+        ]
+      }
+    },
 
-					this.$Loading.finish();
-					that.charge = res;
-				})
-			})
+    mounted() {
+      that = this;
+      that.getStockList()
+      staffs.get_stafflist().then(res => {
+        that.charge = res
+      })
+    },
 
-		},
+    methods: {
 
-		methods: {
+      reSet(){
+        that.stock = {
+          Image: [],
+          stock_name: "",
+          num: 0,
+          beizhu: '',
+          phoneNumber: '',
+          address: '',
+          disabled: true,
+          chargeName: "",
+          chargeId: '',
+          objectId: "",
+        }
+        that.modal3 = false
+      },
 
-			//添加仓库点击确定
-			add_stock() {
-				this.$Loading.start();
-				manage.add_stock(that.stock).then(res => {
-					manage.getstock_list().then(res => {
-						this.$Message.success('成功');
-						this.$Loading.finish();
-						that.data = res;
-					})
-				});
-			},
+      changeValue(value) {
+        that.stock.disabled = value
+      },
 
-			//修改仓库
-			edit(row) {
-				that.modal3 = true;
-				that.stock.name = row.stock_name
-				that.stock.disabled = !row.disabled
-				that.stock.beizhu = row.beizhu
-				that.stock.objectId = row.objectId
-			},
+      changeCharge(value) {
+        that.stock.chargeId = that.charge[value].objectId
+        that.stock.chargeName = that.charge[value].nickName
+      },
 
-			//删除分类点击
-			remove(row) {
-				that.modal2 = true,
-					that.stock.objectId = row.objectId
-			},
+      //添加仓库点击确定
+      add_stock() {
+        that.stock.type = that.type
+        that.$http.Post("stock_stocksManage", that.stock).then(res => {
+          that.getStockList()
+        })
+      },
 
-			//确定删除
-			del() {
-				that.modal2 = false,
-					this.$Loading.start();
-				manage.delete_stock(that.stock.objectId).then(res => {
-					manage.getstock_list().then(res => {
-						this.$Message.success('删除成功');
-						this.$Loading.finish();
-						that.data = res;
-					})
-				})
-			},
+      getStockList() {
+        that.$http.Post("stock_stocksManage", {
+          type: 'get'
+        }).then(res => {
+          that.data = res.data
+          that.reSet()
+        })
+      },
+
+      //删除分类点击
+      remove(row) {
+        this.$Modal.confirm({
+          title: '是否删除此店仓',
+          content: '',
+          onOk: () => {
+            setTimeout(() => {
+              that.$http.Post("stock_stocksManage", {
+                type: 'delete',
+                objectId: row.objectId
+              }).then(res => {
+                this.$Modal.remove();
+                that.getStockList()
+              })
+
+            }, 1000);
+          }
+        });
+      },
 
 
-		},
-	}
+    },
+  }
 </script>
 
 <style>
-	.vertical-center-modal {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		text-align: center;
-	
-		.ivu-modal {
-			top: 0;
-		}
-	}
+  .vertical-center-modal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+    .ivu-modal {
+      top: 0;
+    }
+  }
+
+  .ivu-modal-body {
+    text-align: unset;
+  }
 </style>

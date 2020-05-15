@@ -9,21 +9,24 @@
 				<BreadcrumbItem to="/home/goods">类别管理</BreadcrumbItem>
 			</Breadcrumb>
 		</div>
-		
+
 		<div style="margin-bottom: 10px;display: flex;align-items: center;justify-content: space-between;">
 			<div style="display: flex;align-items: center;">
 				<Button type="warning" @click="modal3 = true" icon="md-add" style="margin-right: 10px;background: #ed4014;">添加一级分类</Button>
 			</div>
 		</div>
-		
+
 		<Row type="flex" justify="start">
 			<Col span="12">
 				<Table :columns="columns" :data="data" stripe border :height="screenHeight - 250">
-					<template slot-scope="{ row, index }" slot="action">
-						<Button type="primary" size="small" style="margin-right: 5px" @click="edit(row,1)">修改</Button>
-						<Button type="primary" size="small" style="margin-right: 5px" @click="add(row)">添加二级分类</Button>
-						<Button type="primary" size="small" style="margin-right: 5px" @click="getSecond(row)">查看二级分类</Button>
-						<Button type="error" size="small" @click="remove(row,1)">删除</Button>
+					<template slot-scope="{ row, index }" slot="action" >
+            <div class="display_flex" style="justify-content: center;">
+              <Button type="primary" size="small" style="margin-right: 5px" @click="edit(row,1)">修改</Button>
+              <Button type="primary" size="small" style="margin-right: 5px" @click="add(row)">添加二级分类</Button>
+              <Button type="primary" size="small" style="margin-right: 5px" @click="getSecond(row)">查看二级分类</Button>
+              <Button type="error" size="small" @click="remove(row,1)">删除</Button>
+            </div>
+
 					</template>
 				</Table>
 			</Col>
@@ -103,6 +106,10 @@
 				classType:1,
 				data: [],
 				columns: [
+          {
+          	title: '分类Id',
+          	key: 'objectId',
+          },
 					{
 						title: '一级分类',
 						key: 'class_text',
@@ -110,12 +117,17 @@
 					{
 						title: '操作',
 						slot: 'action',
-						align: 'center'
+						align: 'center',
+            width:360
 					}
 				],
-				
+
 				data1: [],
 				columns1: [
+          {
+          	title: '分类Id',
+          	key: 'objectId',
+          },
 					{
 						title: '二级分类',
 						key: 'class_text',
@@ -233,7 +245,7 @@
 					that.select_item = row.parent;
 					that.select_item1 = row;
 				}
-				
+
 			},
 
 			//确定删除
@@ -259,7 +271,7 @@
 						})
 					})
 				}
-				
+
 			},
 		},
 	}
