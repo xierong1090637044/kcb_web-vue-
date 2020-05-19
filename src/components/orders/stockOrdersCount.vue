@@ -30,7 +30,7 @@
 						 v-print="'#printMe'" @click="Print(row)">采购入库</Button></div>
 					<div v-if="row.type == -1 && row.status == false" style="margin-right: 10px"><Button type="primary" size="small"
 						 v-print="'#printMe'" @click="Print(row)">销售出库</Button></div>-->
-					<div @click="deleteHeaderGood(row.objectId)"><Button type="error" size="small">撤销</Button></div>
+					<div @click="revokeOrder(row.objectId)"><Button type="error" size="small">撤销</Button></div>
 				</div>
 
 			</template>
@@ -287,6 +287,24 @@
 		},
 
 		methods: {
+      
+      //撤销单据
+      revokeOrder(orderId) {
+        this.$Modal.confirm({
+          title: '提示',
+          content: '<p>是否确认撤销此单据</p>',
+          onOk: () => {
+            that.$http.Post("order_opreationSellPurchaseRevoke", {
+              orderId: orderId,
+              negativeOut: true,
+            }).then(res => {
+               if(res.code == 1){
+                 that.get_operations()
+               }
+            })
+          }
+        });
+      },
 
       fetchBillList() {
         that.$http.Post("orders_detailBills", {

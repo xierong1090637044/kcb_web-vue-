@@ -29,7 +29,7 @@
 						 v-print="'#printMe'" @click="Print(row)">采购入库</Button></div>
 					<div v-if="row.type == -1 && row.status == false" style="margin-right: 10px"><Button type="primary" size="small"
 						 v-print="'#printMe'" @click="Print(row)">销售出库</Button></div>-->
-          <div @click="deleteHeaderGood(row.objectId)"><Button type="error" size="small">撤销</Button></div>
+          <!--<div @click="deleteHeaderGood(row.objectId)"><Button type="error" size="small">撤销</Button></div>-->
         </div>
 
       </template>

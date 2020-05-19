@@ -26,7 +26,7 @@
       <template slot-scope="{ row, index }" slot="action">
         <div style="display: flex;justify-content: center;">
           <div style="margin-right: 10px" @click="showReserve(row)"><Button type="primary" size="small">详情</Button></div>
-          <div @click="deleteHeaderGood(row.objectId)"><Button type="error" size="small">撤销</Button></div>
+          <div @click="revokeOrder(row.objectId)"><Button type="error" size="small">撤销</Button></div>
         </div>
 
       </template>
@@ -345,6 +345,24 @@
     },
 
     methods: {
+      
+      //撤销单据
+      revokeOrder(orderId) {
+        this.$Modal.confirm({
+          title: '提示',
+          content: '<p>是否确认撤销此单据</p>',
+          onOk: () => {
+            that.$http.Post("order_opreationSellPurchaseRevoke", {
+              orderId: orderId,
+              negativeOut: true,
+            }).then(res => {
+               if(res.code == 1){
+                 that.get_operations()
+               }
+            })
+          }
+        });
+      },
 
       fetchBillList() {
         that.$http.Post("orders_detailBills", {

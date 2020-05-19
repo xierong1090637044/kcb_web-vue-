@@ -30,7 +30,7 @@
 						 v-print="'#printMe'" @click="Print(row)">采购入库</Button></div>
 					<div v-if="row.type == -1 && row.status == false" style="margin-right: 10px"><Button type="primary" size="small"
 						 v-print="'#printMe'" @click="Print(row)">销售出库</Button></div>-->
-          <div @click="deleteHeaderGood(row.objectId)"><Button type="error" size="small">撤销</Button></div>
+          <div @click="revokeOrder(row.objectId)"><Button type="error" size="small">撤销</Button></div>
         </div>
 
       </template>
@@ -57,55 +57,7 @@
       <img :src="GoodImg.attr" style="height: 800px;margin: 0 auto;width: 100%;" />
     </Modal>
 
-
-    <Modal title="详情" v-model="detailShow" width="60%" foot-hide>
-      <div>
-        <Button type="primary" v-print="'#printTest'">打印</Button>
-      </div>
-
-      <!---出库单详情-->
-      <div id="printTest" v-if="detail.type==-1">
-        <div>
-          <div style="font-size: 22px;padding-bottom:10px;font-weight:800;font-family:宋体; text-align:center">出库单</div>
-        </div>
-        <table>
-          <thead>
-            <th>产品名称</th>
-            <th>数量</th>
-            <th>单位</th>
-            <th>出库仓库</th>
-            <th>单价</th>
-            <th>合计</th>
-          </thead>
-          <tbody>
-            <tr v-for="item in detail.detail" :key="item.id">
-              <td>{{item.goodsName}}</td>
-              <td>{{item.num}}</td>
-              <td>{{item.packingUnit?item.packingUnit:''}}</td>
-              <td>{{item.stock}}</td>
-              <td>{{item.modify_retailPrice}}</td>
-              <td>{{item.modify_retailPrice * item.num}}</td>
-            </tr>
-          </tbody>
-        </table>
-        <div>
-          <div class="display_flex_bet" style="margin: 10px 0;">
-            <div style="font-size:14px;">出库日期：{{detail.createdTime}}</div>
-            <div style="font-size:14px;" class="display_flex">
-              <div>操作者：</div>
-              <div style="width:100px">{{detail.opreater?detail.opreater.nickName:''}}</div>
-            </div>
-          </div>
-          <div class="display_flex_bet" style="margin-bottom: 40px;">
-            <div style="font-size:14px;">备注：{{detail.beizhu?detail.beizhu:'未填写'}}</div>
-            <div style="font-size:14px;" class="display_flex">
-              <div>经办人签字或盖章：</div>
-              <div style="width:100px"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </Modal>
+     <printDetailInfo :detail="detail" @close="detailShow= false" v-if="detailShow"></printDetailInfo>
   </div>
 </template>
 <script>
@@ -116,13 +68,15 @@
   import expandRow from '@/components/component/expandRow.vue';
   import customS from '@/components/component/customS.vue';
   import producerS from '@/components/component/producerS.vue';
+  import printDetailInfo from '@/components/component/printDetailInfo.vue';
   let that;
   let user;
   export default {
     components: {
       expandRow,
       customS,
-      producerS
+      producerS,
+      printDetailInfo
     },
     data() {
       return {
@@ -272,12 +226,13 @@
           "产品名称": "goodsName",
           "出库类别": "stockClass",
           "数量": "num",
+          "总计": "total_money",
           "包装含量": "goodsId.packageContent",
           "包装单位": "goodsId.packingUnit",
-          //"总计": "total_money",
           "出库仓库": "stock.stock_name",
-          //"销售客户": "custom.custom_name",
+          "销售客户": "custom.custom_name",
           "出库日期": "createdAt",
+          "备注":'beizhu',
           "操作者": "opreater.nickName"
         },
         json_data: []
@@ -296,6 +251,24 @@
     },
 
     methods: {
+      
+      //撤销单据
+      revokeOrder(orderId) {
+        this.$Modal.confirm({
+          title: '提示',
+          content: '<p>是否确认撤销此单据</p>',
+          onOk: () => {
+            that.$http.Post("order_opreationSellPurchaseRevoke", {
+              orderId: orderId,
+              negativeOut: true,
+            }).then(res => {
+               if(res.code == 1){
+                 that.get_operations()
+               }
+            })
+          }
+        });
+      },
 
       fetchBillList() {
         that.$http.Post("orders_detailBills", {
@@ -306,13 +279,6 @@
           goodsName: that.params.goodsName,
         }).then(res => {
           let results = res.data.flat()
-          for (let item of results) {
-            if (item.extra_type == 1 || item.extra_type == 2) {
-              item.stockClass = "销售出库"
-            } else if (item.extra_type == 4) {
-              item.stockClass = "采购退货出库"
-            }
-          }
           that.json_data = results
         })
       },
@@ -403,11 +369,6 @@
         }).then(res => {
           for (let item of res.data) {
             item.nickName = item.opreater.nickName
-            if (item.extra_type == 1) {
-              item.stockClass = "销售出库"
-            } else if (item.extra_type == 4) {
-              item.stockClass = "采购退货出库"
-            }
             item.createdTime = item.createdTime ? item.createdTime.iso.split(" ")[0] : item.createdAt
           }
           this.order_opreations = res.data;

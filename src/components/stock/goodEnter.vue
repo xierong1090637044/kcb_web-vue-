@@ -224,13 +224,14 @@
         }
 
         if (selectGoods.length == 0) {
-          this.$Message.error('"没有选择入库产品');
+          this.$Message.error('没有选择入库产品');
           that.button_disabled = false;
           return
         }
 
         if (that.formItem.stock == null || that.formItem.stock == "" || that.formItem.stock == undefined) {
-          this.$Message.error('"请选择入库仓库');
+          this.$Message.error('请选择入库仓库');
+          that.button_disabled = false;
           return
         }
         that.$http.Post("stock_goodEnter", {
@@ -247,11 +248,10 @@
           "opreater": JSON.parse(localStorage.getItem("user")).objectId,
           "nowDay": that.formItem.date
         }).then(res => {
+          that.button_disabled = false;
           if (res) {
-            that.button_disabled = false;
             that.$Loading.finish();
             that.handleData();
-
           }
         })
       },
