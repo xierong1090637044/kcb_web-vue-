@@ -8,83 +8,76 @@
     </div>
 
     <div style="background: #FFFFFF;padding: 1.25rem 1.25rem 0;">
-      <div>
-        <div style="text-align: right;padding:0 0 0.625rem;">
-          <Button type="primary" @click="handleSubmit(2)" :disabled="button_disabled">确定盘点</Button>
+      <div class="orderTitle">盘点单</div>
+      <div class="display_flex" style="margin-bottom: 1.875rem;">
+        <div class="tableEle">
+          <div class="tableRightEle">盘点仓库<span style="color: #f30;">*</span></div>
+          <Input v-model="formItem.stock.stock_name" placeholder="请选择盘点仓库" @on-focus="stockShow = true"></Input>
         </div>
-        <Table :columns="columns" :data="selectGoods" ref="table" border :height="screenHeight - 440" size="small">
-          <template slot-scope="{ row, index }" slot="goodsName">
-            <div v-if="row.goodsName">{{row.goodsName}}</div>
-            <Input placeholder="点击选择产品" @on-focus="goodsShow = true;selectIndex = index" v-else>
-            <Icon type="ios-arrow-down" slot="suffix" />
-            </Input>
-          </template>
-          <template slot-scope="{ row, index }" slot="reserve">
-            <div v-if="row.selected_model">
-              <div v-for="(model,key) in row.selected_model" :key="key" class="display_flex" style="margin:0.25rem 0.375rem;">
-                <div>{{model.custom1.value + model.custom2.value + model.custom3.value + model.custom4.value}}：</div>
-                <InputNumber placeholder="请输入数量" size="small" @on-focus="selectIndex = index" v-if="row.goodsName"
-                  :value="model.num" :min="0" @on-change="handleModelNumChange($event, index,key,model)"></InputNumber>
-              </div>
+
+        <div class="tableEle">
+          <div class="tableRightEle">盘点日期</div>
+          <DatePicker type="datetime" placeholder="请选择盘点日期" v-model="formItem.date" format="yyyy-MM-dd HH:mm:ss"></DatePicker>
+        </div>
+      </div>
+      <Table :columns="columns" :data="selectGoods" ref="table" border :height="screenHeight - 540" size="small">
+        <template slot-scope="{ row, index }" slot="goodsName">
+          <div v-if="row.goodsName">{{row.goodsName}}</div>
+          <Input placeholder="点击选择产品" @on-focus="goodsShow = true;selectIndex = index" v-else>
+          <Icon type="ios-arrow-down" slot="suffix" />
+          </Input>
+        </template>
+        <template slot-scope="{ row, index }" slot="reserve">
+          <div v-if="row.selected_model">
+            <div v-for="(model,key) in row.selected_model" :key="key" class="display_flex" style="margin:0.25rem 0.375rem;">
+              <div>{{model.custom1.value + model.custom2.value + model.custom3.value + model.custom4.value}}：</div>
+              <InputNumber placeholder="请输入数量" size="small" @on-focus="selectIndex = index" v-if="row.goodsName" :value="model.num"
+                :min="0" @on-change="handleModelNumChange($event, index,key,model)"></InputNumber>
             </div>
-            <div v-else>
-              <InputNumber placeholder="请输入数量" size="small" @on-focus="selectIndex = index" v-if="row.goodsName" :min="0"
-                @on-change="modify_num($event, index)"></InputNumber>
-            </div>
-          </template>
-          <!--<template slot-scope="{ row, index }" slot="modify_retailPrice">
-            <InputNumber placeholder="请输入实际成本价" size="small" @on-focus="selectIndex = index" v-if="row.goodsName" :min="0"
-              :value="Number(row.modify_retailPrice)" @on-change="modify_price($event, index)"></InputNumber>
-          </template>-->
-          <template slot-scope="{ row, index }" slot="action">
-            <ButtonGroup>
-              <Button icon="md-add" @click="addSelectGoods"></Button>
-              <Button icon="md-close" @click="reduceSelectGoods(index)"></Button>
-            </ButtonGroup>
-          </template>
-        </Table>
+          </div>
+          <div v-else>
+            <InputNumber placeholder="请输入数量" size="small" @on-focus="selectIndex = index" v-if="row.goodsName" :min="0"
+              @on-change="modify_num($event, index)"></InputNumber>
+          </div>
+        </template>
+
+        <template slot-scope="{ row, index }" slot="action">
+          <ButtonGroup>
+            <Button icon="md-add" @click="addSelectGoods"></Button>
+            <Button icon="md-close" @click="reduceSelectGoods(index)"></Button>
+          </ButtonGroup>
+        </template>
+      </Table>
+
+      <div style="display: flex;margin-top: 1.875rem;">
+        <div style="display: flex;margin-right: 1.25rem;">
+          <div class="tableRightEle">备注</div>
+          <Input v-model="formItem.beizhu" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入备注"></Input>
+        </div>
+
+        <div style="display: flex;">
+          <div class="tableRightEle">凭证图</div>
+          <uploadImg @selectImg="selectImg"></uploadImg>
+        </div>
       </div>
 
-      <div style="padding: 0 0.625rem;">
-        <Form :model="formItem" :label-width="100" style="margin-top: 1.875rem;">
-
-          <div class="display_flex">
-            <FormItem label="盘点仓库">
-              <Input v-model="formItem.stock.stock_name" placeholder="请选择盘点仓库" @on-focus="chooseStockClick = true;"></Input>
-							<Icon type="ios-arrow-down" slot="suffix" />
-            </FormItem>
-
-            <FormItem label="盘点日期">
-              <FormItem prop="producttime">
-                <DatePicker type="datetime" placeholder="请选择盘点日期" v-model="formItem.date" format="yyyy-MM-dd HH:mm:ss"></DatePicker>
-              </FormItem>
-            </FormItem>
-
-            <FormItem label="备注" style="width: 25rem;margin-left: 1.875rem;">
-              <Input v-model="formItem.beizhu" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="请输入备注"></Input>
-            </FormItem>
-          </div>
-					<div>
-						<FormItem label="凭证图">
-							<uploadImg @selectImg="selectImg"></uploadImg>
-						</FormItem>
-					</div>
-
-        </Form>
+      <div style="text-align: center;padding:1.25rem 0;">
+        <Button type="primary" @click="handleSubmit(2)" :disabled="button_disabled">确定盘点</Button>
       </div>
 
     </div>
 
     <!--选择产品模板-->
-    <goodsS :show="goodsShow" @cancle="goodsShow = false" @confrimGoods="confrimSelectGoods" type="count" :thisSelectGoods="selectGoods"></goodsS>
-    <stocksS @cancle="chooseStockClick = false" @confrim="chooseStock" v-if="chooseStockClick"></stocksS>
+    <goodsS :show="goodsShow" @cancle="goodsShow = false" @confrimGoods="confrimSelectGoods" type="count"
+      :thisSelectGoods="selectGoods"></goodsS>
+    <stocksS v-if="stockShow" @confrim="chooseStock" @cancle="stockShow = false"></stocksS>
 
   </div>
 </template>
 <script>
   import goodsS from '@/components/component/goodsS.vue';
   import stocksS from '@/components/component/stocksS.vue';
-	import uploadImg from '@/components/component/uploadImg.vue';
+  import uploadImg from '@/components/component/uploadImg.vue';
 
   import send_temp from '@/serve/send_temp.js';
   import common from '@/serve/common.js';
@@ -93,13 +86,13 @@
   let that;
   export default {
     components: {
-			uploadImg,
+      uploadImg,
       goodsS,
       stocksS
     },
     data() {
       return {
-        chooseStockClick:false,
+        chooseStockClick: false,
         button_disabled: false,
         stockShow: false,
         shopShow: false,
@@ -112,7 +105,7 @@
           real_num: 0, //数量
           beizhu: '', //备注
           Images: [],
-          date: common.getDay(0,true,true), //入库日期
+          date: common.getDay(0, true, true), //入库日期
         },
         selectIndex: 0,
         selectGoods: [],
@@ -130,11 +123,39 @@
             key: 'goodsName',
             slot: 'goodsName',
             align: 'center',
+          }, {
+            title: '产品图片',
+            key: 'goodsIcon',
+            width: 100,
+            render: (h, params) => {
+              return h('div', {
+                style: {
+                  "text-align": "center"
+                },
+              }, [
+                h('img', {
+                  style: {
+                    width: '20px',
+                  },
+                  attrs: {
+                    src: params.row.goodsIcon
+                  }
+                })
+              ]);
+            }
+          },
+
+          {
+            align: 'center',
+            title: '包装',
+            key: 'package',
+            width: 100,
           },
           {
             align: 'center',
-            title: '所属分类',
-            key: 'class',
+            title: '规格',
+            key: 'packModel',
+            width: 100,
           },
           {
             width: 200,
@@ -144,28 +165,13 @@
             slot: 'reserve',
           },
           {
-            width: 100,
-            align: 'center',
-            title: '成本价',
-            key: 'costPrice',
-          },
-          {
-            align: 'center',
-            title: '规格',
-            key: 'packageContent',
-          },
-          {
-            align: 'center',
-            title: '单位',
-            key: 'packingUnit',
-          },
-          {
             width: 120,
             title: '操作',
             slot: 'action',
             align: 'center'
           }
         ],
+
 
       };
     },
@@ -176,11 +182,11 @@
     },
 
     methods: {
-			//选择凭证图
-			selectImg(value) {
-				that.formItem.Images = value
-			},
-			
+      //选择凭证图
+      selectImg(value) {
+        that.formItem.Images = value
+      },
+
       //提交表单
       handleSubmit(type) {
 
@@ -201,7 +207,7 @@
           that.$Loading.finish();
           return
         }
-        
+
         if (that.formItem.stock == null || that.formItem.stock == "" || that.formItem.stock == undefined) {
           that.$Message.error('"请选择盘点仓库');
           that.button_disabled = false;
@@ -209,178 +215,27 @@
           return
         }
 
-        let operation_ids = [];
-        let billsObj = new Array();
-        let detailObj = [];
-        let stockIds = [];
-        let goodsName = [];
-        for (let i = 0; i < selectGoods.length; i++) {
-          //单据
-          let tempBills = Bmob.Query('Bills');
-          let detailBills = {};
-          goodsName.push(selectGoods[i].goodsName)
-
-          let pointer = Bmob.Pointer('_User')
-          let user = pointer.set(uid)
-          let pointer1 = Bmob.Pointer('Goods')
-          let tempGoods_id = pointer1.set(selectGoods[i].objectId);
-
-          let masterId = localStorage.getItem('masterId');
-          let pointer2 = Bmob.Pointer('_User')
-          let poiID2 = pointer2.set(masterId);
-
-          tempBills.set('goodsName', selectGoods[i].goodsName);
-          tempBills.set('retailPrice', (selectGoods[i].modify_retailPrice).toString());
-          tempBills.set('num', Number(selectGoods[i].num));
-          tempBills.set('reserve', Number(selectGoods[i].reserve));
-          tempBills.set('now_reserve', (selectGoods[i].num).toString());
-          tempBills.set('total_money', selectGoods[i].total_money);
-          tempBills.set('opreater', poiID2);
-          tempBills.set('goodsId', tempGoods_id);
-          tempBills.set('userId', user);
-          tempBills.set('type', 3);
-          tempBills.set("createdTime", {
-            "__type": "Date",
-            "iso": that.formItem.date
-          }); // 操作单详情
-          let pointer3 = Bmob.Pointer('stocks')
-          let poiID3 = pointer3.set(that.formItem.stock.objectId);
-
-          tempBills.set('stock', poiID3);
-          stockIds.push(that.formItem.stock.objectId)
-          detailBills.stock = that.formItem.stock.stock_name
-
-          let goodsId = {}
-          if (selectGoods[i].selected_model) {
-            goodsId.selected_model = selectGoods[i].selected_model
-            goodsId.models = selectGoods[i].models
-            detailBills.goodsId = goodsId
+        that.$http.Post("stock_goodCount", {
+          "goods": selectGoods,
+          "beizhu": that.formItem.beizhu,
+          "stockId": that.formItem.stock.objectId,
+          "stockName": that.formItem.stock.stock_name,
+          "Images": that.formItem.Images,
+          "opreater": JSON.parse(localStorage.getItem("user")).objectId,
+          "nowDay": that.formItem.date
+        }).then(res => {
+          if (res) {
+            that.button_disabled = false;
+            that.$Loading.finish();
+            that.handleData();
           }
-          detailBills.goodsName = selectGoods[i].goodsName
-          detailBills.reserve = selectGoods[i].reserve
-          detailBills.now_reserve = selectGoods[i].num.toString()
-          detailBills.packingUnit = selectGoods[i].packingUnit
-
-          billsObj.push(tempBills)
-          detailObj.push(detailBills)
-        }
-        //插入单据
-        Bmob.Query('Bills').saveAll(billsObj).then(function(res) {
-            //console.log("批量新增单据成功", res);
-
-            let pointer = Bmob.Pointer('_User')
-            let poiID = pointer.set(uid);
-
-            let masterId = localStorage.getItem('masterId');
-            let pointer1 = Bmob.Pointer('_User')
-            let poiID1 = pointer1.set(masterId);
-
-            let query = Bmob.Query('order_opreations');
-            query.set("beizhu", that.formItem.beizhu);
-            query.set("detail", detailObj);
-            query.set("type", 3);
-            query.set("opreater", poiID1);
-            query.set("master", poiID);
-            query.set('goodsName', goodsName.join(","));
-            query.set("stockIds", stockIds);
-						query.set("Images", that.formItem.Images);
-            query.set("createdTime", {
-              "__type": "Date",
-              "iso": that.formItem.date
-            }); // 操作单详情
-            query.save().then(res => {
-              let operationId = res.objectId;
-              //console.log("添加操作历史记录成功", res);
-              let countKey = 0;
-              for (let i = 0; i < selectGoods.length; i++) {
-                let num = 0;
-                const query = Bmob.Query('Goods');
-                query.equalTo("header", "==", selectGoods[i].objectId);
-                query.equalTo("stocks", "==", that.formItem.stock.objectId);
-                query.find().then(res => {
-
-                  if (res.length == 0) {
-                    common.upload_good_withNoCan(selectGoods[i], that.formItem.stock, Number(selectGoods[i].num))
-                      .then(res => {
-                        query.equalTo("header", "==", selectGoods[i].objectId);
-                        query.equalTo("order", "==", 1);
-                        query.statTo("sum", "reserve");
-                        query.find().then(res => {
-                          //console.log("dasds", res)
-                          let now_reserve = res[0]._sumReserve
-                          query.get(selectGoods[i].objectId).then(res => {
-                            res.set('reserve', now_reserve)
-                            res.save()
-
-                            common.modifyStockType(selectGoods[i].objectId)
-                            countKey +=1;
-
-                            if(countKey == selectGoods.length){
-                              that.button_disabled = false;
-                              that.$Loading.finish();
-                              that.$Message.success('盘点成功');
-                              that.handleData();
-                            }
-                          })
-                        })
-                      })
-                  } else {
-                    let thisGood = res[0]
-
-                    if (selectGoods[i].selected_model) {
-                      for(let item of selectGoods[i].selected_model){
-                        item.reserve = item.num
-                        delete item.num
-                      }
-                      query.set('models', selectGoods[i].selected_model)
-                      num = Number(selectGoods[i].num);
-                    } else {
-                      num = Number(selectGoods[i].num);
-                    }
-                    query.set('id', thisGood.objectId) //需要修改的objectId
-                    query.set('reserve', num)
-                    query.save().then(res => {
-                      query.equalTo("header", "==", selectGoods[i].objectId);
-                      query.equalTo("order", "==", 1);
-                      query.statTo("sum", "reserve");
-                      query.find().then(res => {
-                        //console.log("dasds", res)
-                        let now_reserve = res[0]._sumReserve
-                        query.get(selectGoods[i].objectId).then(res => {
-                          res.set('reserve', now_reserve)
-                          res.save()
-
-                          common.modifyStockType(selectGoods[i].objectId)
-                          countKey +=1;
-
-                          if(countKey == selectGoods.length){
-                            that.button_disabled = false;
-                            that.$Loading.finish();
-                            that.$Message.success('盘点成功');
-                            that.handleData();
-                          }
-
-                        })
-                      })
-                    }).catch(err => {
-                      console.log(err)
-                    })
-                  }
-                })
-              }
-            })
-          },
-          function(error) {
-            // 批量新增异常处理
-            console.log("异常处理");
-          });
-
+        })
       },
 
       //选择仓库
       chooseStock(value) {
         that.formItem.stock = value
-        that.chooseStockClick = false
+        that.stockShow = false
       },
 
       //输入数量时触发
@@ -486,30 +341,30 @@
           good.createdAt = ''
           that.selectGoods.push(good)
         }
-				
-				that.formItem = {
-				  stock: '',
-				  all_money: 0,
-				  real_money: 0,
-				  real_num: 0, //数量
-				  beizhu: '', //备注
-				  Images: [],
-				  date: common.getDay(0,true,true), //入库日期
-				}
+
+        that.formItem = {
+          stock: '',
+          all_money: 0,
+          real_money: 0,
+          real_num: 0, //数量
+          beizhu: '', //备注
+          Images: [],
+          date: common.getDay(0, true, true), //入库日期
+        }
       },
 
       reduceSelectGoods(index) {
         console.log(index)
         that.selectGoods.splice(index, 1)
-				
-				that.formItem.real_money = 0
-				that.formItem.all_money = 0
-				that.formItem.real_num = 0
-				for (let item of that.selectGoods) {
-					that.formItem.real_num += Number(item.num ? item.num : 0)
-					that.formItem.all_money += Number(item.total_money ? item.total_money : 0)
-					that.formItem.real_money += Number(item.really_total_money ? item.really_total_money : 0)
-				}
+
+        that.formItem.real_money = 0
+        that.formItem.all_money = 0
+        that.formItem.real_num = 0
+        for (let item of that.selectGoods) {
+          that.formItem.real_num += Number(item.num ? item.num : 0)
+          that.formItem.all_money += Number(item.total_money ? item.total_money : 0)
+          that.formItem.real_money += Number(item.really_total_money ? item.really_total_money : 0)
+        }
       },
     }
   };

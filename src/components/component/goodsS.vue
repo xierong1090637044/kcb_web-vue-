@@ -2,13 +2,6 @@
   <div>
     <Modal title="选择产品" :closable="false" width="80%" :value="show" @on-cancel="outData" @on-ok="confrimGoods">
       <div class="display_flex" style="margin-bottom: 20px;">
-        <!--<div class="display_flex">
-          <div>选择仓库：</div>
-          <Select style="width:300px" @on-change='selectStock'>
-            <Option v-for="item in stockList" :value="item.objectId" :key="item.objectId">{{ item.stock_name }}</Option>
-          </Select>
-        </div>-->
-
         <Input search enter-button placeholder="请输入产品名字" style="width: 300px;margin-left: 20px;" @on-search="searchGood" />
       </div>
 
@@ -78,54 +71,64 @@
             align: 'center',
           },
           {
-            align: 'center',
-            title: '所属仓库',
-            key: 'stocks',
+            title: '产品图片',
+            key: 'goodsIcon',
+            width: 100,
             render: (h, params) => {
-              if(params.row.stocks && params.row.stocks.stock_name){
-                return h('div', [params.row.stocks.stock_name])
-              }
-
+              return h('div', {
+                style: {
+                  "text-align": "center"
+                },
+              }, [
+                h('img', {
+                  style: {
+                    width: '20px',
+                  },
+                  attrs: {
+                    src: params.row.goodsIcon
+                  },
+                  on: {
+                    'click': function() {
+                      that.GoodImg.show = true
+                      that.GoodImg.attr = params.row.goodsIcon
+                    }
+                  }
+                })
+              ]);
             }
           },
           {
-
             align: 'center',
             title: '所属分类',
             key: 'class',
           },
           {
-
             align: 'center',
             title: '库存',
             key: 'reserve',
             sortable: true,
           },
           {
-
             align: 'center',
             sortable: true,
             title: '成本价',
             key: 'costPrice',
           },
           {
-
             align: 'center',
             title: '零售价',
             key: 'retailPrice',
             sortable: true,
           },
           {
-
             align: 'center',
             title: '规格',
-            key: 'packageContent',
+            key: 'packModel',
           },
           {
-
             align: 'center',
-            title: '单位',
-            key: 'packingUnit',
+            title: '包装',
+            key: 'package',
           },
           {
             align: 'center',
@@ -240,17 +243,13 @@
         that.select_goods = [];
 
         let params = {
-          funcName: 'Goods',
-          data: {
-            uid: that.userid,
             content: that.search.searchGoodText,
-            pageSize: 200,
+            pageSize: 50,
             pageNum: that.pege_number,
             order: "-createdAt"
-          }
         }
-        Bmob.functions(params.funcName, params.data).then(function(res) {
-          console.log(res.data)
+         that.$http.Post("Goods", params).then(res => {
+          //console.log(res.data)
           for (let item of res.data) {
 
             for(let selectgGood of that.thisSelectGoods){
@@ -262,6 +261,7 @@
 
             item.class = (item.goodsClass ? (item.goodsClass.class_text || "") : "") + "    " + (item.second_class ?
               (item.second_class.class_text || "") : "")
+            item.package = ''+item.packageContent +''+item.packingUnit
 
 
             if (item.models) {

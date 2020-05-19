@@ -1,5 +1,25 @@
-.marginBot5{
+.marginBot5 {
   margin-bottom: 5px;
+}
+
+
+.orderTitle {
+  font-size: 1.25rem;
+  color: #333;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 1.25rem;
+}
+
+.tableEle {
+  display: flex;
+  margin-right: 1.25rem;
+  align-items: center;
+}
+
+.tableRightEle {
+  margin-right: 1.25rem;
+  min-width: 4rem;
 }
 
 .display_flex {

@@ -95,7 +95,6 @@
 
 <style>
 	.upload-imgs {
-		margin: 0.625rem 0;
 		overflow: hidden;
 		font-size: 0;
 		width: 22.5rem;
